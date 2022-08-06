@@ -9,7 +9,7 @@
 
 namespace satellite
 {
-    satellite::satellite(Tle _tle, SGP4 _sgp4) : tle(_tle), sgp4(_sgp4) {}
+    satellite::satellite(Tle _tle, SGP4 _sgp4, int _id) : tle(_tle), sgp4(_sgp4), id(_id) {}
 
     //獲得某個時間點觀測另一個衛星的AER
     AER satellite::getAER(int second, satellite other){
@@ -35,8 +35,13 @@ namespace satellite
     Tle satellite::getTle(){
         return tle;
     }
+
     SGP4 satellite::getSgp4(){
         return sgp4;
+    }
+
+    int satellite::getId(){
+        return id;
     }
 
 

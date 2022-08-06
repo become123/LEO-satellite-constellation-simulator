@@ -47,8 +47,9 @@ namespace getTLEdata
             // SGP4 observerSgp4(satellite);
             const Tle satelliteTLE = Tle(satelliteNumbers[i], TLEs[i].first, TLEs[i].second);
             SGP4 newSatelliteSGP4data(satelliteTLE);
-            satellite::satellite s(satelliteTLE,newSatelliteSGP4data);
-            satellites.insert(std::make_pair(stoi(satelliteNumbers[i]),s));
+            int id = stoi(satelliteNumbers[i]);
+            satellite::satellite s(satelliteTLE,newSatelliteSGP4data, id);
+            satellites.insert(std::make_pair(id,s));
         }
         return satellites;
     }

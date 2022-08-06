@@ -12,15 +12,17 @@ namespace satellite
     
 class satellite{
 public:    
-    satellite(Tle _tle, SGP4 _sgp4);
+    satellite(Tle _tle, SGP4 _sgp4, int _id);
     Tle getTle();
     SGP4 getSgp4();
+    int getId();
 
     AER getAER(int second, satellite other);
 
 private:
     Tle tle;
     SGP4 sgp4;
+    int id;
 };
 
 

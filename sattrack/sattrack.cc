@@ -44,7 +44,7 @@ int main()
     for (int i = 0; i < 86400; ++i)
     {
         AER curAER = observer.getAER(i, other);
-        output<<"date: "<<curAER.date<<",    A: "<<curAER.A<<",    E: "<<curAER.E<<",    R: "<<curAER.R<<"\n";
+        output<<"satellite"<<observer.getId()<<" observe satellite"<<other.getId()<<" at date "<<curAER.date<<":    A: "<<curAER.A<<",    E: "<<curAER.E<<",    R: "<<curAER.R<<"\n";
     };
 
     return 0;
