@@ -5,6 +5,8 @@ CMakeCache.txt
 compile_commands.json
 .vscode/
 output.txt
+sattrack/outputFile/
+sattrack/sattrack.cc
 # Created by https://www.toptal.com/developers/gitignore/api/c++
 # Edit at https://www.toptal.com/developers/gitignore?templates=c++
 
