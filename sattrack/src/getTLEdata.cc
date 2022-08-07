@@ -5,15 +5,15 @@
 #include <iomanip>
 #include<fstream>
 #include<string>
-#include<unordered_map>
+#include<map>
 #include<vector>
 #include<utility>
 
 namespace getTLEdata
 {
-    std::unordered_map<int, satellite::satellite> getTLEdata(std::string fileName){
+    std::map<int, satellite::satellite> getTLEdata(std::string fileName){
         std::ifstream ifs(fileName);
-        std::unordered_map<int, satellite::satellite> satellites;
+        std::map<int, satellite::satellite> satellites;
         std::vector<std::string> satelliteNumbers;
         std::vector<std::pair<std::string,std::string>> TLEs;
         /*----------------get input data from file--------------*/

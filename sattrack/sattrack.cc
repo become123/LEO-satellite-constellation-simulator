@@ -26,7 +26,7 @@
 
 #include <iostream>
 #include <iomanip>
-#include<unordered_map>
+#include<map>
 #include<fstream>
 
 
@@ -34,18 +34,22 @@
 
 int main()
 {
-    std::unordered_map<int, satellite::satellite> satellites = getTLEdata::getTLEdata("TLE_7P_16Sats.txt");
+    std::map<int, satellite::satellite> satellites = getTLEdata::getTLEdata("TLE_7P_16Sats.txt");
     
-    satellite::satellite observer = satellites.at(101);
-    satellite::satellite other = satellites.at(701);
+    satellite::satellite observer = satellites.at(304);
+    satellite::satellite other = satellites.at(303);
 
     std::ofstream output("./output.txt");
     output << std::setprecision(8) << std::fixed;
-    for (int i = 0; i < 86400; ++i)
-    {
-        AER curAER = observer.getAER(i, other);
-        output<<"satellite"<<observer.getId()<<" observe satellite"<<other.getId()<<" at date "<<curAER.date<<":    A: "<<curAER.A<<",    E: "<<curAER.E<<",    R: "<<curAER.R<<"\n";
-    };
+    // for (int i = 0; i < 86400; ++i)
+    // {
+    //     AER curAER = observer.getAER(i, other);
+    //     output<<"satellite"<<observer.getId()<<" observe satellite"<<other.getId()<<" at date "<<curAER.date 
+    //           <<":    A: "<<curAER.A<<",    E: "<<curAER.E<<",    R: "<<curAER.R<<"\n";
+    // };
+    for(auto &sat:satellites){
+        sat.second.printNeighbor();
+    }
 
     return 0;
 }
