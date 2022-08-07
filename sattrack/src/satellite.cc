@@ -117,7 +117,7 @@ namespace satellite
 
     bool satellite::judgeWestConnectability(int second, std::map<int, satellite> &satellites){
         AER westSatAER = this->getAER(second, this->getWestSatId(), satellites);
-        return judgeAzimuth(180, acceptableAzimuthDif, westSatAER.A) && judgeElevation(acceptableElevationDif, westSatAER.E) && judgeRange(acceptableRange, westSatAER.R);
+        return judgeAzimuth(270, acceptableAzimuthDif, westSatAER.A) && judgeElevation(acceptableElevationDif, westSatAER.E) && judgeRange(acceptableRange, westSatAER.R);
     }
 
 

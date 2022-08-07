@@ -101,6 +101,6 @@ int main()
 {
     std::map<int, satellite::satellite> satellites = getTLEdata::getTLEdata("TLE_7P_16Sats.txt");
     printAllSatConnectionInfoFile(satellites);
-    // printAERfile(101, satellites.at(101).getWestSat(),satellites);
+    // printAERfile(101, satellites.at(101).getWestSatId(),satellites);
     return 0;
 }
