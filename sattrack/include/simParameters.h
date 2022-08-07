@@ -1,7 +1,7 @@
 #ifndef SIM_PARAMETERS_H
 #define SIM_PARAMETERS_H
 
-#define acceptableAzimuthDif 90
+#define acceptableAzimuthDif 60
 #define acceptableElevationDif 45
 #define acceptableRange 3000
 

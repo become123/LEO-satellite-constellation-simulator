@@ -31,7 +31,7 @@
 #include<fstream>
 
 
-void printNeighbor(std::map<int, satellite::satellite> &satellites){
+void printAllSatNeighbor(std::map<int, satellite::satellite> &satellites){
     for(auto &sat:satellites){
         sat.second.printNeighbor();
     }
@@ -45,14 +45,13 @@ void testJudgeAzimuthFunction(){
 
 void printAERfile(int observerId, int otherId, std::map<int, satellite::satellite> &satellites){
     satellite::satellite observer = satellites.at(observerId);
-    satellite::satellite other = satellites.at(otherId);
 
     std::ofstream output("./output.txt");
     output << std::setprecision(8) << std::fixed;
     for (int i = 0; i < 86400; ++i)
     {
-        AER curAER = observer.getAER(i, other);
-        output<<"satellite"<<observer.getId()<<" observe satellite"<<other.getId()<<" at date "<<curAER.date <<":    A: "<<curAER.A<<",    E: "<<curAER.E<<",    R: "<<curAER.R<<"\n";
+        AER curAER = observer.getAER(i, otherId, satellites);
+        output<<"satellite"<<observer.getId()<<" observe satellite"<<otherId<<" at date "<<curAER.date <<":    A: "<<curAER.A<<",    E: "<<curAER.E<<",    R: "<<curAER.R<<"\n";
     }
     output.close();
 
@@ -79,17 +78,21 @@ void printWestAvailableTimeFile(int satId, std::map<int, satellite::satellite> &
 }
 
 //印出一顆衛星在一天中，分別對東西方衛星可以連線的秒數總數
-void printAllSatAvailableTimeCountFile(std::map<int, satellite::satellite> &satellites){
-    std::ofstream output("./output.txt");
+void printAllSatConnectionInfoFile(std::map<int, satellite::satellite> &satellites){
+    std::string outputDir = "./outputFile/" + std::to_string(acceptableAzimuthDif) + "_" + std::to_string(acceptableElevationDif) + "_" + std::to_string(acceptableRange) + ".txt";
+    std::ofstream output(outputDir);
+    output << std::setprecision(5) << std::fixed;    
     for(auto &sat: satellites){
-        output<<"sat"<<sat.first<<": ";
         int eastAvailableTime = 0;
-        int westAvailableTime = 0;
+        int westAvailableTime = 0;       
+        output<<"sat"<<sat.first<<": ";
         for (int second = 0; second < 86400; ++second){
             if(sat.second.judgeEastConnectability(second, satellites)) ++eastAvailableTime;
             if(sat.second.judgeWestConnectability(second, satellites)) ++westAvailableTime;
         }
-        output<<"eastAvailableTime: "<<eastAvailableTime<<", westAvailableTime: "<<westAvailableTime<<"\n";        
+        output<<"eastAvailableTime: "<<eastAvailableTime<<", westAvailableTime: "<<westAvailableTime;
+        double avgUtilization = (double)(172800+eastAvailableTime+westAvailableTime)/345600;//86400*2=172800(同軌道前後的衛星永遠可以連線得上), 86400*4=345600
+        output<<", average Utilization: "<<avgUtilization<<"\n";                
     }
     output.close();    
 }
@@ -97,6 +100,7 @@ void printAllSatAvailableTimeCountFile(std::map<int, satellite::satellite> &sate
 int main()
 {
     std::map<int, satellite::satellite> satellites = getTLEdata::getTLEdata("TLE_7P_16Sats.txt");
-    printAllSatAvailableTimeCountFile(satellites);
+    printAllSatConnectionInfoFile(satellites);
+    // printAERfile(101, satellites.at(101).getWestSat(),satellites);
     return 0;
 }

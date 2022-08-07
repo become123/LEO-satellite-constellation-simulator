@@ -69,7 +69,8 @@ namespace satellite
     }
 
     //獲得某個時間點觀測另一個衛星的AER
-    AER satellite::getAER(int second, satellite other){
+    AER satellite::getAER(int second, int otherId, std::map<int, satellite> &satellites){
+        satellite other = satellites.at(otherId);
         DateTime dt = this->getTle().Epoch().AddSeconds(second);
         Eci observerEci = this->getSgp4().FindPosition(dt);
         Eci otherEci = other.getSgp4().FindPosition(dt);
@@ -89,19 +90,19 @@ namespace satellite
 
     }
 
-    int satellite::getEastSat(){
+    int satellite::getEastSatId(){
         return neighbors[0];
     }
 
-    int satellite::getWestSat(){
+    int satellite::getWestSatId(){
         return neighbors[1];
     }
 
-    int satellite::getFrontSat(){
+    int satellite::getFrontSatId(){
         return neighbors[2];
     }
 
-    int satellite::getBackSat(){
+    int satellite::getBackSatId(){
         return neighbors[3];
     }
 
@@ -110,14 +111,12 @@ namespace satellite
     }
 
     bool satellite::judgeEastConnectability(int second, std::map<int, satellite> &satellites){
-        satellite eastSat = satellites.at(this->getEastSat());
-        AER eastSatAER = this->getAER(second, eastSat);
+        AER eastSatAER = this->getAER(second, this->getEastSatId(), satellites);
         return judgeAzimuth(90, acceptableAzimuthDif, eastSatAER.A) && judgeElevation(acceptableElevationDif, eastSatAER.E) && judgeRange(acceptableRange, eastSatAER.R);
     }
 
     bool satellite::judgeWestConnectability(int second, std::map<int, satellite> &satellites){
-        satellite westSat = satellites.at(this->getWestSat());
-        AER westSatAER = this->getAER(second, westSat);
+        AER westSatAER = this->getAER(second, this->getWestSatId(), satellites);
         return judgeAzimuth(180, acceptableAzimuthDif, westSatAER.A) && judgeElevation(acceptableElevationDif, westSatAER.E) && judgeRange(acceptableRange, westSatAER.R);
     }
 

@@ -21,11 +21,11 @@ public:
     Tle getTle();
     SGP4 getSgp4();
     int getId();
-    AER getAER(int second, satellite other);
-    int getEastSat();
-    int getWestSat();
-    int getFrontSat();
-    int getBackSat();
+    AER getAER(int second, int otherId, std::map<int, satellite> &satellites);
+    int getEastSatId();
+    int getWestSatId();
+    int getFrontSatId();
+    int getBackSatId();
     void printNeighbor();
     bool judgeEastConnectability(int second, std::map<int, satellite> &satellites);
     bool judgeWestConnectability(int second, std::map<int, satellite> &satellites);
