@@ -4,12 +4,16 @@
 #include <CoordTopocentric.h>
 #include <CoordGeodetic.h>
 #include <Observer.h>
+#include<map>
 #include <SGP4.h>
 #include "AER.h"
 
 
 namespace satellite
 {
+    bool judgeAzimuth(double ISLdirAzimuth, double acceptableAzimuthDif, double otherSatAzimuth);
+    bool judgeElevation(double acceptableElevationDif, double otherSatElevation);
+    bool judgeRange(double acceptableRange, double otherSatRange);
     
 class satellite{
 public: 
@@ -23,6 +27,8 @@ public:
     int getFrontSat();
     int getBackSat();
     void printNeighbor();
+    bool judgeEastConnectability(int second, std::map<int, satellite> &satellites);
+    bool judgeWestConnectability(int second, std::map<int, satellite> &satellites);
 
 
 private:

@@ -4,12 +4,37 @@
 #include <SGP4.h>
 #include <string>
 #include <iostream>
+#include <algorithm> //min()
+#include <map>
 #include "rectifyAzimuth.h"
 #include "satellite.h"
 #include "AER.h"
+#include "simParameters.h"
 
 namespace satellite
 {
+    bool judgeAzimuth(double ISLdirAzimuth, double AcceptableAzimuthDif, double otherSatAzimuth){
+        double AngleDif1 = ISLdirAzimuth-otherSatAzimuth;
+        double AngleDif2 = otherSatAzimuth-ISLdirAzimuth;
+        if(AngleDif1 < 0) AngleDif1+=360;
+        if(AngleDif2 < 0) AngleDif2+=360;
+        return std::min(AngleDif1, AngleDif2) < AcceptableAzimuthDif;
+    }
+
+    bool judgeElevation(double AcceptableElevationDif, double otherSatElevation){
+        if(otherSatElevation > 0){
+            return otherSatElevation < AcceptableElevationDif;
+        }
+        else{
+            return otherSatElevation > -AcceptableElevationDif;
+        }
+        return true;
+    }
+
+    bool judgeRange(double AcceptableRange, double otherSatRange){
+        return otherSatRange < AcceptableRange;
+    }
+
     satellite::satellite(Tle _tle, SGP4 _sgp4, int _id) : tle(_tle), sgp4(_sgp4), id(_id) {
         neighbors = std::vector<int>(4);//east west front back
         const int satNum = id%100;
@@ -84,7 +109,17 @@ namespace satellite
         std::cout<<"neighbors of sat"<<id<<"->east: "<<neighbors[0]<<", west: "<<neighbors[1]<<", front: "<<neighbors[2]<<", back: "<<neighbors[3]<<"\n";
     }
 
+    bool satellite::judgeEastConnectability(int second, std::map<int, satellite> &satellites){
+        satellite eastSat = satellites.at(this->getEastSat());
+        AER eastSatAER = this->getAER(second, eastSat);
+        return judgeAzimuth(90, acceptableAzimuthDif, eastSatAER.A) && judgeElevation(acceptableElevationDif, eastSatAER.E) && judgeRange(acceptableRange, eastSatAER.R);
+    }
 
+    bool satellite::judgeWestConnectability(int second, std::map<int, satellite> &satellites){
+        satellite westSat = satellites.at(this->getWestSat());
+        AER westSatAER = this->getAER(second, westSat);
+        return judgeAzimuth(180, acceptableAzimuthDif, westSatAER.A) && judgeElevation(acceptableElevationDif, westSatAER.E) && judgeRange(acceptableRange, westSatAER.R);
+    }
 
 
 

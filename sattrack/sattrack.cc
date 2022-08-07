@@ -23,6 +23,7 @@
 #include "rectifyAzimuth.h"
 #include "satellite.h"
 #include "AER.h"
+#include "simParameters.h"
 
 #include <iostream>
 #include <iomanip>
@@ -30,26 +31,45 @@
 #include<fstream>
 
 
+void printNeighbor(std::map<int, satellite::satellite> &satellites){
+    for(auto &sat:satellites){
+        sat.second.printNeighbor();
+    }
+}
 
+void testJudgeAzimuthFunction(){
+    for(int i = 0; i < 180; ++i){
+        std::cout<<i<<": "<<satellite::judgeAzimuth(200, i, 0.0001)<<"\n";
+    }    
+}
+
+void printAERfile(int observerId, int otherId, std::map<int, satellite::satellite> &satellites){
+    satellite::satellite observer = satellites.at(observerId);
+    satellite::satellite other = satellites.at(otherId);
+
+    std::ofstream output("./output.txt");
+    output << std::setprecision(8) << std::fixed;
+    for (int i = 0; i < 86400; ++i)
+    {
+        AER curAER = observer.getAER(i, other);
+        output<<"satellite"<<observer.getId()<<" observe satellite"<<other.getId()<<" at date "<<curAER.date <<":    A: "<<curAER.A<<",    E: "<<curAER.E<<",    R: "<<curAER.R<<"\n";
+    }
+    output.close();
+
+}
+
+void printEastConnectabilityFile(int satId, std::map<int, satellite::satellite> &satellites){
+    satellite::satellite sat = satellites.at(satId);
+    std::ofstream output("./output.txt");
+    for (int i = 0; i < 86400; ++i){
+        output<<sat.judgeEastConnectability(i, satellites);
+    }
+    output.close();
+}
 
 int main()
 {
     std::map<int, satellite::satellite> satellites = getTLEdata::getTLEdata("TLE_7P_16Sats.txt");
-    
-    satellite::satellite observer = satellites.at(304);
-    satellite::satellite other = satellites.at(303);
-
-    std::ofstream output("./output.txt");
-    output << std::setprecision(8) << std::fixed;
-    // for (int i = 0; i < 86400; ++i)
-    // {
-    //     AER curAER = observer.getAER(i, other);
-    //     output<<"satellite"<<observer.getId()<<" observe satellite"<<other.getId()<<" at date "<<curAER.date 
-    //           <<":    A: "<<curAER.A<<",    E: "<<curAER.E<<",    R: "<<curAER.R<<"\n";
-    // };
-    for(auto &sat:satellites){
-        sat.second.printNeighbor();
-    }
-
+    printEastConnectabilityFile(101, satellites);
     return 0;
 }
