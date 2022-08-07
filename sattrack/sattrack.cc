@@ -58,18 +58,45 @@ void printAERfile(int observerId, int otherId, std::map<int, satellite::satellit
 
 }
 
-void printEastConnectabilityFile(int satId, std::map<int, satellite::satellite> &satellites){
+//印出特定一顆衛星一天中對東方衛星的連線狀態(1表示可連，2表示不可連)
+void printEastAvailableTimeFile(int satId, std::map<int, satellite::satellite> &satellites){
     satellite::satellite sat = satellites.at(satId);
     std::ofstream output("./output.txt");
-    for (int i = 0; i < 86400; ++i){
-        output<<sat.judgeEastConnectability(i, satellites);
+    for (int second = 0; second < 86400; ++second){
+        output<<sat.judgeEastConnectability(second, satellites);
     }
     output.close();
+}
+
+//印出特定一顆衛星一天中對西方衛星的連線狀態(1表示可連，2表示不可連)
+void printWestAvailableTimeFile(int satId, std::map<int, satellite::satellite> &satellites){
+    satellite::satellite sat = satellites.at(satId);
+    std::ofstream output("./output.txt");
+    for (int second = 0; second < 86400; ++second){
+        output<<sat.judgeWestConnectability(second, satellites);
+    }
+    output.close();
+}
+
+//印出一顆衛星在一天中，分別對東西方衛星可以連線的秒數總數
+void printAllSatAvailableTimeCountFile(std::map<int, satellite::satellite> &satellites){
+    std::ofstream output("./output.txt");
+    for(auto &sat: satellites){
+        output<<"sat"<<sat.first<<": ";
+        int eastAvailableTime = 0;
+        int westAvailableTime = 0;
+        for (int second = 0; second < 86400; ++second){
+            if(sat.second.judgeEastConnectability(second, satellites)) ++eastAvailableTime;
+            if(sat.second.judgeWestConnectability(second, satellites)) ++westAvailableTime;
+        }
+        output<<"eastAvailableTime: "<<eastAvailableTime<<", westAvailableTime: "<<westAvailableTime<<"\n";        
+    }
+    output.close();    
 }
 
 int main()
 {
     std::map<int, satellite::satellite> satellites = getTLEdata::getTLEdata("TLE_7P_16Sats.txt");
-    printEastConnectabilityFile(101, satellites);
+    printAllSatAvailableTimeCountFile(satellites);
     return 0;
 }
