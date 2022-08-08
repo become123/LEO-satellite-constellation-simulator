@@ -9,7 +9,6 @@
 #include "rectifyAzimuth.h"
 #include "satellite.h"
 #include "AER.h"
-#include "simParameters.h"
 
 namespace satellite
 {
@@ -110,14 +109,14 @@ namespace satellite
         std::cout<<"neighbors of sat"<<id<<"->east: "<<neighbors[0]<<", west: "<<neighbors[1]<<", front: "<<neighbors[2]<<", back: "<<neighbors[3]<<"\n";
     }
 
-    bool satellite::judgeEastConnectability(int second, std::map<int, satellite> &satellites){
+    bool satellite::judgeEastConnectability(int second, std::map<int, satellite> &satellites, std::map<std::string, int> &parameterTable){
         AER eastSatAER = this->getAER(second, this->getEastSatId(), satellites);
-        return judgeAzimuth(90, acceptableAzimuthDif, eastSatAER.A) && judgeElevation(acceptableElevationDif, eastSatAER.E) && judgeRange(acceptableRange, eastSatAER.R);
+        return judgeAzimuth(90, parameterTable.at("acceptableAzimuthDif"), eastSatAER.A) && judgeElevation(parameterTable.at("acceptableElevationDif"), eastSatAER.E) && judgeRange(parameterTable.at("acceptableRange"), eastSatAER.R);
     }
 
-    bool satellite::judgeWestConnectability(int second, std::map<int, satellite> &satellites){
+    bool satellite::judgeWestConnectability(int second, std::map<int, satellite> &satellites, std::map<std::string, int> &parameterTable){
         AER westSatAER = this->getAER(second, this->getWestSatId(), satellites);
-        return judgeAzimuth(270, acceptableAzimuthDif, westSatAER.A) && judgeElevation(acceptableElevationDif, westSatAER.E) && judgeRange(acceptableRange, westSatAER.R);
+        return judgeAzimuth(270, parameterTable.at("acceptableAzimuthDif"), westSatAER.A) && judgeElevation(parameterTable.at("acceptableElevationDif"), westSatAER.E) && judgeRange(parameterTable.at("acceptableRange"), westSatAER.R);
     }
 
 

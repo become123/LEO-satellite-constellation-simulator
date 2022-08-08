@@ -1,4 +1,4 @@
-#include "getTLEdata.h"
+#include "getFileData.h"
 #include "satellite.h"
 #include <SGP4.h>
 #include <iostream>
@@ -9,7 +9,7 @@
 #include<vector>
 #include<utility>
 
-namespace getTLEdata
+namespace getFileData
 {
     std::map<int, satellite::satellite> getTLEdata(std::string fileName){
         std::ifstream ifs(fileName);
@@ -52,6 +52,42 @@ namespace getTLEdata
             satellites.insert(std::make_pair(id,s));
         }
         return satellites;
+    }
+
+    std::map<std::string, int> getParameterdata(std::string fileName){
+        std::map<std::string, int> parameterTable;
+        std::ifstream ifs(fileName);
+        if (!ifs.is_open()) {
+            std::cout << "Failed to open file.\n";
+            exit(EXIT_FAILURE);
+        }  
+        std::string s;
+        while ( std::getline (ifs,s) ){
+            if(s[0] != '('){
+                continue;
+            }
+            std::vector<std::string> data;
+            //找出括號中的資料
+            std::string leftBracket = "(";
+            std::string rightBracket = ")";
+            size_t leftPos = 0;
+            size_t rightPos = 0;
+            std::string token;
+            leftPos = s.find(leftBracket);
+            rightPos = s.find(rightBracket);
+            while (leftPos != std::string::npos && rightPos != std::string::npos) {
+                token = s.substr(leftPos, rightPos-leftPos);
+                token.erase(0, 1);
+                // std::cout<<token<<"\n";
+                data.push_back(token);
+                s.erase(0, rightPos + 1);
+                leftPos = s.find(leftBracket);
+                rightPos = s.find(rightBracket);
+            }
+            parameterTable[data[0]] = std::stoi(data[1]);
+        }
+        ifs.close();  
+        return parameterTable;            
     }
 }
 

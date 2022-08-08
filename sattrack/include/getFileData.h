@@ -5,8 +5,9 @@
 #include<SGP4.h>
 #include"satellite.h"
 
-namespace getTLEdata
+namespace getFileData
 {
     std::map<int, satellite::satellite> getTLEdata(std::string fileName);
+    std::map<std::string, int> getParameterdata(std::string fileName);
 }
 #endif

@@ -9,7 +9,7 @@ find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 
 add_executable(sattrack
     ${SRCS}
-    src/getTLEdata.cc
+    src/getFileData.cc
     src/rectifyAzimuth.cc
     src/satellite.cc)
 

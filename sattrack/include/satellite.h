@@ -4,7 +4,7 @@
 #include <CoordTopocentric.h>
 #include <CoordGeodetic.h>
 #include <Observer.h>
-#include<map>
+#include <map>
 #include <SGP4.h>
 #include "AER.h"
 
@@ -27,8 +27,8 @@ public:
     int getFrontSatId();
     int getBackSatId();
     void printNeighbor();
-    bool judgeEastConnectability(int second, std::map<int, satellite> &satellites);
-    bool judgeWestConnectability(int second, std::map<int, satellite> &satellites);
+    bool judgeEastConnectability(int second, std::map<int, satellite> &satellites, std::map<std::string, int> &parameterTable);
+    bool judgeWestConnectability(int second, std::map<int, satellite> &satellites, std::map<std::string, int> &parameterTable);
 
 
 private:
