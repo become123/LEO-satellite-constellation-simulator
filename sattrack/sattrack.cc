@@ -31,7 +31,7 @@
 #include <utility>
 
 //印出設定的parameter
-void printParameter(std::map<std::string, int> &parameterTable){
+void printParameter(std::map<std::string, std::string> &parameterTable){
     for(auto p:parameterTable){
         std::cout<<p.first<<": "<<p.second<<"\n";
     }
@@ -71,7 +71,7 @@ void printAERfile(int observerId, int otherId, std::map<int, satellite::satellit
 }
 
 //印出特定一顆衛星一天中對東方衛星的連線狀態(1表示可連，2表示不可連)到./output.txt
-void printEastAvailableTimeFile(int satId, std::map<int, satellite::satellite> &satellites, std::map<std::string, int> &parameterTable){
+void printEastAvailableTimeFile(int satId, std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){
     satellite::satellite sat = satellites.at(satId);
     std::ofstream output("./output.txt");
     for (int second = 0; second < 86400; ++second){
@@ -81,7 +81,7 @@ void printEastAvailableTimeFile(int satId, std::map<int, satellite::satellite> &
 }
 
 //印出特定一顆衛星一天中對西方衛星的連線狀態(1表示可連，2表示不可連)到./output.txt
-void printWestAvailableTimeFile(int satId, std::map<int, satellite::satellite> &satellites, std::map<std::string, int> &parameterTable){
+void printWestAvailableTimeFile(int satId, std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){
     satellite::satellite sat = satellites.at(satId);
     std::ofstream output("./output.txt");
     for (int second = 0; second < 86400; ++second){
@@ -91,8 +91,8 @@ void printWestAvailableTimeFile(int satId, std::map<int, satellite::satellite> &
 }
 
 //印出每顆衛星在一天中，分別對東西方衛星的連線狀態到./outputFile/資料夾中
-void printAllSatConnectionInfoFile(std::map<int, satellite::satellite> &satellites, std::map<std::string, int> &parameterTable){
-    std::string outputDir = "./outputFile/" + std::to_string(parameterTable.at("acceptableAzimuthDif")) + "_" + std::to_string(parameterTable.at("acceptableElevationDif")) + "_" + std::to_string(parameterTable.at("acceptableRange")) + ".txt";
+void printAllSatConnectionInfoFile(std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){
+    std::string outputDir = "./outputFile/" + parameterTable.at("acceptableAzimuthDif") + "_" + parameterTable.at("acceptableElevationDif") + "_" + parameterTable.at("acceptableRange") + ".txt";
     std::ofstream output(outputDir);
     output << std::setprecision(5) << std::fixed;    
     for(auto &sat: satellites){
@@ -113,7 +113,7 @@ void printAllSatConnectionInfoFile(std::map<int, satellite::satellite> &satellit
 int main()
 {
     std::map<int, satellite::satellite> satellites = getFileData::getTLEdata("TLE_7P_16Sats.txt");
-    std::map<std::string, int> parameterTable  = getFileData::getParameterdata("parameter.txt");
+    std::map<std::string, std::string> parameterTable  = getFileData::getParameterdata("parameter.txt");
     printParameter(parameterTable);
     // printAllSatNeighbor(satellites);
     // testJudgeAzimuthFunction(200, 359.99);

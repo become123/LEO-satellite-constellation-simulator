@@ -54,8 +54,8 @@ namespace getFileData
         return satellites;
     }
 
-    std::map<std::string, int> getParameterdata(std::string fileName){
-        std::map<std::string, int> parameterTable;
+    std::map<std::string, std::string> getParameterdata(std::string fileName){
+        std::map<std::string, std::string> parameterTable;
         std::ifstream ifs(fileName);
         if (!ifs.is_open()) {
             std::cout << "Failed to open file.\n";
@@ -84,7 +84,7 @@ namespace getFileData
                 leftPos = s.find(leftBracket);
                 rightPos = s.find(rightBracket);
             }
-            parameterTable[data[0]] = std::stoi(data[1]);
+            parameterTable[data[0]] = data[1];
         }
         ifs.close();  
         return parameterTable;            

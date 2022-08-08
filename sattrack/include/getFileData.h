@@ -8,6 +8,6 @@
 namespace getFileData
 {
     std::map<int, satellite::satellite> getTLEdata(std::string fileName);
-    std::map<std::string, int> getParameterdata(std::string fileName);
+    std::map<std::string, std::string> getParameterdata(std::string fileName);
 }
 #endif

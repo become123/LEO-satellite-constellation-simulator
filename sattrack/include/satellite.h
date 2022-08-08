@@ -27,8 +27,8 @@ public:
     int getFrontSatId();
     int getBackSatId();
     void printNeighbor();
-    bool judgeEastConnectability(int second, std::map<int, satellite> &satellites, std::map<std::string, int> &parameterTable);
-    bool judgeWestConnectability(int second, std::map<int, satellite> &satellites, std::map<std::string, int> &parameterTable);
+    bool judgeEastConnectability(int second, std::map<int, satellite> &satellites, std::map<std::string, std::string> &parameterTable);
+    bool judgeWestConnectability(int second, std::map<int, satellite> &satellites, std::map<std::string, std::string> &parameterTable);
 
 
 private:
