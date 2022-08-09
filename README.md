@@ -1,3 +1,51 @@
+LEO satellite simulator
+============
+- 衛星位置的預測是base on此C++ SGP4 project
+   - https://www.danrw.com/sgp4/
+### 編譯流程
+
+---
+
+- 需先安裝修正方位角時會用到的C++ Eigen library:
+    
+    ```bash
+    sudo apt install libeigen3-dev
+    ```
+    
+- 進入到檔案位置sgp4/中進行cmake來產生Makefile，在sgp4/中輸入指令:
+    
+    ```bash
+    cmake .
+    ```
+    
+- 使用產生的Makefile編譯檔案:
+    
+    ```bash
+    make
+    ```
+    
+
+### 執行流程
+
+---
+
+- 設定parameter.txt 中的參數
+    - parameter.txt位於sgp4/sattrack中
+- 目前有實作以下5個function
+    - **printAllSatNeighborId** : 印出每一個衛星的四個連線鄰居衛星編號
+    - **printAERfile** : 印出編號observerId衛星觀察編號otherId衛星一天中的AER數值到sattrack/output.txt中
+        - 需設定parameter: observerId、otherId
+    - **printRightAvailableTimeFile**: 印出編號observerId的衛星一天中對飛行方向右方衛星的連線狀態(1表示可連，0表示不可連)到sattrack/output.txt 中(目前輸出有點粗糙之後會優化)
+        - 需設定parameter: observerId、acceptableAzimuthDif、acceptableElevationDif、acceptableRange
+    - **printLeftAvailableTimeFile**: 印出編號observerId的衛星一天中對飛行方向左方衛星的連線狀態(1表示可連，0表示不可連)到sattrack/output.txt 中(目前輸出有點粗糙之後會優化)
+        - 需設定parameter: observerId、acceptableAzimuthDif、acceptableElevationDif、acceptableRange
+    - **printAllSatConnectionInfoFile**: 印出每顆衛星在一天中，分別對飛行方向左方右方衛星的連線狀態到./outputFile/資料夾中，檔名會是`acceptableAzimuthDif_acceptableElevationDif_acceptableRange.txt`
+        - 需設定parameter: acceptableAzimuthDif、acceptableElevationDif、acceptableRange
+- 進入到sgp4/sattrack中執行sattrack
+    
+    ```bash
+    ./sattrack
+    ```
 SGP4 library
 ============
 

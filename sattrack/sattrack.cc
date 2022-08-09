@@ -30,7 +30,10 @@
 #include<fstream>
 #include <utility>
 
-
+//for using std::string type in switch statement
+constexpr unsigned int str2int(const char* str, int h = 0){
+    return !str[h] ? 5381 : (str2int(str, h+1) * 33) ^ (unsigned int)str[h];
+}
 
 typedef void (*ScriptFunction)(); // function pointer type 
 std::map<std::string, ScriptFunction> functionTable;
@@ -38,9 +41,11 @@ std::map<std::string, ScriptFunction> functionTable;
 
 //印出設定的parameter
 void printParameter(std::map<std::string, std::string> &parameterTable){
+    std::cout<<"**********************************************\nparameters:\n----------------------------------------------\n";
     for(auto p:parameterTable){
         std::cout<<p.first<<": "<<p.second<<"\n";
     }
+    std::cout<<"**********************************************\n";
 }
 
 //印出每一個衛星的四個鄰居衛星編號
@@ -62,7 +67,7 @@ void testJudgeAzimuthFunction(int ISLdirAngle, int otherSatAngle){
     }    
 }
 
-//印出編號observerId衛星觀察編號otherId衛星一天中的AER數值到./output.txt
+//印出編號observerId衛星觀察編號otherId衛星一天中的AER數值到./sattrack/output.txt
 void printAERfile(int observerId, int otherId, std::map<int, satellite::satellite> &satellites){
     satellite::satellite observer = satellites.at(observerId);
     std::ofstream output("./output.txt");
@@ -76,9 +81,9 @@ void printAERfile(int observerId, int otherId, std::map<int, satellite::satellit
 
 }
 
-//印出特定一顆衛星一天中對東方衛星的連線狀態(1表示可連，2表示不可連)到./output.txt
-void printRightAvailableTimeFile(int satId, std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){
-    satellite::satellite sat = satellites.at(satId);
+//印出特定observerId的衛星一天中對飛行方向右方衛星的連線狀態(1表示可連，0表示不可連)到./output.txt
+void printRightAvailableTimeFile(int observerId, std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){
+    satellite::satellite sat = satellites.at(observerId);
     std::ofstream output("./output.txt");
     for (int second = 0; second < 86400; ++second){
         output<<sat.judgeRightConnectability(second, satellites, parameterTable);
@@ -86,9 +91,9 @@ void printRightAvailableTimeFile(int satId, std::map<int, satellite::satellite> 
     output.close();
 }
 
-//印出特定一顆衛星一天中對西方衛星的連線狀態(1表示可連，2表示不可連)到./output.txt
-void printLeftAvailableTimeFile(int satId, std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){
-    satellite::satellite sat = satellites.at(satId);
+//印出特定一顆衛星一天中對飛行方向左方衛星的連線狀態(1表示可連，0表示不可連)到./output.txt
+void printLeftAvailableTimeFile(int observerId, std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){
+    satellite::satellite sat = satellites.at(observerId);
     std::ofstream output("./output.txt");
     for (int second = 0; second < 86400; ++second){
         output<<sat.judgeLeftConnectability(second, satellites, parameterTable);
@@ -96,7 +101,7 @@ void printLeftAvailableTimeFile(int satId, std::map<int, satellite::satellite> &
     output.close();
 }
 
-//印出每顆衛星在一天中，分別對東西方衛星的連線狀態到./outputFile/資料夾中
+//印出每顆衛星在一天中，分別對飛行方向左方右方衛星的連線狀態到./outputFile/資料夾中，檔名會是acceptableAzimuthDif_acceptableElevationDif_acceptableRange.txt
 void printAllSatConnectionInfoFile(std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){
     std::string outputDir = "./outputFile/" + parameterTable.at("acceptableAzimuthDif") + "_" + parameterTable.at("acceptableElevationDif") + "_" + parameterTable.at("acceptableRange") + ".txt";
     std::ofstream output(outputDir);
@@ -125,11 +130,37 @@ int main()
     std::map<std::string, std::string> parameterTable  = getFileData::getParameterdata("parameter.txt");
 
     printParameter(parameterTable);
-    // printAllSatNeighborId(satellites);
-    // testJudgeAzimuthFunction(200, 359.99);
-    // printAERfile(101, satellites.at(101).getLeftSatId(),satellites);
-    // printRightAvailableTimeFile(101, satellites, parameterTable);
-    // printLeftAvailableTimeFile(101, satellites, parameterTable);
-    printAllSatConnectionInfoFile(satellites, parameterTable);
+
+    switch (str2int(parameterTable["execute_function"].c_str()))
+    {
+        case str2int("printAllSatNeighborId"):
+            printAllSatNeighborId(satellites);
+            break;
+        case str2int("printAERfile"):
+            printAERfile(std::stoi(parameterTable.at("observerId")), std::stoi(parameterTable.at("otherId")),satellites);
+            break;
+        case str2int("printRightAvailableTimeFile"):
+            printRightAvailableTimeFile(std::stoi(parameterTable.at("observerId")),satellites,parameterTable);
+            break;
+        case str2int("printLeftAvailableTimeFile"):
+            printLeftAvailableTimeFile(std::stoi(parameterTable.at("observerId")),satellites,parameterTable);
+            break;
+        case str2int("printAllSatConnectionInfoFile"):
+            printAllSatConnectionInfoFile(satellites,parameterTable);
+            break;          
+        default:
+            std::cout<<"unknown execute_function!"<<"\n";
+            break;
+    }
     return 0;
 }
+
+/*
+    printParameter(parameterTable);
+    printAllSatNeighborId(satellites);
+    testJudgeAzimuthFunction(200, 359.99);
+    printAERfile(101, satellites.at(101).getLeftSatId(),satellites);
+    printRightAvailableTimeFile(101, satellites, parameterTable);
+    printLeftAvailableTimeFile(101, satellites, parameterTable);
+    printAllSatConnectionInfoFile(satellites, parameterTable);
+*/

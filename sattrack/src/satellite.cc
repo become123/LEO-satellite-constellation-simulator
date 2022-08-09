@@ -106,7 +106,7 @@ namespace satellite
     }
 
     void satellite::printNeighborId(){
-        std::cout<<"neighbors of sat"<<id<<"->right: "<<neighbors[0]<<", left: "<<neighbors[1]<<", front: "<<neighbors[2]<<", back: "<<neighbors[3]<<"\n";
+        std::cout<<"neighbors of sat"<<id<<" ---> right: "<<neighbors[0]<<", left: "<<neighbors[1]<<", front: "<<neighbors[2]<<", back: "<<neighbors[3]<<"\n";
     }
 
     bool satellite::judgeRightConnectability(int second, std::map<int, satellite> &satellites, std::map<std::string, std::string> &parameterTable){

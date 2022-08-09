@@ -63,7 +63,7 @@ namespace getFileData
         }  
         std::string s;
         while ( std::getline (ifs,s) ){
-            if(s[0] != '('){
+            if(s[0] != '>'){
                 continue;
             }
             std::vector<std::string> data;
