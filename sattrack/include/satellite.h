@@ -35,7 +35,8 @@ private:
     Tle tle;
     SGP4 sgp4;
     int id;
-    std::vector<int> neighbors;
+    std::vector<int> neighbors;//依序是 right left  front back 的衛星編號
+    
 };
 
 

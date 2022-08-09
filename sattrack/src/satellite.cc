@@ -12,6 +12,7 @@
 
 namespace satellite
 {
+    //檢查對其他衛星的方位角是否符合可連線標準
     bool judgeAzimuth(double ISLdirAzimuth, double AcceptableAzimuthDif, double otherSatAzimuth){
         double AngleDif1 = ISLdirAzimuth-otherSatAzimuth;
         double AngleDif2 = otherSatAzimuth-ISLdirAzimuth;
@@ -20,6 +21,7 @@ namespace satellite
         return std::min(AngleDif1, AngleDif2) < AcceptableAzimuthDif;
     }
 
+    //檢查對其他衛星的仰角是否符合可連線標準
     bool judgeElevation(double AcceptableElevationDif, double otherSatElevation){
         if(otherSatElevation > 0){
             return otherSatElevation < AcceptableElevationDif;
@@ -30,21 +32,23 @@ namespace satellite
         return true;
     }
 
+    //檢查對其他衛星的距離是否符合可連線標準
     bool judgeRange(double AcceptableRange, double otherSatRange){
         return otherSatRange < AcceptableRange;
     }
 
+    //satellite的建構子，初始化衛星的各個資訊
     satellite::satellite(Tle _tle, SGP4 _sgp4, int _id) : tle(_tle), sgp4(_sgp4), id(_id) {
         neighbors = std::vector<int>(4);//east west front back
         const int satNum = id%100;
         const int orbitNum = (id-satNum)/100;
         // std::cout<<"orbitNum: "<<orbitNum<<", satNum: "<<satNum<<"\n";
-        //east
+        //right
         neighbors[0] = satNum - 2 < 1 ? 100*(orbitNum+1)+satNum-2+16 : 100*(orbitNum+1)+satNum-2;
         if(orbitNum == 7){
             neighbors[0] = 100+satNum;
         }
-        //west
+        //left
         neighbors[1] = satNum + 2 > 16 ? 100*(orbitNum-1)+satNum+2-16 : 100*(orbitNum-1)+satNum+2;
         if(orbitNum == 1){
             neighbors[1] = 700+satNum;
@@ -105,18 +109,21 @@ namespace satellite
         return neighbors[3];
     }
 
+    //印出每一個相鄰衛星的編號
     void satellite::printNeighborId(){
         std::cout<<"neighbors of sat"<<id<<" ---> right: "<<neighbors[0]<<", left: "<<neighbors[1]<<", front: "<<neighbors[2]<<", back: "<<neighbors[3]<<"\n";
     }
 
+    //回傳右方鄰近軌道的衛星在特定時刻是否可以建立連線
     bool satellite::judgeRightConnectability(int second, std::map<int, satellite> &satellites, std::map<std::string, std::string> &parameterTable){
         AER eastSatAER = this->getAER(second, this->getRightSatId(), satellites);
-        return judgeAzimuth(90, std::stoi(parameterTable.at("acceptableAzimuthDif")), eastSatAER.A) && judgeElevation(std::stoi(parameterTable.at("acceptableElevationDif")), eastSatAER.E) && judgeRange(std::stoi(parameterTable.at("acceptableRange")), eastSatAER.R);
+        return judgeAzimuth(std::stoi(parameterTable.at("ISLrightAngle")), std::stoi(parameterTable.at("acceptableAzimuthDif")), eastSatAER.A) && judgeElevation(std::stoi(parameterTable.at("acceptableElevationDif")), eastSatAER.E) && judgeRange(std::stoi(parameterTable.at("acceptableRange")), eastSatAER.R);
     }
 
+    //回傳左方鄰近軌道的衛星在特定時刻是否可以建立連線
     bool satellite::judgeLeftConnectability(int second, std::map<int, satellite> &satellites, std::map<std::string, std::string> &parameterTable){
         AER westSatAER = this->getAER(second, this->getLeftSatId(), satellites);
-        return judgeAzimuth(270, std::stoi(parameterTable.at("acceptableAzimuthDif")), westSatAER.A) && judgeElevation(std::stoi(parameterTable.at("acceptableElevationDif")), westSatAER.E) && judgeRange(std::stoi(parameterTable.at("acceptableRange")), westSatAER.R);
+        return judgeAzimuth(std::stoi(parameterTable.at("ISLleftAngle")), std::stoi(parameterTable.at("acceptableAzimuthDif")), westSatAER.A) && judgeElevation(std::stoi(parameterTable.at("acceptableElevationDif")), westSatAER.E) && judgeRange(std::stoi(parameterTable.at("acceptableRange")), westSatAER.R);
     }
 
 

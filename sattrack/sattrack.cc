@@ -29,6 +29,7 @@
 #include<map>
 #include<fstream>
 #include <utility>
+#include <numeric>
 
 //for using std::string type in switch statement
 constexpr unsigned int str2int(const char* str, int h = 0){
@@ -122,6 +123,33 @@ void printAllSatConnectionInfoFile(std::map<int, satellite::satellite> &satellit
 }
 
 
+void printAvgAvailableTimeFile(std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){
+    std::ofstream output("./output.txt");
+    output << std::setprecision(5) << std::fixed; 
+    for(int acceptableAzimuthDif = 80; acceptableAzimuthDif <= 175; acceptableAzimuthDif+=5){
+        std::vector<int> rightAvailableTimeOfAllSat;
+        std::vector<int> leftAvailableTimeOfAllSat;
+        parameterTable["acceptableAzimuthDif"] = std::to_string(acceptableAzimuthDif);
+        for(auto &sat: satellites){
+            int rightAvailableTime = 0;
+            int leftAvailableTime = 0;       
+            for (int second = 0; second < 86400; ++second){
+                if(sat.second.judgeRightConnectability(second, satellites, parameterTable)) ++rightAvailableTime;
+                if(sat.second.judgeLeftConnectability(second, satellites, parameterTable)) ++leftAvailableTime;
+            }
+            rightAvailableTimeOfAllSat.push_back(rightAvailableTime);
+            leftAvailableTimeOfAllSat.push_back(leftAvailableTime);
+        }   
+        double rightAvgAvailableTime = (double)std::accumulate(rightAvailableTimeOfAllSat.begin(), rightAvailableTimeOfAllSat.end(), 0.0) / rightAvailableTimeOfAllSat.size();
+        double leftAvgAvailableTime = (double)std::accumulate(leftAvailableTimeOfAllSat.begin(), leftAvailableTimeOfAllSat.end(), 0.0) / leftAvailableTimeOfAllSat.size();
+        double interLinkAvgAvailableTime = (rightAvgAvailableTime+leftAvgAvailableTime)/2;
+        output<<"acceptableAzimuthDif = "<<std::setw(3)<<acceptableAzimuthDif<<" --> "<<", interplane link avg available time: "<<interLinkAvgAvailableTime<<", right link avg available time: "<<rightAvgAvailableTime<<", left link avg available time: "<<leftAvgAvailableTime<<"\n";    
+        // output<<std::setw(3)<<acceptableAzimuthDif<<","<<std::setw(14)<<interLinkAvgAvailableTime<<","<<std::setw(14)<<rightAvgAvailableTime<<","<<std::setw(14)<<leftAvgAvailableTime<<"\n";
+    }
+    output.close();    
+}
+
+
 
 
 int main()
@@ -130,28 +158,28 @@ int main()
     std::map<std::string, std::string> parameterTable  = getFileData::getParameterdata("parameter.txt");
 
     printParameter(parameterTable);
-
-    switch (str2int(parameterTable["execute_function"].c_str()))
-    {
-        case str2int("printAllSatNeighborId"):
-            printAllSatNeighborId(satellites);
-            break;
-        case str2int("printAERfile"):
-            printAERfile(std::stoi(parameterTable.at("observerId")), std::stoi(parameterTable.at("otherId")),satellites);
-            break;
-        case str2int("printRightAvailableTimeFile"):
-            printRightAvailableTimeFile(std::stoi(parameterTable.at("observerId")),satellites,parameterTable);
-            break;
-        case str2int("printLeftAvailableTimeFile"):
-            printLeftAvailableTimeFile(std::stoi(parameterTable.at("observerId")),satellites,parameterTable);
-            break;
-        case str2int("printAllSatConnectionInfoFile"):
-            printAllSatConnectionInfoFile(satellites,parameterTable);
-            break;          
-        default:
-            std::cout<<"unknown execute_function!"<<"\n";
-            break;
-    }
+    printAvgAvailableTimeFile(satellites, parameterTable);
+    // switch (str2int(parameterTable["execute_function"].c_str()))
+    // {
+    //     case str2int("printAllSatNeighborId"):
+    //         printAllSatNeighborId(satellites);
+    //         break;
+    //     case str2int("printAERfile"):
+    //         printAERfile(std::stoi(parameterTable.at("observerId")), std::stoi(parameterTable.at("otherId")),satellites);
+    //         break;
+    //     case str2int("printRightAvailableTimeFile"):
+    //         printRightAvailableTimeFile(std::stoi(parameterTable.at("observerId")),satellites,parameterTable);
+    //         break;
+    //     case str2int("printLeftAvailableTimeFile"):
+    //         printLeftAvailableTimeFile(std::stoi(parameterTable.at("observerId")),satellites,parameterTable);
+    //         break;
+    //     case str2int("printAllSatConnectionInfoFile"):
+    //         printAllSatConnectionInfoFile(satellites,parameterTable);
+    //         break;          
+    //     default:
+    //         std::cout<<"unknown execute_function!"<<"\n";
+    //         break;
+    // }
     return 0;
 }
 
