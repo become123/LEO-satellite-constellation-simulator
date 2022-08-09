@@ -5,7 +5,6 @@ CMakeCache.txt
 compile_commands.json
 .vscode/
 output.txt
-parameter.txt
 sattrack/outputFile/
 sattrack/sattrack.cc
 # Created by https://www.toptal.com/developers/gitignore/api/c++

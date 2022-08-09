@@ -1,0 +1,6 @@
+每一行放(parameter名稱):(parameter數值)
+**記得都要用括號包起來，並且要最前面不能有空格**
+
+(acceptableAzimuthDif): (90)
+(acceptableElevationDif): (45)
+(acceptableRange): (5000)

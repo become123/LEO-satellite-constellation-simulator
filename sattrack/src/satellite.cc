@@ -89,11 +89,11 @@ namespace satellite
 
     }
 
-    int satellite::getEastSatId(){
+    int satellite::getRightSatId(){
         return neighbors[0];
     }
 
-    int satellite::getWestSatId(){
+    int satellite::getLeftSatId(){
         return neighbors[1];
     }
 
@@ -105,17 +105,17 @@ namespace satellite
         return neighbors[3];
     }
 
-    void satellite::printNeighbor(){
-        std::cout<<"neighbors of sat"<<id<<"->east: "<<neighbors[0]<<", west: "<<neighbors[1]<<", front: "<<neighbors[2]<<", back: "<<neighbors[3]<<"\n";
+    void satellite::printNeighborId(){
+        std::cout<<"neighbors of sat"<<id<<"->right: "<<neighbors[0]<<", left: "<<neighbors[1]<<", front: "<<neighbors[2]<<", back: "<<neighbors[3]<<"\n";
     }
 
-    bool satellite::judgeEastConnectability(int second, std::map<int, satellite> &satellites, std::map<std::string, std::string> &parameterTable){
-        AER eastSatAER = this->getAER(second, this->getEastSatId(), satellites);
+    bool satellite::judgeRightConnectability(int second, std::map<int, satellite> &satellites, std::map<std::string, std::string> &parameterTable){
+        AER eastSatAER = this->getAER(second, this->getRightSatId(), satellites);
         return judgeAzimuth(90, std::stoi(parameterTable.at("acceptableAzimuthDif")), eastSatAER.A) && judgeElevation(std::stoi(parameterTable.at("acceptableElevationDif")), eastSatAER.E) && judgeRange(std::stoi(parameterTable.at("acceptableRange")), eastSatAER.R);
     }
 
-    bool satellite::judgeWestConnectability(int second, std::map<int, satellite> &satellites, std::map<std::string, std::string> &parameterTable){
-        AER westSatAER = this->getAER(second, this->getWestSatId(), satellites);
+    bool satellite::judgeLeftConnectability(int second, std::map<int, satellite> &satellites, std::map<std::string, std::string> &parameterTable){
+        AER westSatAER = this->getAER(second, this->getLeftSatId(), satellites);
         return judgeAzimuth(270, std::stoi(parameterTable.at("acceptableAzimuthDif")), westSatAER.A) && judgeElevation(std::stoi(parameterTable.at("acceptableElevationDif")), westSatAER.E) && judgeRange(std::stoi(parameterTable.at("acceptableRange")), westSatAER.R);
     }
 
