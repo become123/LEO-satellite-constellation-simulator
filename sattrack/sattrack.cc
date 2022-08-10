@@ -89,10 +89,10 @@ void printRightConnectabilityFile(int observerId, std::map<int, satellite::satel
     std::ofstream output("./output.txt");
     for (int second = 0; second < 86400; ++second){
         AER rightSatAER;
-        std::bitset<3> state;
-        bool result = sat.judgeRightConnectability(second, satellites, parameterTable, state, rightSatAER);
+        std::bitset<3> connectionState;
+        bool result = sat.judgeRightConnectability(second, satellites, parameterTable, connectionState, rightSatAER);
         output<<rightSatAER.date<<":"<<std::setw(10)<<rightSatAER.A<<","<<std::setw(10)<<rightSatAER.E<<","<<std::setw(10)<<rightSatAER.R;
-        output<<",   connectability of A: "<<state[0]<<",   connectability of E: "<<state[1]<<",   connectability of R: "<<state[2]<<"  ---->  ";
+        output<<",   connectability of A: "<<connectionState[0]<<",   connectability of E: "<<connectionState[1]<<",   connectability of R: "<<connectionState[2]<<"  ---->  ";
         if(result)  
             output<<"OK\n";
         else    
@@ -107,10 +107,10 @@ void printLeftConnectabilityFile(int observerId, std::map<int, satellite::satell
     std::ofstream output("./output.txt");
     for (int second = 0; second < 86400; ++second){
         AER leftSatAER;
-        std::bitset<3> state;
-        bool result = sat.judgeLeftConnectability(second, satellites, parameterTable, state, leftSatAER);
+        std::bitset<3> connectionState;
+        bool result = sat.judgeLeftConnectability(second, satellites, parameterTable, connectionState, leftSatAER);
         output<<leftSatAER.date<<":"<<std::setw(10)<<leftSatAER.A<<","<<std::setw(10)<<leftSatAER.E<<","<<std::setw(10)<<leftSatAER.R;
-        output<<",   connectability of A: "<<state[0]<<",   connectability of E: "<<state[1]<<",   connectability of R: "<<state[2]<<"  ---->  ";
+        output<<",   connectability of A: "<<connectionState[0]<<",   connectability of E: "<<connectionState[1]<<",   connectability of R: "<<connectionState[2]<<"  ---->  ";
         if(result)  
             output<<"OK\n";
         else    

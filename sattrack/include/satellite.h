@@ -29,11 +29,13 @@ public:
     int getBackSatId();
     void printNeighborId();
     bool judgeRightConnectability(int second, std::map<int, satellite> &satellites, std::map<std::string, std::string> &parameterTable);
-    bool judgeRightConnectability(int second, std::map<int, satellite> &satellites, std::map<std::string, std::string> &parameterTable, std::bitset<3> &state, AER &rightAER);
+    bool judgeRightConnectability(int second, std::map<int, satellite> &satellites, std::map<std::string, std::string> &parameterTable, std::bitset<3> &connectionState, AER &rightAER);
     bool judgeLeftConnectability(int second, std::map<int, satellite> &satellites, std::map<std::string, std::string> &parameterTable);
-    bool judgeLeftConnectability(int second, std::map<int, satellite> &satellites, std::map<std::string, std::string> &parameterTable, std::bitset<3> &state, AER &leftSatAER);
-
-
+    bool judgeLeftConnectability(int second, std::map<int, satellite> &satellites, std::map<std::string, std::string> &parameterTable, std::bitset<3> &connectionState, AER &leftSatAER);
+    bool judgeFrontConnectability(int second, std::map<int, satellite> &satellites, std::map<std::string, std::string> &parameterTable);
+    bool judgeFrontConnectability(int second, std::map<int, satellite> &satellites, std::map<std::string, std::string> &parameterTable, std::bitset<3> &connectionState, AER &frontSatAER);
+    bool judgeBackConnectability(int second, std::map<int, satellite> &satellites, std::map<std::string, std::string> &parameterTable);
+    bool judgeBackConnectability(int second, std::map<int, satellite> &satellites, std::map<std::string, std::string> &parameterTable, std::bitset<3> &connectionState, AER &backSatAER);
 private:
     Tle tle;
     SGP4 sgp4;
