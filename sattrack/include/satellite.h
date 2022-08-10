@@ -6,6 +6,7 @@
 #include <Observer.h>
 #include <map>
 #include <SGP4.h>
+#include <bitset>
 #include "AER.h"
 
 
@@ -28,7 +29,9 @@ public:
     int getBackSatId();
     void printNeighborId();
     bool judgeRightConnectability(int second, std::map<int, satellite> &satellites, std::map<std::string, std::string> &parameterTable);
+    bool judgeRightConnectability(int second, std::map<int, satellite> &satellites, std::map<std::string, std::string> &parameterTable, std::bitset<3> &state, AER &rightAER);
     bool judgeLeftConnectability(int second, std::map<int, satellite> &satellites, std::map<std::string, std::string> &parameterTable);
+    bool judgeLeftConnectability(int second, std::map<int, satellite> &satellites, std::map<std::string, std::string> &parameterTable, std::bitset<3> &state, AER &leftSatAER);
 
 
 private:
@@ -36,7 +39,7 @@ private:
     SGP4 sgp4;
     int id;
     std::vector<int> neighbors;//依序是 right left  front back 的衛星編號
-    
+
 };
 
 

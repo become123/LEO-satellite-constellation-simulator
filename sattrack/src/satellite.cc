@@ -6,6 +6,7 @@
 #include <iostream>
 #include <algorithm> //min()
 #include <map>
+#include <bitset>
 #include "rectifyAzimuth.h"
 #include "satellite.h"
 #include "AER.h"
@@ -116,14 +117,32 @@ namespace satellite
 
     //回傳右方鄰近軌道的衛星在特定時刻是否可以建立連線
     bool satellite::judgeRightConnectability(int second, std::map<int, satellite> &satellites, std::map<std::string, std::string> &parameterTable){
-        AER eastSatAER = this->getAER(second, this->getRightSatId(), satellites);
-        return judgeAzimuth(std::stoi(parameterTable.at("ISLrightAngle")), std::stoi(parameterTable.at("acceptableAzimuthDif")), eastSatAER.A) && judgeElevation(std::stoi(parameterTable.at("acceptableElevationDif")), eastSatAER.E) && judgeRange(std::stoi(parameterTable.at("acceptableRange")), eastSatAER.R);
+        AER rightSatAER = this->getAER(second, this->getRightSatId(), satellites);
+        return judgeAzimuth(std::stoi(parameterTable.at("ISLrightAngle")), std::stoi(parameterTable.at("acceptableAzimuthDif")), rightSatAER.A) && judgeElevation(std::stoi(parameterTable.at("acceptableElevationDif")), rightSatAER.E) && judgeRange(std::stoi(parameterTable.at("acceptableRange")), rightSatAER.R);
+    } 
+ 
+    //回傳右方鄰近軌道的衛星在特定時刻是否可以建立連線，同時獲得AER及對AER的三個判斷結果(std::bitset<3> state由右而左三個bit分別代表A(state[2])、E(state[1)、R(state[0])是否符合連線標準)
+    bool satellite::judgeRightConnectability(int second, std::map<int, satellite> &satellites, std::map<std::string, std::string> &parameterTable, std::bitset<3> &state, AER &rightSatAER){
+        rightSatAER = this->getAER(second, this->getRightSatId(), satellites);
+        state[0] = judgeAzimuth(std::stoi(parameterTable.at("ISLrightAngle")), std::stoi(parameterTable.at("acceptableAzimuthDif")), rightSatAER.A);
+        state[1] = judgeElevation(std::stoi(parameterTable.at("acceptableElevationDif")), rightSatAER.E);
+        state[2] = judgeRange(std::stoi(parameterTable.at("acceptableRange")), rightSatAER.R);
+        return  state[0] && state[1] && state[2];
     }
 
     //回傳左方鄰近軌道的衛星在特定時刻是否可以建立連線
     bool satellite::judgeLeftConnectability(int second, std::map<int, satellite> &satellites, std::map<std::string, std::string> &parameterTable){
-        AER westSatAER = this->getAER(second, this->getLeftSatId(), satellites);
-        return judgeAzimuth(std::stoi(parameterTable.at("ISLleftAngle")), std::stoi(parameterTable.at("acceptableAzimuthDif")), westSatAER.A) && judgeElevation(std::stoi(parameterTable.at("acceptableElevationDif")), westSatAER.E) && judgeRange(std::stoi(parameterTable.at("acceptableRange")), westSatAER.R);
+        AER leftSatAER = this->getAER(second, this->getLeftSatId(), satellites);
+        return judgeAzimuth(std::stoi(parameterTable.at("ISLleftAngle")), std::stoi(parameterTable.at("acceptableAzimuthDif")), leftSatAER.A) && judgeElevation(std::stoi(parameterTable.at("acceptableElevationDif")), leftSatAER.E) && judgeRange(std::stoi(parameterTable.at("acceptableRange")), leftSatAER.R);
+    }
+
+    //回傳左方鄰近軌道的衛星在特定時刻是否可以建立連線，同時獲得AER及對AER的三個判斷結果(std::bitset<3> state由右而左三個bit分別代表A(state[2])、E(state[1)、R(state[0])是否符合連線標準)
+    bool satellite::judgeLeftConnectability(int second, std::map<int, satellite> &satellites, std::map<std::string, std::string> &parameterTable, std::bitset<3> &state, AER &leftSatAER){
+        leftSatAER = this->getAER(second, this->getLeftSatId(), satellites);
+        state[0] = judgeAzimuth(std::stoi(parameterTable.at("ISLleftAngle")), std::stoi(parameterTable.at("acceptableAzimuthDif")), leftSatAER.A);
+        state[1] = judgeElevation(std::stoi(parameterTable.at("acceptableElevationDif")), leftSatAER.E);
+        state[2] = judgeRange(std::stoi(parameterTable.at("acceptableRange")), leftSatAER.R);
+        return  state[0] && state[1] && state[2];
     }
 
 
