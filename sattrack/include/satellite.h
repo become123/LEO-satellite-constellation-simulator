@@ -27,16 +27,35 @@ public:
     int getLeftSatId();
     int getFrontSatId();
     int getBackSatId();
+
+    //印出每一個相鄰衛星的編號
     void printNeighborId();
-    bool judgeRightConnectability(int second, std::map<int, satellite> &satellites, std::map<std::string, std::string> &parameterTable);
-    bool judgeRightConnectability(int second, std::map<int, satellite> &satellites, std::map<std::string, std::string> &parameterTable, std::bitset<3> &connectionState, AER &rightAER);
-    bool judgeLeftConnectability(int second, std::map<int, satellite> &satellites, std::map<std::string, std::string> &parameterTable);
-    bool judgeLeftConnectability(int second, std::map<int, satellite> &satellites, std::map<std::string, std::string> &parameterTable, std::bitset<3> &connectionState, AER &leftSatAER);
-    bool judgeFrontConnectability(int second, std::map<int, satellite> &satellites, std::map<std::string, std::string> &parameterTable);
-    bool judgeFrontConnectability(int second, std::map<int, satellite> &satellites, std::map<std::string, std::string> &parameterTable, std::bitset<3> &connectionState, AER &frontSatAER);
-    bool judgeBackConnectability(int second, std::map<int, satellite> &satellites, std::map<std::string, std::string> &parameterTable);
-    bool judgeBackConnectability(int second, std::map<int, satellite> &satellites, std::map<std::string, std::string> &parameterTable, std::bitset<3> &connectionState, AER &backSatAER);
-private:
+
+    //回傳右方鄰近軌道的衛星在特定時刻是否可以建立連線
+    bool judgeRightConnectability(int second, std::map<int, satellite> &satellites, double ISLrightAngle, const AER &acceptableAER_diff);
+
+    //回傳右方鄰近軌道的衛星在特定時刻是否可以建立連線，同時獲得AER及對AER的三個判斷結果(std::bitset<3> connectionState由右而左三個bit分別代表A(connectionState[2])、E(connectionState[1)、R(connectionState[0])是否符合連線標準)
+    bool judgeRightConnectability(int second, std::map<int, satellite> &satellites, double ISLrightAngle, const AER &acceptableAER_diff, std::bitset<3> &connectionState, AER &rightSatAER);
+    
+    //回傳左方鄰近軌道的衛星在特定時刻是否可以建立連線
+    bool judgeLeftConnectability(int second, std::map<int, satellite> &satellites, double ISLleftAngle, const AER &acceptableAER_diff);
+    
+    //回傳左方鄰近軌道的衛星在特定時刻是否可以建立連線，同時獲得AER及對AER的三個判斷結果(std::bitset<3> connectionState由右而左三個bit分別代表A(connectionState[2])、E(connectionState[1)、R(connectionState[0])是否符合連線標準)
+    bool judgeLeftConnectability(int second, std::map<int, satellite> &satellites, double ISLleftAngle, const AER &acceptableAER_diff, std::bitset<3> &connectionState, AER &leftSatAER);
+    
+    //回傳前方鄰近軌道的衛星在特定時刻是否可以建立連線
+    bool judgeFrontConnectability(int second, std::map<int, satellite> &satellites, double ISLfrontAngle, const AER &acceptableAER_diff);
+    
+    //回前方鄰近軌道的衛星在特定時刻是否可以建立連線，同時獲得AER及對AER的三個判斷結果(std::bitset<3> connectionState由右而左三個bit分別代表A(connectionState[2])、E(connectionState[1)、R(connectionState[0])是否符合連線標準)
+    bool judgeFrontConnectability(int second, std::map<int, satellite> &satellites, double ISLfrontAngle, const AER &acceptableAER_diff, std::bitset<3> &connectionState, AER &frontSatAER);
+    
+    //回傳後方鄰近軌道的衛星在特定時刻是否可以建立連線
+    bool judgeBackConnectability(int second, std::map<int, satellite> &satellites, double ISLbackAngle, const AER &acceptableAER_diff);
+    
+    //回後方鄰近軌道的衛星在特定時刻是否可以建立連線，同時獲得AER及對AER的三個判斷結果(std::bitset<3> connectionState由右而左三個bit分別代表A(connectionState[2])、E(connectionState[1)、R(connectionState[0])是否符合連線標準)
+    bool judgeBackConnectability(int second, std::map<int, satellite> &satellites, double ISLbackAngle, const AER &acceptableAER_diff, std::bitset<3> &connectionState, AER &backSatAER);
+    
+    private:
     Tle tle;
     SGP4 sgp4;
     int id;

@@ -31,9 +31,9 @@
 >>(acceptableElevationDif): (45)  <-- 可接受仰角誤差
 >>(acceptableRange): (5000)  <-- 可接受range
 
->>(ISLfrontAngle):(0)
->>(ISLrightAngle):(90)
->>(ISLbackAngle):(180)
->>(ISLleftAngle):(270)
+>>(ISLfrontAngle):(0) <-- 前方ISL設置角度
+>>(ISLrightAngle):(90) <-- 右方ISL設置角度
+>>(ISLbackAngle):(180) <-- 後方ISL設置角度
+>>(ISLleftAngle):(270) <-- 左方ISL設置角度
 
 

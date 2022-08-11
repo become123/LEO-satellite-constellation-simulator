@@ -57,18 +57,6 @@ void printAllSatNeighborId(std::map<int, satellite::satellite> &satellites){
     }
 }
 
-//測試function satellite::judgeAzimuth，印出acceptableAngle介於0~180，連線裝置設在角度ISLdirAngle，觀測衛星位在角度otherSatAngle時，可否連線
-void testJudgeAzimuthFunction(int ISLdirAngle, int otherSatAngle){
-    for(int acceptableAngle = 0; acceptableAngle < 180; ++acceptableAngle){
-        if(satellite::judgeAzimuth(ISLdirAngle, acceptableAngle, otherSatAngle)){
-            std::cout<<"acceptableAngle: "<<acceptableAngle<<"->"<<"can connect"<<"\n";
-        }
-        else{
-            std::cout<<"acceptableAngle: "<<acceptableAngle<<"->"<<"can not connect"<<"\n";
-        }
-    }    
-}
-
 //印出編號observerId衛星觀察編號otherId衛星一天中的AER數值到sattrack/output.txt
 void printAERfile(int observerId, int otherId, std::map<int, satellite::satellite> &satellites){
     satellite::satellite observer = satellites.at(observerId);
@@ -83,14 +71,16 @@ void printAERfile(int observerId, int otherId, std::map<int, satellite::satellit
 
 }
 
-//印出特定observerId的衛星一天中對飛行方向右方衛星的連線狀態到sattrack/output.txt中
+//印出編號observerId衛星一天中對飛行方向右方衛星的連線狀態到sattrack/output.txt中
 void printRightConnectabilityFile(int observerId, std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){
     satellite::satellite sat = satellites.at(observerId);
     std::ofstream output("./output.txt");
+    AER acceptableAER_diff("acceptableAER_diff", std::stod(parameterTable.at("acceptableAzimuthDif")), std::stod(parameterTable.at("acceptableElevationDif")), std::stod(parameterTable.at("acceptableRange")));
+    double ISLrightAngle = std::stod(parameterTable.at("ISLrightAngle"));    
     for (int second = 0; second < 86400; ++second){
         AER rightSatAER;
         std::bitset<3> connectionState;
-        bool result = sat.judgeRightConnectability(second, satellites, parameterTable, connectionState, rightSatAER);
+        bool result = sat.judgeRightConnectability(second, satellites, ISLrightAngle, acceptableAER_diff, connectionState, rightSatAER);
         output<<rightSatAER.date<<":"<<std::setw(10)<<rightSatAER.A<<","<<std::setw(10)<<rightSatAER.E<<","<<std::setw(10)<<rightSatAER.R;
         output<<",   connectability of A: "<<connectionState[0]<<",   connectability of E: "<<connectionState[1]<<",   connectability of R: "<<connectionState[2]<<"  ---->  ";
         if(result)  
@@ -101,14 +91,16 @@ void printRightConnectabilityFile(int observerId, std::map<int, satellite::satel
     output.close();
 }
 
-//印出特定一顆衛星一天中對飛行方向左方衛星的連線狀態到sattrack/output.txt中
+//印出編號observerId衛星一天中對飛行方向左方衛星的連線狀態到sattrack/output.txt中
 void printLeftConnectabilityFile(int observerId, std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){
     satellite::satellite sat = satellites.at(observerId);
     std::ofstream output("./output.txt");
+    AER acceptableAER_diff("acceptableAER_diff", std::stod(parameterTable.at("acceptableAzimuthDif")), std::stod(parameterTable.at("acceptableElevationDif")), std::stod(parameterTable.at("acceptableRange")));
+    double ISLleftAngle = std::stod(parameterTable.at("ISLleftAngle"));    
     for (int second = 0; second < 86400; ++second){
         AER leftSatAER;
         std::bitset<3> connectionState;
-        bool result = sat.judgeLeftConnectability(second, satellites, parameterTable, connectionState, leftSatAER);
+        bool result = sat.judgeLeftConnectability(second, satellites, ISLleftAngle, acceptableAER_diff, connectionState, leftSatAER);
         output<<leftSatAER.date<<":"<<std::setw(10)<<leftSatAER.A<<","<<std::setw(10)<<leftSatAER.E<<","<<std::setw(10)<<leftSatAER.R;
         output<<",   connectability of A: "<<connectionState[0]<<",   connectability of E: "<<connectionState[1]<<",   connectability of R: "<<connectionState[2]<<"  ---->  ";
         if(result)  
@@ -123,14 +115,17 @@ void printLeftConnectabilityFile(int observerId, std::map<int, satellite::satell
 void printAllSatConnectionInfoFile(std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){
     std::string outputDir = "./outputFile/" + parameterTable.at("acceptableAzimuthDif") + "_" + parameterTable.at("acceptableElevationDif") + "_" + parameterTable.at("acceptableRange") + ".txt";
     std::ofstream output(outputDir);
+    AER acceptableAER_diff("acceptableAER_diff", std::stod(parameterTable.at("acceptableAzimuthDif")), std::stod(parameterTable.at("acceptableElevationDif")), std::stod(parameterTable.at("acceptableRange")));
+    double ISLrightAngle = std::stod(parameterTable.at("ISLrightAngle"));
+    double ISLleftAngle = std::stod(parameterTable.at("ISLrightAngle"));
     output << std::setprecision(5) << std::fixed;    
     for(auto &sat: satellites){
         int rightAvailableTime = 0;
         int leftAvailableTime = 0;       
         output<<"sat"<<sat.first<<": ";
         for (int second = 0; second < 86400; ++second){
-            if(sat.second.judgeRightConnectability(second, satellites, parameterTable)) ++rightAvailableTime;
-            if(sat.second.judgeLeftConnectability(second, satellites, parameterTable)) ++leftAvailableTime;
+            if(sat.second.judgeRightConnectability(second, satellites, ISLrightAngle, acceptableAER_diff)) ++rightAvailableTime;
+            if(sat.second.judgeLeftConnectability(second, satellites, ISLleftAngle, acceptableAER_diff)) ++leftAvailableTime;
         }
         output<<"rightAvailableTime: "<<rightAvailableTime<<", leftAvailableTime: "<<leftAvailableTime;
         double avgUtilization = (double)(172800+rightAvailableTime+leftAvailableTime)/345600;//86400*2=172800(同軌道前後的衛星永遠可以連線得上), 86400*4=345600
@@ -139,10 +134,13 @@ void printAllSatConnectionInfoFile(std::map<int, satellite::satellite> &satellit
     output.close();    
 }
 
-///印出從方位角誤差80、85、90、...、170、175，所有衛星的左方與右方ISL平均可連線總時間到sattrack/output.txt中
+//印出從方位角誤差80、85、90、...、170、175，所有衛星的左方與右方ISL平均可連線總時間到sattrack/output.txt中
 void printAvgAvailableTimeFile(std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){
     std::ofstream output("./output.txt");
     output << std::setprecision(5) << std::fixed; 
+    AER acceptableAER_diff("acceptableAER_diff", std::stod(parameterTable.at("acceptableAzimuthDif")), std::stod(parameterTable.at("acceptableElevationDif")), std::stod(parameterTable.at("acceptableRange")));
+    double ISLrightAngle = std::stod(parameterTable.at("ISLrightAngle"));
+    double ISLleftAngle = std::stod(parameterTable.at("ISLrightAngle"));    
     for(int acceptableAzimuthDif = 80; acceptableAzimuthDif <= 175; acceptableAzimuthDif+=5){
         std::vector<int> rightAvailableTimeOfAllSat;
         std::vector<int> leftAvailableTimeOfAllSat;
@@ -151,8 +149,8 @@ void printAvgAvailableTimeFile(std::map<int, satellite::satellite> &satellites, 
             int rightAvailableTime = 0;
             int leftAvailableTime = 0;       
             for (int second = 0; second < 86400; ++second){
-                if(sat.second.judgeRightConnectability(second, satellites, parameterTable)) ++rightAvailableTime;
-                if(sat.second.judgeLeftConnectability(second, satellites, parameterTable)) ++leftAvailableTime;
+                if(sat.second.judgeRightConnectability(second, satellites, ISLrightAngle, acceptableAER_diff)) ++rightAvailableTime;
+                if(sat.second.judgeLeftConnectability(second, satellites, ISLleftAngle, acceptableAER_diff)) ++leftAvailableTime;
             }
             rightAvailableTimeOfAllSat.push_back(rightAvailableTime);
             leftAvailableTimeOfAllSat.push_back(leftAvailableTime);
@@ -160,8 +158,8 @@ void printAvgAvailableTimeFile(std::map<int, satellite::satellite> &satellites, 
         double rightAvgAvailableTime = (double)std::accumulate(rightAvailableTimeOfAllSat.begin(), rightAvailableTimeOfAllSat.end(), 0.0) / rightAvailableTimeOfAllSat.size();
         double leftAvgAvailableTime = (double)std::accumulate(leftAvailableTimeOfAllSat.begin(), leftAvailableTimeOfAllSat.end(), 0.0) / leftAvailableTimeOfAllSat.size();
         double interLinkAvgAvailableTime = (rightAvgAvailableTime+leftAvgAvailableTime)/2;
-        output<<"acceptableAzimuthDif = "<<std::setw(3)<<acceptableAzimuthDif<<" --> "<<", interplane link avg available time: "<<interLinkAvgAvailableTime<<", right link avg available time: "<<rightAvgAvailableTime<<", left link avg available time: "<<leftAvgAvailableTime<<"\n";    
-        // output<<std::setw(3)<<acceptableAzimuthDif<<","<<std::setw(14)<<interLinkAvgAvailableTime<<","<<std::setw(14)<<rightAvgAvailableTime<<","<<std::setw(14)<<leftAvgAvailableTime<<"\n";
+        // output<<"acceptableAzimuthDif = "<<std::setw(3)<<acceptableAzimuthDif<<" --> "<<", interplane link avg available time: "<<interLinkAvgAvailableTime<<", right link avg available time: "<<rightAvgAvailableTime<<", left link avg available time: "<<leftAvgAvailableTime<<"\n";    
+        output<<std::setw(3)<<acceptableAzimuthDif<<","<<std::setw(14)<<interLinkAvgAvailableTime<<","<<std::setw(14)<<rightAvgAvailableTime<<","<<std::setw(14)<<leftAvgAvailableTime<<"\n";
     }
     output.close();    
 }
@@ -179,7 +177,7 @@ int main()
     std::map<std::string, std::string> parameterTable  = getFileData::getParameterdata("parameter.txt");
 
     printParameter(parameterTable);
-    std::cout<<"execute_function: "<<parameterTable["execute_function"]<<"\n";
+    std::cout<<"running function "<<parameterTable["execute_function"]<<"...\n";
     switch (str2int(parameterTable["execute_function"].c_str()))
     {
         case str2int("printAllSatNeighborId"):
@@ -212,13 +210,15 @@ int main()
     return 0;
 }
 
-/*
-    printParameter(parameterTable);
-    printAllSatNeighborId(satellites);
-    testJudgeAzimuthFunction(200, 359.99);
-    printAERfile(101, satellites.at(101).getLeftSatId(),satellites);
-    printRightAvailableTimeFile(101, satellites, parameterTable);
-    printLeftAvailableTimeFile(101, satellites, parameterTable);
-    printAllSatConnectionInfoFile(satellites, parameterTable);
-    printAvgAvailableTimeFile(satellites, parameterTable);
-*/
+
+//測試function satellite::judgeAzimuth，印出acceptableAngle介於0~180，連線裝置設在角度ISLdirAngle，觀測衛星位在角度otherSatAngle時，可否連線
+void testJudgeAzimuthFunction(int ISLdirAngle, int otherSatAngle){
+    for(int acceptableAngle = 0; acceptableAngle < 180; ++acceptableAngle){
+        if(satellite::judgeAzimuth(ISLdirAngle, acceptableAngle, otherSatAngle)){
+            std::cout<<"acceptableAngle: "<<acceptableAngle<<"->"<<"can connect"<<"\n";
+        }
+        else{
+            std::cout<<"acceptableAngle: "<<acceptableAngle<<"->"<<"can not connect"<<"\n";
+        }
+    }    
+}
