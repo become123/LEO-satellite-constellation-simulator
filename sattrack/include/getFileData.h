@@ -7,7 +7,7 @@
 
 namespace getFileData
 {
-    std::map<int, satellite::satellite> getTLEdata(std::string fileName);
+    std::map<int, satellite::satellite> getSatellitesTable(std::string fileName, int ISLfrontAngle, int ISLrightAngle, int ISLbackAngle, int ISLleftAngle);
     std::map<std::string, std::string> getParameterdata(std::string fileName);
 }
 #endif

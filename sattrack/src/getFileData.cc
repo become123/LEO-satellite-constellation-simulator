@@ -11,7 +11,7 @@
 
 namespace getFileData
 {
-    std::map<int, satellite::satellite> getTLEdata(std::string fileName){
+    std::map<int, satellite::satellite> getSatellitesTable(std::string fileName, int ISLfrontAngle, int ISLrightAngle, int ISLbackAngle, int ISLleftAngle){
         std::ifstream ifs(fileName);
         std::map<int, satellite::satellite> satellites;
         std::vector<std::string> satelliteNumbers;
@@ -48,7 +48,7 @@ namespace getFileData
             const Tle satelliteTLE = Tle(satelliteNumbers[i], TLEs[i].first, TLEs[i].second);
             SGP4 newSatelliteSGP4data(satelliteTLE);
             int id = stoi(satelliteNumbers[i]);
-            satellite::satellite s(satelliteTLE,newSatelliteSGP4data, id);
+            satellite::satellite s(satelliteTLE,newSatelliteSGP4data, id, ISLfrontAngle, ISLrightAngle, ISLbackAngle, ISLleftAngle);
             satellites.insert(std::make_pair(id,s));
         }
         return satellites;

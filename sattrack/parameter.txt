@@ -22,7 +22,7 @@
     *此function需計算約60分鐘才會輸出結果至檔案中
 **********************************************************************************************
 
->>(execute_function): (printLeftConnectabilityFile) <-- 填入要執行的function名稱
+>>(execute_function): (printRightConnectabilityFile) <-- 填入要執行的function名稱
 
 >>(observerId): (101) <-- 填入觀察者的衛星編號
 >>(otherId): (215) <-- 填入被觀察者的衛星編號
