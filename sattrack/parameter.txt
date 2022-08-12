@@ -22,7 +22,7 @@
     *此function需計算約60分鐘才會輸出結果至檔案中
 **********************************************************************************************
 
->>(execute_function): (printAllSatConnectionInfoFile) <-- 填入要執行的function名稱
+>>(execute_function): (printRightConnectabilityFile) <-- 填入要執行的function名稱
 
 >>(observerId): (101) <-- 填入觀察者的衛星編號
 >>(otherId): (215) <-- 填入被觀察者的衛星編號
@@ -35,5 +35,7 @@
 >>(ISLrightAngle):(90) <-- 右方ISL設置角度
 >>(ISLbackAngle):(180) <-- 後方ISL設置角度
 >>(ISLleftAngle):(270) <-- 左方ISL設置角度
+
+>>(PAT_time):(10) <--建立連線所需花的時間
 
 

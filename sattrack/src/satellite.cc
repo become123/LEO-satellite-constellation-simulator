@@ -159,11 +159,15 @@ namespace satellite
         std::cout<<",  ISLangle of sat"<<id<<" ---> right: "<<neighbors[0].second<<", left: "<<neighbors[1].second<<", front: "<<neighbors[2].second<<", back: "<<neighbors[3].second<<"\n";
     }
 
-    //回傳右方鄰近軌道的衛星在特定時刻是否可以建立連線
-    bool satellite::judgeRightConnectability(int second, const AER &acceptableAER_diff){
+    //回傳右方鄰近軌道的衛星在特定時刻是否可以建立連線，可連線則回傳距離，不可連線則回傳0
+    int satellite::judgeRightConnectability(int second, const AER &acceptableAER_diff){
         AER rightSatAER = this->getAER(second, this->getRightSat());
-        return judgeAzimuth(this->getISLrightAngle(), acceptableAER_diff.A, rightSatAER.A) && judgeElevation(acceptableAER_diff.E, rightSatAER.E) && judgeRange(acceptableAER_diff.R, rightSatAER.R);
-    } 
+        //if可以連到右方衛星
+        if(judgeAzimuth(this->getISLrightAngle(), acceptableAER_diff.A, rightSatAER.A) && judgeElevation(acceptableAER_diff.E, rightSatAER.E) && judgeRange(acceptableAER_diff.R, rightSatAER.R)){
+            return (int)rightSatAER.R;
+        }
+        return 0;
+    }  
  
     //回傳右方鄰近軌道的衛星在特定時刻是否可以建立連線，同時獲得AER及對AER的三個判斷結果(std::bitset<3> connectionState由右而左三個bit分別代表A(connectionState[2])、E(connectionState[1)、R(connectionState[0])是否符合連線標準)
     bool satellite::judgeRightConnectability(int second, const AER &acceptableAER_diff, std::bitset<3> &connectionState, AER &rightSatAER){
@@ -174,10 +178,13 @@ namespace satellite
         return  connectionState[0] && connectionState[1] && connectionState[2];
     }
 
-    //回傳左方鄰近軌道的衛星在特定時刻是否可以建立連線
-    bool satellite::judgeLeftConnectability(int second, const AER &acceptableAER_diff){
+    //回傳左方鄰近軌道的衛星在特定時刻是否可以建立連線，可連線則回傳距離，不可連線則回傳0
+    int satellite::judgeLeftConnectability(int second, const AER &acceptableAER_diff){
         AER leftSatAER = this->getAER(second, this->getLeftSat());
-        return judgeAzimuth(this->getISLleftAngle(), acceptableAER_diff.A, leftSatAER.A) && judgeElevation(acceptableAER_diff.E, leftSatAER.E) && judgeRange(acceptableAER_diff.R, leftSatAER.R);
+        if(judgeAzimuth(this->getISLleftAngle(), acceptableAER_diff.A, leftSatAER.A) && judgeElevation(acceptableAER_diff.E, leftSatAER.E) && judgeRange(acceptableAER_diff.R, leftSatAER.R)){
+            return leftSatAER.R;
+        }
+        return 0;
     } 
 
     //回傳左方鄰近軌道的衛星在特定時刻是否可以建立連線，同時獲得AER及對AER的三個判斷結果(std::bitset<3> connectionState由右而左三個bit分別代表A(connectionState[2])、E(connectionState[1)、R(connectionState[0])是否符合連線標準)
@@ -189,10 +196,13 @@ namespace satellite
         return  connectionState[0] && connectionState[1] && connectionState[2];
     }
 
-    //回傳前方鄰近軌道的衛星在特定時刻是否可以建立連線
-    bool satellite::judgeFrontConnectability(int second, const AER &acceptableAER_diff){
+    //回傳前方鄰近軌道的衛星在特定時刻是否可以建立連線，可連線則回傳距離，不可連線則回傳0
+    int satellite::judgeFrontConnectability(int second, const AER &acceptableAER_diff){
         AER frontSatAER = this->getAER(second, this->getFrontSat());
-        return judgeAzimuth(this->getISLfrontAngle(), acceptableAER_diff.A, frontSatAER.A) && judgeElevation(acceptableAER_diff.E, frontSatAER.E) && judgeRange(acceptableAER_diff.R, frontSatAER.R);
+        if(judgeAzimuth(this->getISLfrontAngle(), acceptableAER_diff.A, frontSatAER.A) && judgeElevation(acceptableAER_diff.E, frontSatAER.E) && judgeRange(acceptableAER_diff.R, frontSatAER.R)){
+            return frontSatAER.R;
+        }
+        return 0;
     } 
 
     //回前方鄰近軌道的衛星在特定時刻是否可以建立連線，同時獲得AER及對AER的三個判斷結果(std::bitset<3> connectionState由右而左三個bit分別代表A(connectionState[2])、E(connectionState[1)、R(connectionState[0])是否符合連線標準)
@@ -204,10 +214,13 @@ namespace satellite
         return  connectionState[0] && connectionState[1] && connectionState[2];
     }
 
-    //回傳後方鄰近軌道的衛星在特定時刻是否可以建立連線
-    bool satellite::judgeBackConnectability(int second, const AER &acceptableAER_diff){
+    //回傳後方鄰近軌道的衛星在特定時刻是否可以建立連線，可連線則回傳距離，不可連線則回傳0
+    int satellite::judgeBackConnectability(int second, const AER &acceptableAER_diff){
         AER backSatAER = this->getAER(second, this->getBackSat());
-        return judgeAzimuth(this->getISLbackAngle(), acceptableAER_diff.A, backSatAER.A) && judgeElevation(acceptableAER_diff.E, backSatAER.E) && judgeRange(acceptableAER_diff.R, backSatAER.R);
+        if(judgeAzimuth(this->getISLbackAngle(), acceptableAER_diff.A, backSatAER.A) && judgeElevation(acceptableAER_diff.E, backSatAER.E) && judgeRange(acceptableAER_diff.R, backSatAER.R)){
+            return backSatAER.R;
+        }
+        return 0;
     } 
 
     //回後方鄰近軌道的衛星在特定時刻是否可以建立連線，同時獲得AER及對AER的三個判斷結果(std::bitset<3> connectionState由右而左三個bit分別代表A(connectionState[2])、E(connectionState[1)、R(connectionState[0])是否符合連線標準)
@@ -219,13 +232,65 @@ namespace satellite
         return  connectionState[0] && connectionState[1] && connectionState[2];
     }
 
-    //回傳特定時刻可否建立右方的ISL(要彼此可以連線到彼此才可以建立)
-    bool satellite::judgeRightISL(int second, const AER &acceptableAER_diff){
-        return this->judgeRightConnectability(second, acceptableAER_diff) && this->getRightSat().judgeLeftConnectability(second, acceptableAER_diff);
+    //回傳特定時刻可否建立右方的ISL(要彼此可以連線到彼此才可以建立)，可連線則回傳距離，不可連線則回傳0
+    int satellite::judgeRightISL(int second, const AER &acceptableAER_diff){
+        int right = this->judgeRightConnectability(second, acceptableAER_diff);
+        int left = this->getRightSat().judgeLeftConnectability(second, acceptableAER_diff);
+        if(left && right){
+            return left;
+        }
+        return 0;
     } 
 
-    //回傳特定時刻可否建立左方的ISL(要彼此可以連線到彼此才可以建立)
-    bool satellite::judgeLeftISL(int second, const AER &acceptableAER_diff){
-        return this->judgeLeftConnectability(second, acceptableAER_diff) && this->getLeftSat().judgeRightConnectability(second, acceptableAER_diff);
+    //回傳特定時刻可否建立左方的ISL(要彼此可以連線到彼此才可以建立)，可連線則回傳距離，不可連線則回傳0
+    int satellite::judgeLeftISL(int second, const AER &acceptableAER_diff){
+        int right = this->judgeLeftConnectability(second, acceptableAER_diff);
+        int left = this->getLeftSat().judgeRightConnectability(second, acceptableAER_diff);
+        if(left && right){
+            return left;
+        }
+        return 0;
     } 
+
+    //回傳考慮PAT time一天(86400秒)中衛星右方ISL的可連性
+    std::bitset<86400> satellite::getRightISLstates(int PATtime, const AER &acceptableAER_diff){
+        std::bitset<86400> ISLstates;
+        int duration = 0;
+        for(size_t second = 0; second < 86400; ++second){
+            if(this->judgeRightISL(second, acceptableAER_diff)){
+                if(duration == PATtime){
+                    ISLstates[second] = true;
+                }
+                else{
+                    ++duration;
+                }
+            }
+            else{
+                duration = 0;
+            }
+        }
+        return ISLstates;
+    }
+
+    //回傳考慮PAT time一天(86400秒)中衛星右方ISL的可連性
+    std::bitset<86400> satellite::getLeftISLstates(int PATtime, const AER &acceptableAER_diff){
+        std::bitset<86400> ISLstates;
+        int duration = 0;
+        for(size_t second = 0; second < 86400; ++second){
+            if(this->judgeLeftISL(second, acceptableAER_diff)){
+                if(duration == PATtime){
+                    ISLstates[second] = true;
+                }
+                else{
+                    ++duration;
+                }
+            }
+            else{
+                duration = 0;
+            }
+        }
+        return ISLstates;
+    }
+
+
 }
