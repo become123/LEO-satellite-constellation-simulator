@@ -36,15 +36,15 @@ LEO satellite simulator
     - **printAllSatNeighborId** : Terminal印出每一個衛星的四個連線鄰居衛星編號
     - **printAERfile** : 印出編號observerId衛星觀察編號otherId衛星一天中的AER數值到sattrack/output.txt中
         - 需設定parameter: observerId、otherId
-    - **printRightConnectabilityFile**: 印出編號observerId衛星一天中對飛行方向右方衛星的連線狀態到sattrack/output.txt中
+    - **printRightConnectabilityFile**: 印出編號observerId衛星一天中對飛行方向右方衛星的連線狀態(單向)到sattrack/output.txt中
         - 需設定parameter: observerId、acceptableAzimuthDif、acceptableElevationDif、acceptableRange、ISLrightAngle
-    - **printLeftConnectabilityFile**: 印出編號observerId衛星一天中對飛行方向左方衛星的連線狀態到sattrack/output.txt中
+    - **printLeftConnectabilityFile**: 印出編號observerId衛星一天中對飛行方向左方衛星的連線狀態(單向)到sattrack/output.txt中
         - 需設定parameter: observerId、acceptableAzimuthDif、acceptableElevationDif、acceptableRange、ISLleftAngle
-    - **printAllSatConnectionInfoFile**: 印出每顆衛星在一天中，分別對飛行方向左方右方衛星的連線狀態到./outputFile/資料夾中，檔名會是`acceptableAzimuthDif_acceptableElevationDif_acceptableRange.txt`
+    - **printAllSatConnectionInfoFile**: 印出每顆衛星在一天中，左右ISL的一天total可建立連線秒數(雙向皆通才可建立連線)到./outputFile/資料夾中，檔名會是`acceptableAzimuthDif_acceptableElevationDif_acceptableRange.txt`
         - 需設定parameter: acceptableAzimuthDif、acceptableElevationDif、acceptableRange、ISLrightAngle、ISLleftAngle
         - 此function需計算約5分鐘才會輸出結果至檔案中
-    - **printAvgAvailableTimeFile**:  印出從方位角誤差(acceptableAzimuthDif)80、85、90、...、170、175，所有衛星的左方與右方ISL平均可連線總時間到sattrack/output.txt中
-        - 需設定parameter: acceptableElevationDif、acceptableRange、ISLfrontAngle、ISLrightAngle、ISLbackAngle、ISLleftAngle(目前是當成前後一定可以連線)
+    - **printAvgAvailableTimeFile**:  印出某個特定時刻，行星群的連線狀態(116*116的二維陣列，可以連的話填上距離，不可連的話填上0，自己連自己也是填0)到sattrack/output.txt中
+        - 需設定parameter: acceptableAzimuthDif、acceptableElevationDif、acceptableRange、PAT_time、time、ISLrightAngle、ISLleftAngle(目前是當成前後一定可以連線)
         - 此function需計算約60分鐘才會輸出結果至檔案中
 - 進入到sgp4/sattrack中執行sattrack
     
