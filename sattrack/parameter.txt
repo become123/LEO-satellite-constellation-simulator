@@ -28,7 +28,7 @@
     需設定parameter: acceptableAzimuthDif、acceptableElevationDif、acceptableRange、PAT_time、time、ISLrightAngle、ISLleftAngle(目前是當成前後一定可以連線)
 **********************************************************************************************
 
->>(execute_function): (compareDifferentPAT_time) <-- 填入要執行的function名稱
+>>(execute_function): (compareDifferentAcceptableAzimuthDif) <-- 填入要執行的function名稱
 
 >>(observerId): (101) <-- 填入觀察者的衛星編號
 >>(otherId): (215) <-- 填入被觀察者的衛星編號

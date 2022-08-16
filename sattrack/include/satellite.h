@@ -6,6 +6,7 @@
 #include <Observer.h>
 #include <map>
 #include <utility>
+#include <set>
 #include <SGP4.h>
 #include <bitset>
 #include "AER.h"
@@ -14,17 +15,40 @@
 namespace satellite
 {
     class satellite;
+    class ISL;
     bool judgeAzimuth(double ISLdirAzimuth, double acceptableAzimuthDif, double otherSatAzimuth);
     bool judgeElevation(double acceptableElevationDif, double otherSatElevation);
     bool judgeRange(double acceptableRange, double otherSatRange);
     //回傳某個特定時刻，行星群的連線狀態(112*112的二維vetcor，可以連的話填上距離，不可連的話填上0，自己連自己也是填0)
     std::vector<std::vector<int>> getConstellationState(int time, int PAT_time, const AER &acceptableAER_diff, std::map<int, satellite> &satellites);
+    std::map<std::set<int>, ISL> getISLtable(std::map<int, satellite> &satellites);
+    //計算出所有ISL的stateOfDay
+    void setupAllISLstateOfDay(int PATtime, const AER &acceptableAER_diff, std::map<int, satellite> &satellites);
+    //reset所有ISL的stateOfDay(標記成尚未計算過)
+    void resetAllISL(std::map<std::set<int>, ISL> &ISLtable);
+
+    class ISL{
+    public:
+        ISL(int sat1, int sat2);
+        std::set<int> getSatIdPair();
+        bool alreadyCalculate();
+        void printISL2SatId();
+        void setStateOfDay(std::bitset<86400> _stateOfDay);
+        std::bitset<86400>  getStateOfDay();
+        void resetStateOfDay(); //reset標記程尚未計算過stateOfDay
 
     
+    private:
+        std::set<int> satelliteIdPair; //表示是哪兩個衛星間的ISL
+        std::bitset<86400> stateOfDay; //一天中86400秒的連線狀態
+        bool calculated; //紀錄是否已經計算過stateOfDay
+    };
+    
+
     class satellite{
     public: 
         satellite(Tle _tle, SGP4 _sgp4, int _id, int ISLfrontAngle, int ISLrightAngle, int ISLbackAngle, int ISLleftAngle);
-        void buildNeighborSats(std::map<int, satellite> &satellites);
+        void buildNeighborSatsAndISLs(std::map<int, satellite> &satellites, std::map<std::set<int>, ISL> &ISLtable);
         Tle getTle();
         SGP4 getSgp4();
         int getId();
@@ -41,11 +65,16 @@ namespace satellite
         satellite& getLeftSat();
         satellite& getFrontSat();
         satellite& getBackSat();
+        ISL& getRightISL();
+        ISL& getLeftISL();       
         bool rightAlreadyCalculate();
         bool leftAlreadyCalculate();
-        void setRightStateOfDate(std::bitset<86400> stateOfDay);
-        void setLeftStateOfDate(std::bitset<86400> stateOfDay);
 
+        //設定右方ISL一天中86400秒的連線狀態
+        void setRightStateOfDate(std::bitset<86400> stateOfDay);
+
+        //設定左方ISL一天中86400秒的連線狀態
+        void setLeftStateOfDate(std::bitset<86400> stateOfDay);
 
         //印出每一個相鄰衛星的編號
         void printNeighborId();
@@ -97,9 +126,9 @@ namespace satellite
         Tle tle;
         SGP4 sgp4;
         int id;
-        satellite *rightSat = 0, *leftSat = 0, *frontSat = 0, *backSat = 0;
+        satellite *rightSatPtr = nullptr , *leftSatPtr = nullptr , *frontSatPtr = nullptr , *backSatPtr = nullptr ;
         std::vector<std::pair<int, double>> neighbors;//依序是 right left  front back 的<衛星編號，ISL角度>
-        std::pair<bool,  std::bitset<86400>> rightStateOfDay,leftStateOfDay;//pair中的first是是否計算過，second是一天中86400秒的連線狀態
+        ISL *rightISLptr = nullptr , *leftISLptr = nullptr ;
     };
 
 

@@ -8,6 +8,7 @@
 #include <utility>
 #include <map>
 #include <bitset>
+#include <set>
 #include "rectifyAzimuth.h"
 #include "satellite.h"
 #include "AER.h"
@@ -81,6 +82,69 @@ namespace satellite
         return constellationState;
     }
 
+    std::map<std::set<int>, ISL> getISLtable(std::map<int, satellite> &satellites){
+        std::map<std::set<int>, ISL> ISLtable;
+        for(auto &sat:satellites){
+            int satId = sat.second.getId();
+            int rightId = sat.second.getRightSatId();
+            int leftId = sat.second.getLeftSatId();
+            ISL ISLright(satId, rightId);
+            ISL ISLleft(satId, leftId);
+            ISLtable.emplace(ISLright.getSatIdPair(),ISLright);
+            ISLtable.emplace(ISLleft.getSatIdPair(),ISLleft);
+        }
+        // std::cout<<ISLtable.size()<<"\n";
+        return ISLtable;
+    }
+
+    //計算出所有ISL的stateOfDay
+    void setupAllISLstateOfDay(int PATtime, const AER &acceptableAER_diff, std::map<int, satellite> &satellites){
+        for(auto &sat: satellites){
+            sat.second.getRightISLstateOfDay(PATtime, acceptableAER_diff);
+            sat.second.getLeftISLstateOfDay(PATtime, acceptableAER_diff);           
+        }          
+    }
+
+    //reset所有ISL的stateOfDay(標記成尚未計算過)
+    void resetAllISL(std::map<std::set<int>, ISL> &ISLtable){
+        for(auto &pair: ISLtable){
+            pair.second.resetStateOfDay();
+        }
+    }
+
+    /*------------------ISL class 的函式------------------*/
+    ISL::ISL(int sat1, int sat2):calculated(false){
+        satelliteIdPair = std::set<int>({sat1, sat2});
+    }
+
+    std::set<int> ISL::getSatIdPair(){
+        return satelliteIdPair;
+    }
+
+    bool ISL::alreadyCalculate(){
+        return calculated;
+    }
+
+    void ISL::printISL2SatId(){
+        std::cout<<"sat1: "<<*satelliteIdPair.begin()<<", sat2: "<<*satelliteIdPair.rbegin()<<"\n";
+    }
+
+    void ISL::setStateOfDay(std::bitset<86400> _stateOfDay){
+        stateOfDay = _stateOfDay;
+        calculated = true;
+    }
+
+    std::bitset<86400>  ISL::getStateOfDay(){
+        return this->stateOfDay;
+    }
+
+    //reset標記成尚未計算過stateOfDay
+    void ISL::resetStateOfDay(){
+        this->calculated = false;
+    }
+    /*------------------ISL class  end------------------*/
+
+    /*------------------Satellite class 的函式  start------------------*/
     //satellite的建構子，初始化衛星的各個資訊
     satellite::satellite(Tle _tle, SGP4 _sgp4, int _id, int ISLfrontAngle, int ISLrightAngle, int ISLbackAngle, int ISLleftAngle) : tle(_tle), sgp4(_sgp4), id(_id) {
         neighbors = std::vector<std::pair<int,double>>(4);//right left front back <satId, ISLangle>
@@ -107,12 +171,18 @@ namespace satellite
         neighbors[3].first = satNum == 1 ? 100*orbitNum+16 : 100*orbitNum+satNum-1;
     }
 
-    //將四個衛星物件的指標，指到對應的衛星衛星物件上
-    void satellite::buildNeighborSats(std::map<int, satellite> &satellites){
-        this->rightSat = &satellites.at(this->getRightSatId());
-        this->leftSat = &satellites.at(this->getLeftSatId());
-        this->frontSat = &satellites.at(this->getFrontSatId());
-        this->backSat = &satellites.at(this->getBackSatId());
+    //將四個衛星物件還有ISL的指標，指到對應的衛星衛星物件上
+    void satellite::buildNeighborSatsAndISLs(std::map<int, satellite> &satellites, std::map<std::set<int>, ISL> &ISLtable){
+        int selfSatId = this->getId();
+        int rightSatId = this->getRightSatId();
+        int leftSatId = this->getLeftSatId();
+        this->rightSatPtr = &satellites.at(rightSatId);
+        this->leftSatPtr = &satellites.at(leftSatId);
+        this->frontSatPtr = &satellites.at(this->getFrontSatId());
+        this->backSatPtr = &satellites.at(this->getBackSatId());
+        
+        this->leftISLptr = &ISLtable.at(std::set<int>({selfSatId,leftSatId}));
+        this->rightISLptr = &ISLtable.at(std::set<int>({selfSatId,rightSatId}));
     }
 
     Tle satellite::getTle(){
@@ -181,53 +251,69 @@ namespace satellite
     }
 
     satellite& satellite::getRightSat(){
-        if(!rightSat){
-            std::cout<<"rightSat is NULL! please call satellite::buildNeighborSats to setup the pointers."<<"\n";
+        if(!rightSatPtr){
+            std::cout<<"line "<<__LINE__<<" of "<<__FILE__<<": rightSatPtr is NULL! please call satellite::buildNeighborSatsAndISLs to setup the pointers."<<"\n";
             exit(-1);
         }
-        return *rightSat;
+        return *rightSatPtr;
     }
 
     satellite& satellite::getLeftSat(){
-        if(!leftSat){
-            std::cout<<"leftSat is NULL! please call satellite::buildNeighborSats to setup the pointers."<<"\n";
+        if(!leftSatPtr){
+            std::cout<<"line "<<__LINE__<<" of "<<__FILE__<<": leftSatPtr is NULL! please call satellite::buildNeighborSatsAndISLs to setup the pointers."<<"\n";
             exit(-1);
         }        
-        return *leftSat;
+        return *leftSatPtr;
     }
 
     satellite& satellite::getFrontSat(){
-        if(!frontSat){
-            std::cout<<"frontSat is NULL! please call satellite::buildNeighborSats to setup the pointers."<<"\n";
+        if(!frontSatPtr){
+            std::cout<<"line "<<__LINE__<<" of "<<__FILE__<<": frontSatPtr is NULL! please call satellite::buildNeighborSatsAndISLs to setup the pointers."<<"\n";
             exit(-1);
         }        
-        return *frontSat;
+        return *frontSatPtr;
     }
 
     satellite& satellite::getBackSat(){
-        if(!backSat){
-            std::cout<<"backSat is NULL! please call satellite::buildNeighborSats to setup the pointers."<<"\n";
+        if(!backSatPtr){
+            std::cout<<"line "<<__LINE__<<" of "<<__FILE__<<": backSatPtr is NULL! please call satellite::buildNeighborSatsAndISLs to setup the pointers."<<"\n";
             exit(-1);
         }          
-        return *backSat;
+        return *backSatPtr;
     }
 
-    bool satellite::rightAlreadyCalculate(){
-        return rightStateOfDay.first;
+    ISL& satellite::getRightISL(){
+        if(this->rightISLptr == nullptr){
+            std::cout<<"line "<<__LINE__<<" of "<<__FILE__<<" :rightISLptr is NULL! pls call function satellite::buildNeighborSatsAndISLs\n";
+            exit(-1);
+        }        
+        return *rightISLptr;
     }
 
-    bool satellite::leftAlreadyCalculate(){
-        return leftStateOfDay.first;
+    ISL& satellite::getLeftISL(){
+        if(this->leftISLptr == nullptr){
+            std::cout<<"line "<<__LINE__<<" of "<<__FILE__<<" :leftISLptr is NULL! pls call function satellite::buildNeighborSatsAndISLs\n";
+            exit(-1);
+        }        
+        return *leftISLptr;
     }
 
-    void satellite::setRightStateOfDate(std::bitset<86400> stateOfDay){
-        rightStateOfDay.first = true;
-        rightStateOfDay.second = stateOfDay;
+    bool satellite::rightAlreadyCalculate(){      
+        return this->getRightISL().alreadyCalculate();
     }
 
-    void satellite::setLeftStateOfDate(std::bitset<86400> stateOfDay){
-        leftStateOfDay.first = true;;
-        leftStateOfDay.second = stateOfDay;
+    bool satellite::leftAlreadyCalculate(){     
+        return this->getLeftISL().alreadyCalculate();
+    }
+
+    //設定右方ISL一天中86400秒的連線狀態
+    void satellite::setRightStateOfDate(std::bitset<86400> stateOfDay){ 
+        this->getRightISL().setStateOfDay(stateOfDay);
+    }
+
+    //設定左方ISL一天中86400秒的連線狀態
+    void satellite::setLeftStateOfDate(std::bitset<86400> stateOfDay){       
+        this->getLeftISL().setStateOfDay(stateOfDay);
     }
 
     //印出每一個相鄰衛星的編號
@@ -332,7 +418,7 @@ namespace satellite
     //回傳考慮PAT time一天(86400秒)中衛星右方ISL的可連性
     std::bitset<86400> satellite::getRightISLstateOfDay(int PATtime, const AER &acceptableAER_diff){
         if(this->rightAlreadyCalculate()){ //若以前計算過，就直接回傳之前算過存下來的
-            return this->rightStateOfDay.second;
+            return this->getRightISL().getStateOfDay();
         }
         std::bitset<86400> stateOfDay;
         int duration = PATtime;
@@ -355,8 +441,8 @@ namespace satellite
 
     //回傳考慮PAT time一天(86400秒)中衛星右方ISL的可連性
     std::bitset<86400> satellite::getLeftISLstateOfDay(int PATtime, const AER &acceptableAER_diff){
-        if(this->leftAlreadyCalculate()){ //若以前計算過，就直接回傳之前算過存下來的
-            return this->leftStateOfDay.second;
+        if(this->leftAlreadyCalculate()){ //若以前計算過，就直接回傳之前算過存下來的    
+            return this->getLeftISL().getStateOfDay();
         }
         std::bitset<86400> stateOfDay;
         int duration = PATtime;
@@ -413,4 +499,5 @@ namespace satellite
         return this->judgeLeftISL(time, acceptableAER_diff);
     }
 
+    /*------------------Satellite class  end------------------*/
 }
