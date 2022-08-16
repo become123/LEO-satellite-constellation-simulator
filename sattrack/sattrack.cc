@@ -30,15 +30,14 @@
 #include<fstream>
 #include <utility>
 #include <numeric>
+#include <algorithm>
 #include <bitset>
+#include <set>
 
 //for using std::string type in switch statement
 constexpr unsigned int str2int(const char* str, int h = 0){
     return !str[h] ? 5381 : (str2int(str, h+1) * 33) ^ (unsigned int)str[h];
 }
-
-typedef void (*ScriptFunction)(); // function pointer type 
-std::map<std::string, ScriptFunction> functionTable;
 
 
 //印出設定的parameter
@@ -76,7 +75,10 @@ void printAERfile(int observerId, int otherId, std::map<int, satellite::satellit
 void printRightConnectabilityFile(int observerId, std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){
     satellite::satellite sat = satellites.at(observerId);
     std::ofstream output("./output.txt");
-    AER acceptableAER_diff("acceptableAER_diff", std::stod(parameterTable.at("acceptableAzimuthDif")), std::stod(parameterTable.at("acceptableElevationDif")), std::stod(parameterTable.at("acceptableRange")));
+    double acceptableAzimuthDif = std::stod(parameterTable.at("acceptableAzimuthDif"));
+    double acceptableElevationDif = std::stod(parameterTable.at("acceptableElevationDif"));
+    double acceptableRange = std::stod(parameterTable.at("acceptableRange"));
+    AER acceptableAER_diff("acceptableAER_diff", acceptableAzimuthDif, acceptableElevationDif, acceptableRange);  
     for (int time = 0; time < 86400; ++time){
         AER rightSatAER;
         std::bitset<3> connectionState;
@@ -95,7 +97,10 @@ void printRightConnectabilityFile(int observerId, std::map<int, satellite::satel
 void printLeftConnectabilityFile(int observerId, std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){
     satellite::satellite sat = satellites.at(observerId);
     std::ofstream output("./output.txt");
-    AER acceptableAER_diff("acceptableAER_diff", std::stod(parameterTable.at("acceptableAzimuthDif")), std::stod(parameterTable.at("acceptableElevationDif")), std::stod(parameterTable.at("acceptableRange")));
+    double acceptableAzimuthDif = std::stod(parameterTable.at("acceptableAzimuthDif"));
+    double acceptableElevationDif = std::stod(parameterTable.at("acceptableElevationDif"));
+    double acceptableRange = std::stod(parameterTable.at("acceptableRange"));
+    AER acceptableAER_diff("acceptableAER_diff", acceptableAzimuthDif, acceptableElevationDif, acceptableRange);  
     for (int time = 0; time < 86400; ++time){
         AER leftSatAER;
         std::bitset<3> connectionState;
@@ -111,10 +116,13 @@ void printLeftConnectabilityFile(int observerId, std::map<int, satellite::satell
 }
 
 //印出每顆衛星在一天中，左右ISL的一天total可建立連線秒數(雙向皆通才可建立連線)到./outputFile/資料夾中，檔名會是acceptableAzimuthDif_acceptableElevationDif_acceptableRange.txt
-void printAllSatConnectionInfoFile(std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){
+void printAllIslConnectionInfoFile(std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){
     std::string outputDir = "./outputFile/" + parameterTable.at("acceptableAzimuthDif") + "_" + parameterTable.at("acceptableElevationDif") + "_" + parameterTable.at("acceptableRange") + ".txt";
     std::ofstream output(outputDir);
-    AER acceptableAER_diff("acceptableAER_diff", std::stod(parameterTable.at("acceptableAzimuthDif")), std::stod(parameterTable.at("acceptableElevationDif")), std::stod(parameterTable.at("acceptableRange")));
+    double acceptableAzimuthDif = std::stod(parameterTable.at("acceptableAzimuthDif"));
+    double acceptableElevationDif = std::stod(parameterTable.at("acceptableElevationDif"));
+    double acceptableRange = std::stod(parameterTable.at("acceptableRange"));
+    AER acceptableAER_diff("acceptableAER_diff", acceptableAzimuthDif, acceptableElevationDif, acceptableRange);  
     output << std::setprecision(5) << std::fixed;    
     for(auto &sat: satellites){
         int rightAvailableTime = 0;
@@ -132,22 +140,32 @@ void printAllSatConnectionInfoFile(std::map<int, satellite::satellite> &satellit
 }
 
 //印出從方位角誤差80、85、90、...、170、175，所有衛星的左方與右方ISL平均可連線總時間到sattrack/output.txt中
-void printAvgAvailableTimeFile(std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){
+void compareDifferentAcceptableAzimuthDif(std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){
     std::ofstream output("./output.txt");
     output << std::setprecision(5) << std::fixed; 
+    double acceptableElevationDif = std::stod(parameterTable.at("acceptableElevationDif"));
+    double acceptableRange = std::stod(parameterTable.at("acceptableRange"));
+    int PATtime = std::stoi(parameterTable.at("PAT_time"));
     for(int acceptableAzimuthDif = 80; acceptableAzimuthDif <= 175; acceptableAzimuthDif+=5){
-        AER acceptableAER_diff("acceptableAER_diff", (double)acceptableAzimuthDif, std::stod(parameterTable.at("acceptableElevationDif")), std::stod(parameterTable.at("acceptableRange")));  
+        AER acceptableAER_diff("acceptableAER_diff", (double)acceptableAzimuthDif, acceptableElevationDif, acceptableRange);  
         double rightAvailableTimeOfAllSat = 0;
         double leftAvailableTimeOfAllSat = 0;
         for(auto &sat: satellites){
-            int rightAvailableTime = 0;
-            int leftAvailableTime = 0;       
-            for (int time = 0; time < 86400; ++time){
-                if(sat.second.judgeRightISL(time, acceptableAER_diff)) ++rightAvailableTime;
-                if(sat.second.judgeLeftISL(time, acceptableAER_diff)) ++leftAvailableTime;
-            }
-            rightAvailableTimeOfAllSat += rightAvailableTime;
-            leftAvailableTimeOfAllSat += leftAvailableTime;
+            /*----------不考慮PAT----------*/
+            // int rightAvailableTime = 0;
+            // int leftAvailableTime = 0;   
+            // for (int time = 0; time < 86400; ++time){
+            //     if(sat.second.judgeRightISL(time, acceptableAER_diff)) ++rightAvailableTime;
+            //     if(sat.second.judgeLeftISL(time, acceptableAER_diff)) ++leftAvailableTime;
+            // }
+            // rightAvailableTimeOfAllSat += rightAvailableTime;
+            // leftAvailableTimeOfAllSat += leftAvailableTime;
+
+            /*----------考慮PAT----------*/
+            std::bitset<86400> rightISLstateOfDay = sat.second.getRightISLstateOfDay(PATtime, acceptableAER_diff);  
+            std::bitset<86400> leftISLstateOfDay = sat.second.getLeftISLstateOfDay(PATtime, acceptableAER_diff);
+            rightAvailableTimeOfAllSat += rightISLstateOfDay.count(); 
+            leftAvailableTimeOfAllSat += leftISLstateOfDay.count();            
         }   
         double rightAvgAvailableTime = rightAvailableTimeOfAllSat / 112;
         double leftAvgAvailableTime = leftAvailableTimeOfAllSat / 112;
@@ -158,11 +176,45 @@ void printAvgAvailableTimeFile(std::map<int, satellite::satellite> &satellites, 
     output.close();    
 }
 
-//印出某個特定時刻，行星群的連線狀態(116*116的二維陣列，可以連的話填上距離，不可連的話填上0，自己連自己也是填0)到sattrack/output.txt中
+//印出從方PAT_time從5、10、15、...、到60，所有衛星的左方與右方ISL平均可連線總時間到sattrack/output.txt中
+void compareDifferentPAT_time(std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){
+    std::ofstream output("./output.txt");
+    output << std::setprecision(5) << std::fixed; 
+    double acceptableAzimuthDif = std::stod(parameterTable.at("acceptableAzimuthDif"));
+    double acceptableElevationDif = std::stod(parameterTable.at("acceptableElevationDif"));
+    double acceptableRange = std::stod(parameterTable.at("acceptableRange"));
+    AER acceptableAER_diff("acceptableAER_diff", acceptableAzimuthDif, acceptableElevationDif, acceptableRange);  
+    // std::map<int, std::bitset<86400>> alreadyCalculate;
+    for(int PATtime = 5; PATtime <= 60; PATtime+=5){
+        double rightAvailableTimeOfAllSat = 0;
+        double leftAvailableTimeOfAllSat = 0;
+        for(auto &sat: satellites){
+            std::bitset<86400> rightISLstateOfDay = sat.second.getRightISLstateOfDay(PATtime, acceptableAER_diff);  
+            std::bitset<86400> leftISLstateOfDay = sat.second.getLeftISLstateOfDay(PATtime, acceptableAER_diff);                        
+            rightAvailableTimeOfAllSat += rightISLstateOfDay.count(); 
+            leftAvailableTimeOfAllSat += leftISLstateOfDay.count();
+        }   
+        double rightAvgAvailableTime = rightAvailableTimeOfAllSat / 112;
+        double leftAvgAvailableTime = leftAvailableTimeOfAllSat / 112;
+        double interLinkAvgAvailableTime = (rightAvgAvailableTime+leftAvgAvailableTime)/2;
+        output<<"PATtime = "<<std::setw(3)<<PATtime<<" --> "<<", interplane link avg available time: "<<interLinkAvgAvailableTime<<", right link avg available time: "<<rightAvgAvailableTime<<", left link avg available time: "<<leftAvgAvailableTime<<"\n";    
+        output<<std::setw(3)<<PATtime<<","<<std::setw(14)<<interLinkAvgAvailableTime<<","<<std::setw(14)<<rightAvgAvailableTime<<","<<std::setw(14)<<leftAvgAvailableTime<<"\n";
+    }
+    output.close();    
+}
+
+
+//印出某個特定時刻，行星群的連線狀態(112*112的二維陣列，可以連的話填上距離，不可連的話填上0，自己連自己也是填0)到sattrack/output.txt中
 void printConstellationStateFile(std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){
     std::ofstream output("./output.txt");
-    AER acceptableAER_diff("acceptableAER_diff", std::stod(parameterTable.at("acceptableAzimuthDif")), std::stod(parameterTable.at("acceptableElevationDif")), std::stod(parameterTable.at("acceptableRange")));
-    std::vector<std::vector<int>> constellationState = satellite::getConstellationState(std::stoi(parameterTable.at("time")), std::stoi(parameterTable["PAT_time"]), acceptableAER_diff, satellites);
+    double acceptableAzimuthDif = std::stod(parameterTable.at("acceptableAzimuthDif"));
+    double acceptableElevationDif = std::stod(parameterTable.at("acceptableElevationDif"));
+    double acceptableRange = std::stod(parameterTable.at("acceptableRange"));
+    AER acceptableAER_diff("acceptableAER_diff", acceptableAzimuthDif, acceptableElevationDif, acceptableRange);
+    int time = std::stoi(parameterTable.at("time"));
+    int PAT_time = std::stoi(parameterTable.at("PAT_time"));
+    std::vector<std::vector<int>> constellationState = satellite::getConstellationState(time, PAT_time, acceptableAER_diff, satellites);
+    //印出112*112二維陣列
     for(auto row: constellationState){
         for(auto i: row){
             output<<std::setw(5)<<i;
@@ -174,12 +226,19 @@ void printConstellationStateFile(std::map<int, satellite::satellite> &satellites
 
 int main()
 {
+    std::cout<<sizeof(satellite::satellite)<<"\n";
     clock_t start, End;
     double cpu_time_used;
     start = clock();
     /*---------------------------------------*/
+    
     std::map<std::string, std::string> parameterTable  = getFileData::getParameterdata("parameter.txt");
-    std::map<int, satellite::satellite> satellites = getFileData::getSatellitesTable("TLE_7P_16Sats.txt", std::stoi(parameterTable.at("ISLfrontAngle")), std::stoi(parameterTable.at("ISLrightAngle")), std::stoi(parameterTable.at("ISLbackAngle")), std::stoi(parameterTable.at("ISLleftAngle")));
+    int ISLfrontAngle = std::stoi(parameterTable.at("ISLfrontAngle"));
+    int ISLrightAngle = std::stoi(parameterTable.at("ISLrightAngle"));
+    int ISLbackAngle = std::stoi(parameterTable.at("ISLbackAngle"));
+    int ISLleftAngle = std::stoi(parameterTable.at("ISLleftAngle"));
+    std::map<int, satellite::satellite> satellites = getFileData::getSatellitesTable("TLE_7P_16Sats.txt", ISLfrontAngle, ISLrightAngle, ISLbackAngle, ISLleftAngle);
+    //讓衛星物件知道自己的鄰居是誰(指標指到鄰居衛星)
     for(auto &sat:satellites){
         sat.second.buildNeighborSats(satellites);
     }
@@ -200,15 +259,18 @@ int main()
         case str2int("printLeftConnectabilityFile"):
             printLeftConnectabilityFile(std::stoi(parameterTable.at("observerId")),satellites,parameterTable);
             break;
-        case str2int("printAllSatConnectionInfoFile"):
-            printAllSatConnectionInfoFile(satellites,parameterTable);
+        case str2int("printAllIslConnectionInfoFile"):
+            printAllIslConnectionInfoFile(satellites,parameterTable);
             break;
-        case str2int("printAvgAvailableTimeFile"):
-            printAvgAvailableTimeFile(satellites,parameterTable);
-            break;           
+        case str2int("compareDifferentAcceptableAzimuthDif"):
+            compareDifferentAcceptableAzimuthDif(satellites,parameterTable);
+            break;   
+        case str2int("compareDifferentPAT_time"):
+            compareDifferentPAT_time(satellites,parameterTable);            
+            break;                      
         case str2int("printConstellationStateFile"):
             printConstellationStateFile(satellites,parameterTable);
-            break;           
+            break;          
         default:
             std::cout<<"unknown execute_function!"<<"\n";
             break;

@@ -46,10 +46,10 @@ namespace satellite
         return  (size_t)(orbitNum-1)*16 + (size_t)(satNum-1);
     }
 
-    //回傳某個特定時刻，行星群的連線狀態(116*116的二維vetcor，可以連的話填上距離，不可連的話填上0，自己連自己也是填0)
+    //回傳某個特定時刻，行星群的連線狀態(112*112的二維vetcor，可以連的話填上距離，不可連的話填上0，自己連自己也是填0)
     std::vector<std::vector<int>> getConstellationState(int time, int PAT_time, const AER &acceptableAER_diff, std::map<int, satellite> &satellites){
-        std::vector<std::vector<int>> constellationState(116, std::vector<int>(116, -1));
-        for(size_t i = 0; i < 116; ++i){
+        std::vector<std::vector<int>> constellationState(112, std::vector<int>(112, -1));
+        for(size_t i = 0; i < 112; ++i){
             constellationState[i][i] = 0; //衛星自己
         }
         for(auto &sat:satellites){
@@ -83,7 +83,7 @@ namespace satellite
 
     //satellite的建構子，初始化衛星的各個資訊
     satellite::satellite(Tle _tle, SGP4 _sgp4, int _id, int ISLfrontAngle, int ISLrightAngle, int ISLbackAngle, int ISLleftAngle) : tle(_tle), sgp4(_sgp4), id(_id) {
-        neighbors = std::vector<std::pair<int,double>>(4);//right left front back
+        neighbors = std::vector<std::pair<int,double>>(4);//right left front back <satId, ISLangle>
         neighbors[0].second = ISLrightAngle;
         neighbors[1].second = ISLleftAngle;
         neighbors[2].second = ISLfrontAngle;
@@ -180,7 +180,7 @@ namespace satellite
         return neighbors[3].second;
     }
 
-    satellite satellite::getRightSat(){
+    satellite& satellite::getRightSat(){
         if(!rightSat){
             std::cout<<"rightSat is NULL! please call satellite::buildNeighborSats to setup the pointers."<<"\n";
             exit(-1);
@@ -188,7 +188,7 @@ namespace satellite
         return *rightSat;
     }
 
-    satellite satellite::getLeftSat(){
+    satellite& satellite::getLeftSat(){
         if(!leftSat){
             std::cout<<"leftSat is NULL! please call satellite::buildNeighborSats to setup the pointers."<<"\n";
             exit(-1);
@@ -196,7 +196,7 @@ namespace satellite
         return *leftSat;
     }
 
-    satellite satellite::getFrontSat(){
+    satellite& satellite::getFrontSat(){
         if(!frontSat){
             std::cout<<"frontSat is NULL! please call satellite::buildNeighborSats to setup the pointers."<<"\n";
             exit(-1);
@@ -204,12 +204,30 @@ namespace satellite
         return *frontSat;
     }
 
-    satellite satellite::getBackSat(){
+    satellite& satellite::getBackSat(){
         if(!backSat){
             std::cout<<"backSat is NULL! please call satellite::buildNeighborSats to setup the pointers."<<"\n";
             exit(-1);
         }          
         return *backSat;
+    }
+
+    bool satellite::rightAlreadyCalculate(){
+        return rightStateOfDay.first;
+    }
+
+    bool satellite::leftAlreadyCalculate(){
+        return leftStateOfDay.first;
+    }
+
+    void satellite::setRightStateOfDate(std::bitset<86400> stateOfDay){
+        rightStateOfDay.first = true;
+        rightStateOfDay.second = stateOfDay;
+    }
+
+    void satellite::setLeftStateOfDate(std::bitset<86400> stateOfDay){
+        leftStateOfDay.first = true;;
+        leftStateOfDay.second = stateOfDay;
     }
 
     //印出每一個相鄰衛星的編號
@@ -218,7 +236,7 @@ namespace satellite
         std::cout<<",  ISLangle of sat"<<id<<" ---> right: "<<neighbors[0].second<<", left: "<<neighbors[1].second<<", front: "<<neighbors[2].second<<", back: "<<neighbors[3].second<<"\n";
     }
 
-    //回傳右方鄰近軌道的衛星在特定時刻是否可以建立連線，可連線則回傳距離，不可連線則回傳0
+    //回傳右方鄰近軌道的衛星在特定時刻是否可以建立連線(單向)，可連線則回傳距離，不可連線則回傳0
     int satellite::judgeRightConnectability(int time, const AER &acceptableAER_diff){
         AER rightSatAER = this->getAER(time, this->getRightSat());
         //if可以連到右方衛星
@@ -228,7 +246,7 @@ namespace satellite
         return 0;
     }  
  
-    //回傳右方鄰近軌道的衛星在特定時刻是否可以建立連線，同時獲得AER及對AER的三個判斷結果(std::bitset<3> connectionState由右而左三個bit分別代表A(connectionState[2])、E(connectionState[1)、R(connectionState[0])是否符合連線標準)
+    //回傳右方鄰近軌道的衛星在特定時刻是否可以建立連線(單向)，同時獲得AER及對AER的三個判斷結果(std::bitset<3> connectionState由右而左三個bit分別代表A(connectionState[2])、E(connectionState[1)、R(connectionState[0])是否符合連線標準)
     bool satellite::judgeRightConnectability(int time, const AER &acceptableAER_diff, std::bitset<3> &connectionState, AER &rightSatAER){
         rightSatAER = this->getAER(time, this->getRightSat());
         connectionState[0] = judgeAzimuth(this->getISLrightAngle(), acceptableAER_diff.A, rightSatAER.A);
@@ -237,7 +255,7 @@ namespace satellite
         return  connectionState[0] && connectionState[1] && connectionState[2];
     }
 
-    //回傳左方鄰近軌道的衛星在特定時刻是否可以建立連線，可連線則回傳距離，不可連線則回傳0
+    //回傳左方鄰近軌道的衛星在特定時刻是否可以建立連線(單向)，可連線則回傳距離，不可連線則回傳0
     int satellite::judgeLeftConnectability(int time, const AER &acceptableAER_diff){
         AER leftSatAER = this->getAER(time, this->getLeftSat());
         if(judgeAzimuth(this->getISLleftAngle(), acceptableAER_diff.A, leftSatAER.A) && judgeElevation(acceptableAER_diff.E, leftSatAER.E) && judgeRange(acceptableAER_diff.R, leftSatAER.R)){
@@ -246,7 +264,7 @@ namespace satellite
         return 0;
     } 
 
-    //回傳左方鄰近軌道的衛星在特定時刻是否可以建立連線，同時獲得AER及對AER的三個判斷結果(std::bitset<3> connectionState由右而左三個bit分別代表A(connectionState[2])、E(connectionState[1)、R(connectionState[0])是否符合連線標準)
+    //回傳左方鄰近軌道的衛星在特定時刻是否可以建立連線(單向)，同時獲得AER及對AER的三個判斷結果(std::bitset<3> connectionState由右而左三個bit分別代表A(connectionState[2])、E(connectionState[1)、R(connectionState[0])是否符合連線標準)
     bool satellite::judgeLeftConnectability(int time, const AER &acceptableAER_diff, std::bitset<3> &connectionState, AER &leftSatAER){
         leftSatAER = this->getAER(time, this->getLeftSat());
         connectionState[0] = judgeAzimuth(this->getISLleftAngle(), acceptableAER_diff.A, leftSatAER.A);
@@ -255,7 +273,7 @@ namespace satellite
         return  connectionState[0] && connectionState[1] && connectionState[2];
     }
 
-    //回傳前方鄰近軌道的衛星在特定時刻是否可以建立連線，可連線則回傳距離，不可連線則回傳0
+    //回傳前方鄰近軌道的衛星在特定時刻是否可以建立連線(單向)，可連線則回傳距離，不可連線則回傳0
     int satellite::judgeFrontConnectability(int time, const AER &acceptableAER_diff){
         AER frontSatAER = this->getAER(time, this->getFrontSat());
         if(judgeAzimuth(this->getISLfrontAngle(), acceptableAER_diff.A, frontSatAER.A) && judgeElevation(acceptableAER_diff.E, frontSatAER.E) && judgeRange(acceptableAER_diff.R, frontSatAER.R)){
@@ -264,7 +282,7 @@ namespace satellite
         return 0;
     } 
 
-    //回前方鄰近軌道的衛星在特定時刻是否可以建立連線，同時獲得AER及對AER的三個判斷結果(std::bitset<3> connectionState由右而左三個bit分別代表A(connectionState[2])、E(connectionState[1)、R(connectionState[0])是否符合連線標準)
+    //回前方鄰近軌道的衛星在特定時刻是否可以建立連線(單向)，同時獲得AER及對AER的三個判斷結果(std::bitset<3> connectionState由右而左三個bit分別代表A(connectionState[2])、E(connectionState[1)、R(connectionState[0])是否符合連線標準)
     bool satellite::judgeFrontConnectability(int time, const AER &acceptableAER_diff, std::bitset<3> &connectionState, AER &frontSatAER){
         frontSatAER = this->getAER(time, this->getFrontSat());
         connectionState[0] = judgeAzimuth(this->getISLfrontAngle(), acceptableAER_diff.A, frontSatAER.A);
@@ -273,7 +291,7 @@ namespace satellite
         return  connectionState[0] && connectionState[1] && connectionState[2];
     }
 
-    //回傳後方鄰近軌道的衛星在特定時刻是否可以建立連線，可連線則回傳距離，不可連線則回傳0
+    //回傳後方鄰近軌道的衛星在特定時刻是否可以建立連線(單向)，可連線則回傳距離，不可連線則回傳0
     int satellite::judgeBackConnectability(int time, const AER &acceptableAER_diff){
         AER backSatAER = this->getAER(time, this->getBackSat());
         if(judgeAzimuth(this->getISLbackAngle(), acceptableAER_diff.A, backSatAER.A) && judgeElevation(acceptableAER_diff.E, backSatAER.E) && judgeRange(acceptableAER_diff.R, backSatAER.R)){
@@ -282,7 +300,7 @@ namespace satellite
         return 0;
     } 
 
-    //回後方鄰近軌道的衛星在特定時刻是否可以建立連線，同時獲得AER及對AER的三個判斷結果(std::bitset<3> connectionState由右而左三個bit分別代表A(connectionState[2])、E(connectionState[1)、R(connectionState[0])是否符合連線標準)
+    //回後方鄰近軌道的衛星在特定時刻是否可以建立連線(單向)，同時獲得AER及對AER的三個判斷結果(std::bitset<3> connectionState由右而左三個bit分別代表A(connectionState[2])、E(connectionState[1)、R(connectionState[0])是否符合連線標準)
     bool satellite::judgeBackConnectability(int time, const AER &acceptableAER_diff, std::bitset<3> &connectionState, AER &backSatAER){
         backSatAER = this->getAER(time, this->getBackSat());
         connectionState[0] = judgeAzimuth(this->getISLbackAngle(), acceptableAER_diff.A, backSatAER.A);
@@ -312,13 +330,16 @@ namespace satellite
     } 
 
     //回傳考慮PAT time一天(86400秒)中衛星右方ISL的可連性
-    std::bitset<86400> satellite::getRightISLstates(int PATtime, const AER &acceptableAER_diff){
-        std::bitset<86400> ISLstates;
-        int duration = 0;
+    std::bitset<86400> satellite::getRightISLstateOfDay(int PATtime, const AER &acceptableAER_diff){
+        if(this->rightAlreadyCalculate()){ //若以前計算過，就直接回傳之前算過存下來的
+            return this->rightStateOfDay.second;
+        }
+        std::bitset<86400> stateOfDay;
+        int duration = PATtime;
         for(size_t time = 0; time < 86400; ++time){
             if(this->judgeRightISL(time, acceptableAER_diff)){
                 if(duration == PATtime){
-                    ISLstates[time] = true;
+                    stateOfDay[time] = true;
                 }
                 else{
                     ++duration;
@@ -328,17 +349,21 @@ namespace satellite
                 duration = 0;
             }
         }
-        return ISLstates;
+        this->getRightSat().setLeftStateOfDate(stateOfDay); //右方的衛星下次若要計算左方衛星整天的連線狀態，就不需計算，直接用現在算過存下來的
+        return stateOfDay;
     }
 
     //回傳考慮PAT time一天(86400秒)中衛星右方ISL的可連性
-    std::bitset<86400> satellite::getLeftISLstates(int PATtime, const AER &acceptableAER_diff){
-        std::bitset<86400> ISLstates;
-        int duration = 0;
+    std::bitset<86400> satellite::getLeftISLstateOfDay(int PATtime, const AER &acceptableAER_diff){
+        if(this->leftAlreadyCalculate()){ //若以前計算過，就直接回傳之前算過存下來的
+            return this->leftStateOfDay.second;
+        }
+        std::bitset<86400> stateOfDay;
+        int duration = PATtime;
         for(size_t time = 0; time < 86400; ++time){
             if(this->judgeLeftISL(time, acceptableAER_diff)){
                 if(duration == PATtime){
-                    ISLstates[time] = true;
+                    stateOfDay[time] = true;
                 }
                 else{
                     ++duration;
@@ -348,13 +373,19 @@ namespace satellite
                 duration = 0;
             }
         }
-        return ISLstates;
+        this->getLeftSat().setRightStateOfDate(stateOfDay); //左方的衛星下次若要計算左方衛星整天的連線狀態，就不需計算，直接用現在算過存下來的
+        return stateOfDay;
     }
 
     //回傳特定時刻可否建立右方的ISL(要彼此可以連線到彼此才可以建立)，且有考慮PAT，可連線則回傳距離，不可連線則回傳0
     int satellite::judgeRightISLwithPAT(int time, int PAT_time, const AER &acceptableAER_diff){
         if(time < PAT_time){
-            return 0;
+            for(int setupTime = 0; setupTime < time; ++setupTime){
+                if(this->judgeRightISL(setupTime, acceptableAER_diff) == 0){
+                    return 0;
+                }
+            }
+            return this->judgeRightISL(time, acceptableAER_diff);
         }
         for(int setupTime = time-PAT_time; setupTime < time; ++setupTime){
             if(this->judgeRightISL(setupTime, acceptableAER_diff) == 0){
@@ -367,7 +398,12 @@ namespace satellite
     //回傳特定時刻可否建立左方的ISL(要彼此可以連線到彼此才可以建立)，且有考慮PAT，可連線則回傳距離，不可連線則回傳0
     int satellite::judgeLeftISLwithPAT(int time, int PAT_time, const AER &acceptableAER_diff){
         if(time < PAT_time){
-            return 0;
+            for(int setupTime = 0; setupTime < time; ++setupTime){
+                if(this->judgeLeftISL(setupTime, acceptableAER_diff) == 0){
+                    return 0;
+                }
+            }
+            return this->judgeLeftISL(time, acceptableAER_diff);
         }
         for(int setupTime = time-PAT_time; setupTime < time; ++setupTime){
             if(this->judgeLeftISL(setupTime, acceptableAER_diff) == 0){
