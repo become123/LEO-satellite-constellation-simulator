@@ -129,18 +129,31 @@ namespace satellite
         std::cout<<"sat1: "<<*satelliteIdPair.begin()<<", sat2: "<<*satelliteIdPair.rbegin()<<"\n";
     }
 
+    std::bitset<86400>  ISL::getStateOfDay(){
+        return this->stateOfDay;
+    }
+    
     void ISL::setStateOfDay(std::bitset<86400> _stateOfDay){
         stateOfDay = _stateOfDay;
         calculated = true;
     }
 
-    std::bitset<86400>  ISL::getStateOfDay(){
-        return this->stateOfDay;
-    }
-
     //reset標記成尚未計算過stateOfDay
     void ISL::resetStateOfDay(){
         this->calculated = false;
+    }
+
+    //回傳一個vector，裡面是紀錄每個connection state改變的時間點，及他是Link Breaking(false)還是connecting(true)
+    std::vector<std::pair<int, bool>> ISL::getStateChangeInfo(){
+        std::vector<std::pair<int, bool>> stateChangeInfo;
+        bool currentState = stateOfDay[0];
+        for(size_t i = 1; i < 86400; ++i){
+            if(stateOfDay[i] != currentState){
+                currentState = !currentState;
+                stateChangeInfo.push_back(std::make_pair(i-1, currentState));
+            }
+        }
+        return stateChangeInfo;
     }
     /*------------------ISL class  end------------------*/
 

@@ -48,7 +48,9 @@ LEO satellite simulator
         - 此function需計算約110分鐘才會輸出結果至檔案中
     7. **compareDifferentPAT_time**: 印出從方PAT_time從5、10、15、...、到60，所有衛星的左方與右方ISL平均可連線總時間到sattrack/output.txt中
         - 需設定parameter: acceptableAzimuthDif、acceptableElevationDif、acceptableRange、ISLrightAngle、ISLleftAngle(目前是當成前後一定可以連線)
-    8. **printConstellationStateFile**: 印出某個特定時刻，行星群的連線狀態(112*112)到sattrack/output.txt中
+    8. **printBreakingConnectingStatus**: 印出整個衛星群的所有inter ISL的breaking及connecting time到sattrack/output.txt中，output每列為"time (sat1Id, sat2Id) 1或0"，1或0表connecting或breaking
+        - 需設定parameter: acceptableAzimuthDif、acceptableElevationDif、acceptableRange、ISLrightAngle、ISLleftAngle、PAT_time
+    9. **printConstellationStateFile**: 印出某個特定時刻，行星群的連線狀態(112*112)到sattrack/output.txt中
         - 需設定parameter: acceptableAzimuthDif、acceptableElevationDif、acceptableRange、PAT_time、time、ISLrightAngle、ISLleftAngle(目前是當成前後一定可以連線)
 - 進入到sgp4/sattrack中執行sattrack
     

@@ -24,11 +24,14 @@
 7. compareDifferentPAT_time --> 印出從方PAT_time從5、10、15、...、到60，所有衛星的左方與右方ISL平均可連線總時間到sattrack/output.txt中
     需設定parameter: acceptableAzimuthDif、acceptableElevationDif、acceptableRange、ISLrightAngle、ISLleftAngle(目前是當成前後一定可以連線)
 
-8. printConstellationStateFile --> 印出某個特定時刻，行星群的連線狀態(116*116的二維陣列，可以連的話填上距離，不可連的話填上0，自己連自己也是填0)到sattrack/output.txt中
+8. printBreakingConnectingStatus --> 印出整個衛星群的所有inter ISL的breaking及connecting time到sattrack/output.txt中，output每列為"time (sat1Id, sat2Id) 1或0"，1或0表connecting或breaking
+    需設定parameter: acceptableAzimuthDif、acceptableElevationDif、acceptableRange、ISLrightAngle、ISLleftAngle、PAT_time
+
+9. printConstellationStateFile --> 印出某個特定時刻，行星群的連線狀態(116*116的二維陣列，可以連的話填上距離，不可連的話填上0，自己連自己也是填0)到sattrack/output.txt中
     需設定parameter: acceptableAzimuthDif、acceptableElevationDif、acceptableRange、PAT_time、time、ISLrightAngle、ISLleftAngle(目前是當成前後一定可以連線)
 **********************************************************************************************
 
->>(execute_function): (compareDifferentAcceptableAzimuthDif) <-- 填入要執行的function名稱
+>>(execute_function): (printBreakingConnectingStatus) <-- 填入要執行的function名稱
 
 >>(observerId): (101) <-- 填入觀察者的衛星編號
 >>(otherId): (215) <-- 填入被觀察者的衛星編號

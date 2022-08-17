@@ -33,9 +33,10 @@ namespace satellite
         std::set<int> getSatIdPair();
         bool alreadyCalculate();
         void printISL2SatId();
-        void setStateOfDay(std::bitset<86400> _stateOfDay);
         std::bitset<86400>  getStateOfDay();
+        void setStateOfDay(std::bitset<86400> _stateOfDay);
         void resetStateOfDay(); //reset標記程尚未計算過stateOfDay
+        std::vector<std::pair<int, bool>> getStateChangeInfo();//回傳一個vector，裡面是紀錄每個connection state改變的時間點，及他是Link Breaking(false)還是connecting(true)
 
     
     private:

@@ -205,6 +205,32 @@ void compareDifferentPAT_time(std::map<int, satellite::satellite> &satellites, s
     output.close();    
 }
 
+// 印出整個衛星群的所有inter ISL的breaking及connecting time到sattrack/output.txt中，output每列為"time (sat1Id, sat2Id) 1或0"，1或0表connecting或breaking
+void printBreakingConnectingStatus(std::map<int, satellite::satellite> &satellites, std::map<std::set<int>, satellite::ISL> &ISLtable, std::map<std::string, std::string> &parameterTable){
+          /*int是時間*/        /*set<int>是ISL的兩顆衛星編號*/   /*bool代表on or off*/
+    std::map<int, std::set< std::pair<std::set<int>,  bool>>> breakingConnectingStatus;
+    std::ofstream output("./output.txt");
+    output << std::setprecision(5) << std::fixed; 
+    double acceptableAzimuthDif = std::stod(parameterTable.at("acceptableAzimuthDif"));
+    double acceptableElevationDif = std::stod(parameterTable.at("acceptableElevationDif"));
+    double acceptableRange = std::stod(parameterTable.at("acceptableRange"));
+    AER acceptableAER_diff("acceptableAER_diff", acceptableAzimuthDif, acceptableElevationDif, acceptableRange);  
+    int PATtime = std::stoi(parameterTable.at("PAT_time"));
+    satellite::setupAllISLstateOfDay(PATtime, acceptableAER_diff, satellites);//將每一個ISL的stateOfDay計算出來
+    for(auto &ISL: ISLtable){//ISL.first是ISL的一對衛星id
+        std::vector<std::pair<int, bool>> stateChangeInfo = ISL.second.getStateChangeInfo();
+        for(const auto &changingPoint: stateChangeInfo){ //changingPoint的第一個elemet是秒數，第二個element是標示改變是由0->1還是1->0
+            breakingConnectingStatus[changingPoint.first].insert(std::make_pair(ISL.first, changingPoint.second));
+        }
+    }
+    for(auto &pair: breakingConnectingStatus){
+        for(auto &p: pair.second){ //p.first是ISL的一對衛星id, p.first是標示改變是由0->1還是1->0
+            output<<std::setw(5)<<pair.first<<" ("<<*p.first.begin()<<","<<*p.first.rbegin()<<") "<<p.second<<"\n";
+        }
+    }
+    output.close();
+}
+
 //印出某個特定時刻，行星群的連線狀態(112*112的二維陣列，可以連的話填上距離，不可連的話填上0，自己連自己也是填0)到sattrack/output.txt中
 void printConstellationStateFile(std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){
     std::ofstream output("./output.txt");
@@ -230,7 +256,7 @@ int main()
     // std::cout<<sizeof(satellite::satellite)<<"\n";
     clock_t start, End;
     double cpu_time_used;
-    start = clock();
+    start = clock();    
     /*---------------------------------------*/
     
     std::map<std::string, std::string> parameterTable  = getFileData::getParameterdata("parameter.txt");
@@ -272,7 +298,10 @@ int main()
             break;   
         case str2int("compareDifferentPAT_time"):
             compareDifferentPAT_time(satellites, ISLtable ,parameterTable);            
-            break;                      
+            break;  
+        case str2int("printBreakingConnectingStatus"):
+            printBreakingConnectingStatus(satellites,ISLtable, parameterTable);
+            break;                                      
         case str2int("printConstellationStateFile"):
             printConstellationStateFile(satellites,parameterTable);
             break;          
@@ -280,6 +309,12 @@ int main()
             std::cout<<"unknown execute_function!"<<"\n";
             break;
     }
+
+    /*-------------test-------------*/
+
+    printBreakingConnectingStatus(satellites,ISLtable,parameterTable);
+    
+    /*------------end test---------*/
 
 
 
