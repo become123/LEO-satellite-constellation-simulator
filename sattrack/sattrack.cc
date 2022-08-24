@@ -224,7 +224,7 @@ void printBreakingConnectingStatus(std::map<int, satellite::satellite> &satellit
         }
     }
     for(auto &pair: breakingConnectingStatus){
-        for(auto &p: pair.second){ //p.first是ISL的一對衛星id, p.first是標示改變是由0->1還是1->0
+        for(auto &p: pair.second){ //p.first是ISL的一對衛星id, p.second是標示改變是由0->1還是1->0
             output<<std::setw(5)<<pair.first<<" ("<<*p.first.begin()<<","<<*p.first.rbegin()<<") "<<p.second<<"\n";
         }
     }
@@ -266,9 +266,7 @@ int main()
     int ISLleftAngle = std::stoi(parameterTable.at("ISLleftAngle"));
     std::map<int, satellite::satellite> satellites = getFileData::getSatellitesTable("TLE_7P_16Sats.txt", ISLfrontAngle, ISLrightAngle, ISLbackAngle, ISLleftAngle);
     std::map<std::set<int>, satellite::ISL> ISLtable = satellite::getISLtable(satellites);
-    /*----------------testing area----------------*/
 
-    /*-------------------------------------------*/
     //讓衛星物件知道自己的鄰居及ISL是誰(指標指到鄰居衛星及ISL)
     for(auto &sat:satellites){
         sat.second.buildNeighborSatsAndISLs(satellites, ISLtable);
@@ -312,7 +310,7 @@ int main()
 
     /*-------------test-------------*/
 
-    printBreakingConnectingStatus(satellites,ISLtable,parameterTable);
+    // printBreakingConnectingStatus(satellites,ISLtable,parameterTable);
     
     /*------------end test---------*/
 

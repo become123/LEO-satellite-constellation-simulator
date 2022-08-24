@@ -150,7 +150,7 @@ namespace satellite
         for(size_t i = 1; i < 86400; ++i){
             if(stateOfDay[i] != currentState){
                 currentState = !currentState;
-                stateChangeInfo.push_back(std::make_pair(i-1, currentState));
+                stateChangeInfo.push_back(std::make_pair(i, currentState));
             }
         }
         return stateChangeInfo;
