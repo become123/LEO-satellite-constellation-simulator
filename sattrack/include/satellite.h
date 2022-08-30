@@ -24,6 +24,7 @@ namespace satellite
     std::map<std::set<int>, ISL> getISLtable(std::map<int, satellite> &satellites);
     //計算出所有ISL的stateOfDay
     void setupAllISLstateOfDay(int PATtime, const AER &acceptableAER_diff, std::map<int, satellite> &satellites);
+    void adjustableISLdeviceSetupAllISLstateOfDay(int PATtime, const AER &acceptableAER_diff, std::map<int, satellite> &satellites, std::map<std::set<int>, ISL> &ISLtable);
     //reset所有ISL的stateOfDay(標記成尚未計算過)
     void resetAllISL(std::map<std::set<int>, ISL> &ISLtable);
 
@@ -34,7 +35,9 @@ namespace satellite
         bool alreadyCalculate();
         void printISL2SatId();
         std::bitset<86400>  getStateOfDay();
+        void setSecondState(size_t time, bool state);
         void setStateOfDay(std::bitset<86400> _stateOfDay);
+        void setStateOfDay();
         void resetStateOfDay(); //reset標記程尚未計算過stateOfDay
         std::vector<std::pair<int, bool>> getStateChangeInfo();//回傳一個vector，裡面是紀錄每個connection state改變的時間點，及他是Link Breaking(false)還是connecting(true)
 
@@ -67,9 +70,13 @@ namespace satellite
         satellite& getFrontSat();
         satellite& getBackSat();
         ISL& getRightISL();
-        ISL& getLeftISL();       
+        ISL& getLeftISL();    
         bool rightAlreadyCalculate();
         bool leftAlreadyCalculate();
+        int getCurrentISLdeviceState();
+        int setISLdeviceState(size_t t, bool state);  
+        int getISLdeviceState(size_t t); 
+        void changeState();  
 
         //設定右方ISL一天中86400秒的連線狀態
         void setRightStateOfDate(std::bitset<86400> stateOfDay);
@@ -122,7 +129,13 @@ namespace satellite
         //回傳特定時刻可否建立左方的ISL(要彼此可以連線到彼此才可以建立)，且有考慮PAT，可連線則回傳距離，不可連線則回傳0
         int judgeLeftISLwithPAT(int time, int PAT_time, const AER &acceptableAER_diff);
 
+        //回傳特定時刻可否建立右方的ISL(要彼此可以連線到彼此才可以建立)，且左側右側ISL可以連P+1或P-1軌道(沒有固定)，尚未考慮PAT
+        bool adjustableISLdeviceJudgeRight(int time, const AER &acceptableAER_diff);
+
+        //回傳特定時刻可否建立左方的ISL(要彼此可以連線到彼此才可以建立)，且左側右側ISL可以連P+1或P-1軌道(沒有固定)，尚未考慮PAT
+        bool adjustableISLdeviceJudgeLeft(int time, const AER &acceptableAER_diff);
         
+
     private:
         Tle tle;
         SGP4 sgp4;
@@ -130,6 +143,8 @@ namespace satellite
         satellite *rightSatPtr = nullptr , *leftSatPtr = nullptr , *frontSatPtr = nullptr , *backSatPtr = nullptr ;
         std::vector<std::pair<int, double>> neighbors;//依序是 right left  front back 的<衛星編號，ISL角度>
         ISL *rightISLptr = nullptr , *leftISLptr = nullptr ;
+        int ISLdeviceState = 0;
+        std::bitset<86400> ISLsettingState; //一天中86400秒的ISL裝置設定狀態
     };
 
 

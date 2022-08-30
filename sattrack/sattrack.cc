@@ -266,9 +266,7 @@ int main()
     int ISLleftAngle = std::stoi(parameterTable.at("ISLleftAngle"));
     std::map<int, satellite::satellite> satellites = getFileData::getSatellitesTable("TLE_7P_16Sats.txt", ISLfrontAngle, ISLrightAngle, ISLbackAngle, ISLleftAngle);
     std::map<std::set<int>, satellite::ISL> ISLtable = satellite::getISLtable(satellites);
-    /*----------------testing area----------------*/
 
-    /*-------------------------------------------*/
     //讓衛星物件知道自己的鄰居及ISL是誰(指標指到鄰居衛星及ISL)
     for(auto &sat:satellites){
         sat.second.buildNeighborSatsAndISLs(satellites, ISLtable);
@@ -306,15 +304,72 @@ int main()
             printConstellationStateFile(satellites,parameterTable);
             break;          
         default:
-            std::cout<<"unknown execute_function!"<<"\n";
+            std::cout<<"running test!"<<"\n";
+            /*-------------test-------------*/
+            std::ofstream output("./output.txt");
+
+
+            double acceptableAzimuthDif = std::stod(parameterTable.at("acceptableAzimuthDif"));
+            double acceptableElevationDif = std::stod(parameterTable.at("acceptableElevationDif"));
+            double acceptableRange = std::stod(parameterTable.at("acceptableRange"));
+            AER acceptableAER_diff("acceptableAER_diff", acceptableAzimuthDif, acceptableElevationDif, acceptableRange);
+            satellite::adjustableISLdeviceSetupAllISLstateOfDay(-1, acceptableAER_diff, satellites, ISLtable);
+            // double rightAvailableTimeOfAllSat = 0;
+            // double leftAvailableTimeOfAllSat = 0;            
+            // for(auto &sat: satellites){
+            //     std::bitset<86400> rightISLstateOfDay = sat.second.getRightISL().getStateOfDay();  
+            //     std::bitset<86400> leftISLstateOfDay = sat.second.getLeftISL().getStateOfDay(); 
+            //     int rightAvailableTime = rightISLstateOfDay.count();
+            //     int leftAvailableTime = leftISLstateOfDay.count();
+            //     output<<"rightAvailableTime: "<<rightAvailableTime<<", leftAvailableTime: "<<leftAvailableTime;
+            //     double avgUtilization = (double)(172800+rightAvailableTime+leftAvailableTime)/345600;//86400*2=172800(同軌道前後的衛星永遠可以連線得上), 86400*4=345600
+            //     output<<", average Utilization: "<<avgUtilization<<"\n";     
+            // }   
+            for(size_t t = 0; t < 86400; ++t){
+                satellite::satellite sat = satellites.at(101);
+                output<<sat.getISLdeviceState(t);
+                sat = sat.getRightSat();
+                while(sat.getId() != 101){
+                    output<<sat.getISLdeviceState(t);
+                    sat = sat.getRightSat();
+                }
+                output<<" ";
+                sat = satellites.at(102);
+                output<<sat.getISLdeviceState(t);
+                sat = sat.getRightSat();
+                while(sat.getId() != 102){
+                    output<<sat.getISLdeviceState(t);
+                    sat = sat.getRightSat();
+                }
+                output<<" ";
+                sat = satellites.at(103);
+                output<<sat.getISLdeviceState(t);
+                sat = sat.getRightSat();
+                while(sat.getId() != 103){
+                    output<<sat.getISLdeviceState(t);
+                    sat = sat.getRightSat();
+                }
+                output<<" ";
+                sat = satellites.at(104);
+                output<<sat.getISLdeviceState(t);
+                sat = sat.getRightSat();
+                while(sat.getId() != 104){
+                    output<<sat.getISLdeviceState(t);
+                    sat = sat.getRightSat();
+                }                                  
+                output<<"\n";
+            }
+
+            output.close();
+            /*------------end test---------*/
+
+
+
+
+
             break;
     }
 
-    /*-------------test-------------*/
-
-    printBreakingConnectingStatus(satellites,ISLtable,parameterTable);
-    
-    /*------------end test---------*/
 
 
 
