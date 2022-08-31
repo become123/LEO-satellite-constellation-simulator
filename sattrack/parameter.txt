@@ -29,9 +29,12 @@
 
 9. printConstellationStateFile --> 印出某個特定時刻，行星群的連線狀態(116*116的二維陣列，可以連的話填上距離，不可連的話填上0，自己連自己也是填0)到sattrack/output.txt中
     需設定parameter: acceptableAzimuthDif、acceptableElevationDif、acceptableRange、PAT_time、time、ISLrightAngle、ISLleftAngle(目前是當成前後一定可以連線)
+
+10. adjustableISLdevice_printSatellitesDeviceStateOfDay --> 印出所有衛星(相鄰的會排在一起)，一天86400秒的ISL設置state
+    需設定parameter: acceptableAzimuthDif、acceptableElevationDif、acceptableRange、time、ISLrightAngle、ISLleftAngle(目前是當成前後一定可以連線)
 **********************************************************************************************
 
->>(execute_function): (printBreakingConnectingStatus) <-- 填入要執行的function名稱
+>>(execute_function): (adjustableISLdevice_printSatellitesDeviceStateOfDay) <-- 填入要執行的function名稱
 
 >>(observerId): (101) <-- 填入觀察者的衛星編號
 >>(otherId): (215) <-- 填入被觀察者的衛星編號
