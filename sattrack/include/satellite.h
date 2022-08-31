@@ -27,6 +27,7 @@ namespace satellite
     void adjustableISLdeviceSetupAllISLstateOfDay(int PATtime, const AER &acceptableAER_diff, std::map<int, satellite> &satellites, std::map<std::set<int>, ISL> &ISLtable);
     //reset所有ISL的stateOfDay(標記成尚未計算過)
     void resetAllISL(std::map<std::set<int>, ISL> &ISLtable);
+    void resetAllSat(std::map<int, satellite> &satellites);
 
     class ISL{
     public:
@@ -74,9 +75,10 @@ namespace satellite
         bool rightAlreadyCalculate();
         bool leftAlreadyCalculate();
         int getCurrentISLdeviceState();
-        int setISLdeviceState(size_t t, bool state);  
-        int getISLdeviceState(size_t t); 
+        void setCertainTimeISLdeviceState(size_t t, bool state);  
+        int getCertainTimeISLdeviceState(size_t t); 
         void changeState();  
+        void resetState();  
 
         //設定右方ISL一天中86400秒的連線狀態
         void setRightStateOfDate(std::bitset<86400> stateOfDay);
@@ -144,7 +146,7 @@ namespace satellite
         std::vector<std::pair<int, double>> neighbors;//依序是 right left  front back 的<衛星編號，ISL角度>
         ISL *rightISLptr = nullptr , *leftISLptr = nullptr ;
         int ISLdeviceState = 0;
-        std::bitset<86400> ISLsettingState; //一天中86400秒的ISL裝置設定狀態
+        std::bitset<86400> ISLsettingStateOfDay; //一天中86400秒的ISL裝置設定狀態
     };
 
 

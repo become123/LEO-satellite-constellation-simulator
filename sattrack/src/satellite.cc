@@ -114,7 +114,7 @@ namespace satellite
                 sat.second.getRightISL().setSecondState(time, sat.second.adjustableISLdeviceJudgeRight(time, acceptableAER_diff));
             }  
             for(auto &sat: satellites){
-                sat.second.setISLdeviceState(time, sat.second.getCurrentISLdeviceState());
+                sat.second.setCertainTimeISLdeviceState(time, sat.second.getCurrentISLdeviceState());
             }              
         }
         for(auto &pair: ISLtable){
@@ -126,6 +126,12 @@ namespace satellite
     void resetAllISL(std::map<std::set<int>, ISL> &ISLtable){
         for(auto &pair: ISLtable){
             pair.second.resetStateOfDay();
+        }
+    }
+
+    void resetAllSat(std::map<int, satellite> &satellites){
+        for(auto &satPair: satellites){
+            satPair.second.resetState();
         }
     }
 
@@ -348,19 +354,24 @@ namespace satellite
         return this->ISLdeviceState;
     }
 
-    int satellite::setISLdeviceState(size_t t, bool state){
-        this->ISLsettingState[t] = state;
+    void satellite::setCertainTimeISLdeviceState(size_t t, bool state){
+        this->ISLsettingStateOfDay[t] = state;
     }    
 
     //回傳衛星所記錄的特定秒數的device state
-    int satellite::getISLdeviceState(size_t t){
-        return this->ISLsettingState[t];
+    int satellite::getCertainTimeISLdeviceState(size_t t){
+        return this->ISLsettingStateOfDay[t];
     }
 
     void satellite::changeState(){
         this->ISLdeviceState = !ISLdeviceState;
         std::swap(this->neighbors[0].second, this->neighbors[1].second);
     }
+
+    void satellite::resetState(){
+        if(this->ISLdeviceState == 1)
+            this->changeState();
+    }    
 
     //設定右方ISL一天中86400秒的連線狀態
     void satellite::setRightStateOfDate(std::bitset<86400> stateOfDay){ 

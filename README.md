@@ -32,7 +32,7 @@ LEO satellite simulator
 
 - 設定parameter.txt 中的參數
     - parameter.txt位於sgp4/sattrack中
-- 目前有實作以下5個function
+- 目前有實作以下function
     1. **printAllSatNeighborId** : Terminal印出每一個衛星的四個連線鄰居衛星編號
     2. **printAERfile** : 印出編號observerId衛星觀察編號otherId衛星一天中的AER數值到sattrack/output.txt中
         - 需設定parameter: observerId、otherId
@@ -52,6 +52,8 @@ LEO satellite simulator
         - 需設定parameter: acceptableAzimuthDif、acceptableElevationDif、acceptableRange、ISLrightAngle、ISLleftAngle、PAT_time
     9. **printConstellationStateFile**: 印出某個特定時刻，行星群的連線狀態(112*112)到sattrack/output.txt中
         - 需設定parameter: acceptableAzimuthDif、acceptableElevationDif、acceptableRange、PAT_time、time、ISLrightAngle、ISLleftAngle(目前是當成前後一定可以連線)
+    10. **adjustableISLdevice_printSatellitesDeviceStateOfDay**: 印出所有衛星(相鄰的會排在一起)，一天86400秒的ISL設置state
+        - 需設定parameter: acceptableAzimuthDif、acceptableElevationDif、acceptableRange、time、ISLrightAngle、ISLleftAngle(目前是當成前後一定可以連線)
 - 進入到sgp4/sattrack中執行sattrack
     
     ```bash

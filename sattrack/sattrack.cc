@@ -145,12 +145,16 @@ void compareDifferentAcceptableAzimuthDif(std::map<int, satellite::satellite> &s
     output << std::setprecision(5) << std::fixed; 
     double acceptableElevationDif = std::stod(parameterTable.at("acceptableElevationDif"));
     double acceptableRange = std::stod(parameterTable.at("acceptableRange"));
-    int PATtime = std::stoi(parameterTable.at("PAT_time"));
+    // int PATtime = std::stoi(parameterTable.at("PAT_time"));
     for(int acceptableAzimuthDif = 80; acceptableAzimuthDif <= 175; acceptableAzimuthDif+=5){
         satellite::resetAllISL(ISLtable);
+        satellite::resetAllSat(satellites);
         AER acceptableAER_diff("acceptableAER_diff", (double)acceptableAzimuthDif, acceptableElevationDif, acceptableRange);  
         double rightAvailableTimeOfAllSat = 0;
         double leftAvailableTimeOfAllSat = 0;
+        /*----------scenario2----------*/          
+        satellite::adjustableISLdeviceSetupAllISLstateOfDay(-1, acceptableAER_diff, satellites, ISLtable);
+        /*-----------------------------*/                              
         for(auto &sat: satellites){
             /*----------不考慮PAT----------*/
             // int rightAvailableTime = 0;
@@ -163,10 +167,16 @@ void compareDifferentAcceptableAzimuthDif(std::map<int, satellite::satellite> &s
             // leftAvailableTimeOfAllSat += leftAvailableTime;
 
             /*----------考慮PAT----------*/
-            std::bitset<86400> rightISLstateOfDay = sat.second.getRightISLstateOfDay(PATtime, acceptableAER_diff);  
-            std::bitset<86400> leftISLstateOfDay = sat.second.getLeftISLstateOfDay(PATtime, acceptableAER_diff);
-            rightAvailableTimeOfAllSat += rightISLstateOfDay.count(); 
-            leftAvailableTimeOfAllSat += leftISLstateOfDay.count();            
+            // std::bitset<86400> rightISLstateOfDay = sat.second.getRightISLstateOfDay(PATtime, acceptableAER_diff);  
+            // std::bitset<86400> leftISLstateOfDay = sat.second.getLeftISLstateOfDay(PATtime, acceptableAER_diff);
+            // rightAvailableTimeOfAllSat += rightISLstateOfDay.count(); 
+            // leftAvailableTimeOfAllSat += leftISLstateOfDay.count();  
+
+            /*----------scenario2----------*/ 
+            std::bitset<86400> rightISLstateOfDay = sat.second.getRightISL().getStateOfDay();  
+            std::bitset<86400> leftISLstateOfDay = sat.second.getLeftISL().getStateOfDay(); 
+            rightAvailableTimeOfAllSat += rightISLstateOfDay.count();
+            leftAvailableTimeOfAllSat += leftISLstateOfDay.count();                     
         }   
         double rightAvgAvailableTime = rightAvailableTimeOfAllSat / 112;
         double leftAvgAvailableTime = leftAvailableTimeOfAllSat / 112;
@@ -251,6 +261,54 @@ void printConstellationStateFile(std::map<int, satellite::satellite> &satellites
     output.close();
 }
 
+//印出所有衛星(相鄰的會排在一起)，一天86400秒的ISL設置state
+void adjustableISLdevice_printSatellitesDeviceStateOfDay(std::map<int, satellite::satellite> &satellites, std::map<std::set<int>, satellite::ISL> &ISLtable, std::map<std::string, std::string> &parameterTable){
+    std::ofstream output("./output.txt");
+
+
+    double acceptableAzimuthDif = std::stod(parameterTable.at("acceptableAzimuthDif"));
+    double acceptableElevationDif = std::stod(parameterTable.at("acceptableElevationDif"));
+    double acceptableRange = std::stod(parameterTable.at("acceptableRange"));
+    AER acceptableAER_diff("acceptableAER_diff", acceptableAzimuthDif, acceptableElevationDif, acceptableRange);
+    satellite::adjustableISLdeviceSetupAllISLstateOfDay(-1, acceptableAER_diff, satellites, ISLtable);              
+    for(size_t t = 0; t < 86400; ++t){
+        satellite::satellite sat = satellites.at(101);
+        output<<sat.getCertainTimeISLdeviceState(t);
+        sat = sat.getRightSat();
+        while(sat.getId() != 101){
+            output<<sat.getCertainTimeISLdeviceState(t);
+            sat = sat.getRightSat();
+        }
+        output<<" ";
+        sat = satellites.at(102);
+        output<<sat.getCertainTimeISLdeviceState(t);
+        sat = sat.getRightSat();
+        while(sat.getId() != 102){
+            output<<sat.getCertainTimeISLdeviceState(t);
+            sat = sat.getRightSat();
+        }
+        output<<" ";
+        sat = satellites.at(103);
+        output<<sat.getCertainTimeISLdeviceState(t);
+        sat = sat.getRightSat();
+        while(sat.getId() != 103){
+            output<<sat.getCertainTimeISLdeviceState(t);
+            sat = sat.getRightSat();
+        }
+        output<<" ";
+        sat = satellites.at(104);
+        output<<sat.getCertainTimeISLdeviceState(t);
+        sat = sat.getRightSat();
+        while(sat.getId() != 104){
+            output<<sat.getCertainTimeISLdeviceState(t);
+            sat = sat.getRightSat();
+        }                                  
+        output<<"\n";
+    }
+
+    output.close();    
+}
+
 int main()
 {
     // std::cout<<sizeof(satellite::satellite)<<"\n";
@@ -302,63 +360,15 @@ int main()
             break;                                      
         case str2int("printConstellationStateFile"):
             printConstellationStateFile(satellites,parameterTable);
-            break;          
+            break; 
+        case str2int("adjustableISLdevice_printSatellitesDeviceStateOfDay"):
+            adjustableISLdevice_printSatellitesDeviceStateOfDay(satellites, ISLtable ,parameterTable);
+            break;                  
         default:
             std::cout<<"running test!"<<"\n";
             /*-------------test-------------*/
             std::ofstream output("./output.txt");
 
-
-            double acceptableAzimuthDif = std::stod(parameterTable.at("acceptableAzimuthDif"));
-            double acceptableElevationDif = std::stod(parameterTable.at("acceptableElevationDif"));
-            double acceptableRange = std::stod(parameterTable.at("acceptableRange"));
-            AER acceptableAER_diff("acceptableAER_diff", acceptableAzimuthDif, acceptableElevationDif, acceptableRange);
-            satellite::adjustableISLdeviceSetupAllISLstateOfDay(-1, acceptableAER_diff, satellites, ISLtable);
-            // double rightAvailableTimeOfAllSat = 0;
-            // double leftAvailableTimeOfAllSat = 0;            
-            // for(auto &sat: satellites){
-            //     std::bitset<86400> rightISLstateOfDay = sat.second.getRightISL().getStateOfDay();  
-            //     std::bitset<86400> leftISLstateOfDay = sat.second.getLeftISL().getStateOfDay(); 
-            //     int rightAvailableTime = rightISLstateOfDay.count();
-            //     int leftAvailableTime = leftISLstateOfDay.count();
-            //     output<<"rightAvailableTime: "<<rightAvailableTime<<", leftAvailableTime: "<<leftAvailableTime;
-            //     double avgUtilization = (double)(172800+rightAvailableTime+leftAvailableTime)/345600;//86400*2=172800(同軌道前後的衛星永遠可以連線得上), 86400*4=345600
-            //     output<<", average Utilization: "<<avgUtilization<<"\n";     
-            // }   
-            for(size_t t = 0; t < 86400; ++t){
-                satellite::satellite sat = satellites.at(101);
-                output<<sat.getISLdeviceState(t);
-                sat = sat.getRightSat();
-                while(sat.getId() != 101){
-                    output<<sat.getISLdeviceState(t);
-                    sat = sat.getRightSat();
-                }
-                output<<" ";
-                sat = satellites.at(102);
-                output<<sat.getISLdeviceState(t);
-                sat = sat.getRightSat();
-                while(sat.getId() != 102){
-                    output<<sat.getISLdeviceState(t);
-                    sat = sat.getRightSat();
-                }
-                output<<" ";
-                sat = satellites.at(103);
-                output<<sat.getISLdeviceState(t);
-                sat = sat.getRightSat();
-                while(sat.getId() != 103){
-                    output<<sat.getISLdeviceState(t);
-                    sat = sat.getRightSat();
-                }
-                output<<" ";
-                sat = satellites.at(104);
-                output<<sat.getISLdeviceState(t);
-                sat = sat.getRightSat();
-                while(sat.getId() != 104){
-                    output<<sat.getISLdeviceState(t);
-                    sat = sat.getRightSat();
-                }                                  
-                output<<"\n";
-            }
 
             output.close();
             /*------------end test---------*/
