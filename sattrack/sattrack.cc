@@ -140,12 +140,12 @@ void printAllIslConnectionInfoFile(std::map<int, satellite::satellite> &satellit
 }
 
 //印出從方位角誤差80、85、90、...、170、175，所有衛星的左方與右方ISL平均可連線總時間到sattrack/output.txt中
-void compareDifferentAcceptableAzimuthDif(std::map<int, satellite::satellite> &satellites, std::map<std::set<int>, satellite::ISL> &ISLtable, std::map<std::string, std::string> &parameterTable){
+void compareDifferentAcceptableAzimuthDif(long unsigned int totalSatCount, std::map<int, satellite::satellite> &satellites, std::map<std::set<int>, satellite::ISL> &ISLtable, std::map<std::string, std::string> &parameterTable){
     std::ofstream output("./output.txt");
     output << std::setprecision(5) << std::fixed; 
     double acceptableElevationDif = std::stod(parameterTable.at("acceptableElevationDif"));
     double acceptableRange = std::stod(parameterTable.at("acceptableRange"));
-    // int PATtime = std::stoi(parameterTable.at("PAT_time"));
+    int PATtime = std::stoi(parameterTable.at("PAT_time"));
     for(int acceptableAzimuthDif = 80; acceptableAzimuthDif <= 175; acceptableAzimuthDif+=5){
         satellite::resetAllISL(ISLtable);
         satellite::resetAllSat(satellites);
@@ -153,7 +153,7 @@ void compareDifferentAcceptableAzimuthDif(std::map<int, satellite::satellite> &s
         double rightAvailableTimeOfAllSat = 0;
         double leftAvailableTimeOfAllSat = 0;
         /*----------scenario2----------*/          
-        satellite::adjustableISLdeviceSetupAllISLstateOfDay(-1, acceptableAER_diff, satellites, ISLtable);
+        // satellite::adjustableISLdeviceSetupAllISLstateOfDay(-1, acceptableAER_diff, satellites, ISLtable);
         /*-----------------------------*/                              
         for(auto &sat: satellites){
             /*----------不考慮PAT----------*/
@@ -167,19 +167,19 @@ void compareDifferentAcceptableAzimuthDif(std::map<int, satellite::satellite> &s
             // leftAvailableTimeOfAllSat += leftAvailableTime;
 
             /*----------考慮PAT----------*/
-            // std::bitset<86400> rightISLstateOfDay = sat.second.getRightISLstateOfDay(PATtime, acceptableAER_diff);  
-            // std::bitset<86400> leftISLstateOfDay = sat.second.getLeftISLstateOfDay(PATtime, acceptableAER_diff);
-            // rightAvailableTimeOfAllSat += rightISLstateOfDay.count(); 
-            // leftAvailableTimeOfAllSat += leftISLstateOfDay.count();  
+            std::bitset<86400> rightISLstateOfDay = sat.second.getRightISLstateOfDay(PATtime, acceptableAER_diff);  
+            std::bitset<86400> leftISLstateOfDay = sat.second.getLeftISLstateOfDay(PATtime, acceptableAER_diff);
+            rightAvailableTimeOfAllSat += rightISLstateOfDay.count(); 
+            leftAvailableTimeOfAllSat += leftISLstateOfDay.count();  
 
-            /*----------scenario2----------*/ 
-            std::bitset<86400> rightISLstateOfDay = sat.second.getRightISL().getStateOfDay();  
-            std::bitset<86400> leftISLstateOfDay = sat.second.getLeftISL().getStateOfDay(); 
-            rightAvailableTimeOfAllSat += rightISLstateOfDay.count();
-            leftAvailableTimeOfAllSat += leftISLstateOfDay.count();                     
+            /*----------scenario2--記得註解掉上方scenario2的adjustableISLdeviceSetupAllISLstateOfDay----------*/ 
+            // std::bitset<86400> rightISLstateOfDay = sat.second.getRightISL().getStateOfDay();  
+            // std::bitset<86400> leftISLstateOfDay = sat.second.getLeftISL().getStateOfDay(); 
+            // rightAvailableTimeOfAllSat += rightISLstateOfDay.count();
+            // leftAvailableTimeOfAllSat += leftISLstateOfDay.count();                     
         }   
-        double rightAvgAvailableTime = rightAvailableTimeOfAllSat / 112;
-        double leftAvgAvailableTime = leftAvailableTimeOfAllSat / 112;
+        double rightAvgAvailableTime = rightAvailableTimeOfAllSat / totalSatCount;
+        double leftAvgAvailableTime = leftAvailableTimeOfAllSat / totalSatCount;
         double interLinkAvgAvailableTime = (rightAvgAvailableTime+leftAvgAvailableTime)/2;
         // output<<"acceptableAzimuthDif = "<<std::setw(3)<<acceptableAzimuthDif<<" --> "<<", interplane link avg available time: "<<interLinkAvgAvailableTime<<", right link avg available time: "<<rightAvgAvailableTime<<", left link avg available time: "<<leftAvgAvailableTime<<"\n";    
         output<<std::setw(3)<<acceptableAzimuthDif<<","<<std::setw(14)<<interLinkAvgAvailableTime<<","<<std::setw(14)<<rightAvgAvailableTime<<","<<std::setw(14)<<leftAvgAvailableTime<<"\n";
@@ -188,7 +188,7 @@ void compareDifferentAcceptableAzimuthDif(std::map<int, satellite::satellite> &s
 }
 
 //印出從方PAT_time從5、10、15、...、到60，所有衛星的左方與右方ISL平均可連線總時間到sattrack/output.txt中
-void compareDifferentPAT_time(std::map<int, satellite::satellite> &satellites, std::map<std::set<int>, satellite::ISL> &ISLtable, std::map<std::string, std::string> &parameterTable){
+void compareDifferentPAT_time(long unsigned int totalSatCount, std::map<int, satellite::satellite> &satellites, std::map<std::set<int>, satellite::ISL> &ISLtable, std::map<std::string, std::string> &parameterTable){
     std::ofstream output("./output.txt");
     output << std::setprecision(5) << std::fixed; 
     double acceptableAzimuthDif = std::stod(parameterTable.at("acceptableAzimuthDif"));
@@ -206,8 +206,8 @@ void compareDifferentPAT_time(std::map<int, satellite::satellite> &satellites, s
             rightAvailableTimeOfAllSat += rightISLstateOfDay.count(); 
             leftAvailableTimeOfAllSat += leftISLstateOfDay.count();
         }   
-        double rightAvgAvailableTime = rightAvailableTimeOfAllSat / 112;
-        double leftAvgAvailableTime = leftAvailableTimeOfAllSat / 112;
+        double rightAvgAvailableTime = rightAvailableTimeOfAllSat / totalSatCount;
+        double leftAvgAvailableTime = leftAvailableTimeOfAllSat / totalSatCount;
         double interLinkAvgAvailableTime = (rightAvgAvailableTime+leftAvgAvailableTime)/2;
         // output<<"PATtime = "<<std::setw(3)<<PATtime<<" --> "<<", interplane link avg available time: "<<interLinkAvgAvailableTime<<", right link avg available time: "<<rightAvgAvailableTime<<", left link avg available time: "<<leftAvgAvailableTime<<"\n";    
         output<<std::setw(3)<<PATtime<<","<<std::setw(14)<<interLinkAvgAvailableTime<<","<<std::setw(14)<<rightAvgAvailableTime<<","<<std::setw(14)<<leftAvgAvailableTime<<"\n";
@@ -241,8 +241,8 @@ void printBreakingConnectingStatus(std::map<int, satellite::satellite> &satellit
     output.close();
 }
 
-//印出某個特定時刻，行星群的連線狀態(112*112的二維陣列，可以連的話填上距離，不可連的話填上0，自己連自己也是填0)到sattrack/output.txt中
-void printConstellationStateFile(std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){
+//印出某個特定時刻，行星群的連線狀態(totalSatCount*totalSatCount)到sattrack/output.txt中
+void printConstellationStateFile(long unsigned int satCountPerOrbit, long unsigned int totalSatCount, std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){
     std::ofstream output("./output.txt");
     double acceptableAzimuthDif = std::stod(parameterTable.at("acceptableAzimuthDif"));
     double acceptableElevationDif = std::stod(parameterTable.at("acceptableElevationDif"));
@@ -250,8 +250,8 @@ void printConstellationStateFile(std::map<int, satellite::satellite> &satellites
     AER acceptableAER_diff("acceptableAER_diff", acceptableAzimuthDif, acceptableElevationDif, acceptableRange);
     int time = std::stoi(parameterTable.at("time"));
     int PAT_time = std::stoi(parameterTable.at("PAT_time"));
-    std::vector<std::vector<int>> constellationState = satellite::getConstellationState(time, PAT_time, acceptableAER_diff, satellites);
-    //印出112*112二維陣列
+    std::vector<std::vector<int>> constellationState = satellite::getConstellationState(satCountPerOrbit, totalSatCount, time, PAT_time, acceptableAER_diff, satellites);
+    //印出totalSatCount*totalSatCount二維陣列
     for(auto row: constellationState){
         for(auto i: row){
             output<<std::setw(5)<<i;
@@ -270,42 +270,55 @@ void adjustableISLdevice_printSatellitesDeviceStateOfDay(std::map<int, satellite
     double acceptableElevationDif = std::stod(parameterTable.at("acceptableElevationDif"));
     double acceptableRange = std::stod(parameterTable.at("acceptableRange"));
     AER acceptableAER_diff("acceptableAER_diff", acceptableAzimuthDif, acceptableElevationDif, acceptableRange);
-    satellite::adjustableISLdeviceSetupAllISLstateOfDay(-1, acceptableAER_diff, satellites, ISLtable);              
-    for(size_t t = 0; t < 86400; ++t){
-        satellite::satellite sat = satellites.at(101);
-        output<<sat.getCertainTimeISLdeviceState(t);
-        sat = sat.getRightSat();
-        while(sat.getId() != 101){
+    satellite::adjustableISLdeviceSetupAllISLstateOfDay(-1, acceptableAER_diff, satellites, ISLtable);   
+    if(parameterTable.at("TLE_inputFileName") == "TLE_7P_16Sats.txt"){
+        for(size_t t = 0; t < 86400; ++t){
+            satellite::satellite sat = satellites.at(101);
             output<<sat.getCertainTimeISLdeviceState(t);
             sat = sat.getRightSat();
+            while(sat.getId() != 101){
+                output<<sat.getCertainTimeISLdeviceState(t);
+                sat = sat.getRightSat();
+            }
+            output<<" ";
+            sat = satellites.at(102);
+            output<<sat.getCertainTimeISLdeviceState(t);
+            sat = sat.getRightSat();
+            while(sat.getId() != 102){
+                output<<sat.getCertainTimeISLdeviceState(t);
+                sat = sat.getRightSat();
+            }
+            output<<" ";
+            sat = satellites.at(103);
+            output<<sat.getCertainTimeISLdeviceState(t);
+            sat = sat.getRightSat();
+            while(sat.getId() != 103){
+                output<<sat.getCertainTimeISLdeviceState(t);
+                sat = sat.getRightSat();
+            }
+            output<<" ";
+            sat = satellites.at(104);
+            output<<sat.getCertainTimeISLdeviceState(t);
+            sat = sat.getRightSat();
+            while(sat.getId() != 104){
+                output<<sat.getCertainTimeISLdeviceState(t);
+                sat = sat.getRightSat();
+            }                                  
+            output<<"\n";
         }
-        output<<" ";
-        sat = satellites.at(102);
-        output<<sat.getCertainTimeISLdeviceState(t);
-        sat = sat.getRightSat();
-        while(sat.getId() != 102){
+    }        
+    else if(parameterTable.at("TLE_inputFileName") == "TLE_6P_22Sats.txt"){
+        for(size_t t = 0; t < 86400; ++t){
+            satellite::satellite sat = satellites.at(101);
             output<<sat.getCertainTimeISLdeviceState(t);
             sat = sat.getRightSat();
-        }
-        output<<" ";
-        sat = satellites.at(103);
-        output<<sat.getCertainTimeISLdeviceState(t);
-        sat = sat.getRightSat();
-        while(sat.getId() != 103){
-            output<<sat.getCertainTimeISLdeviceState(t);
-            sat = sat.getRightSat();
-        }
-        output<<" ";
-        sat = satellites.at(104);
-        output<<sat.getCertainTimeISLdeviceState(t);
-        sat = sat.getRightSat();
-        while(sat.getId() != 104){
-            output<<sat.getCertainTimeISLdeviceState(t);
-            sat = sat.getRightSat();
-        }                                  
-        output<<"\n";
-    }
-
+            while(sat.getId() != 101){
+                output<<sat.getCertainTimeISLdeviceState(t);
+                sat = sat.getRightSat();
+            }
+            output<<"\n";
+        }        
+    } 
     output.close();    
 }
 
@@ -322,7 +335,17 @@ int main()
     int ISLrightAngle = std::stoi(parameterTable.at("ISLrightAngle"));
     int ISLbackAngle = std::stoi(parameterTable.at("ISLbackAngle"));
     int ISLleftAngle = std::stoi(parameterTable.at("ISLleftAngle"));
-    std::map<int, satellite::satellite> satellites = getFileData::getSatellitesTable("TLE_7P_16Sats.txt", ISLfrontAngle, ISLrightAngle, ISLbackAngle, ISLleftAngle);
+    std::string TLE_inputFileName = parameterTable.at("TLE_inputFileName");
+    long unsigned int totalSatCount = 0, satCountPerOrbit = 0;
+    if(TLE_inputFileName == "TLE_7P_16Sats.txt"){
+        totalSatCount = 112;
+        satCountPerOrbit = 16;
+    }
+    else if(TLE_inputFileName == "TLE_6P_22Sats.txt"){
+        totalSatCount = 132;
+        satCountPerOrbit = 22;
+    }
+    std::map<int, satellite::satellite> satellites = getFileData::getSatellitesTable(TLE_inputFileName, ISLfrontAngle, ISLrightAngle, ISLbackAngle, ISLleftAngle);
     std::map<std::set<int>, satellite::ISL> ISLtable = satellite::getISLtable(satellites);
 
     //讓衛星物件知道自己的鄰居及ISL是誰(指標指到鄰居衛星及ISL)
@@ -350,16 +373,16 @@ int main()
             printAllIslConnectionInfoFile(satellites,parameterTable);
             break;
         case str2int("compareDifferentAcceptableAzimuthDif"):
-            compareDifferentAcceptableAzimuthDif(satellites, ISLtable ,parameterTable);
+            compareDifferentAcceptableAzimuthDif(totalSatCount, satellites, ISLtable ,parameterTable);
             break;   
         case str2int("compareDifferentPAT_time"):
-            compareDifferentPAT_time(satellites, ISLtable ,parameterTable);            
+            compareDifferentPAT_time(totalSatCount, satellites, ISLtable ,parameterTable);            
             break;  
         case str2int("printBreakingConnectingStatus"):
             printBreakingConnectingStatus(satellites,ISLtable, parameterTable);
             break;                                      
         case str2int("printConstellationStateFile"):
-            printConstellationStateFile(satellites,parameterTable);
+            printConstellationStateFile(satCountPerOrbit, totalSatCount, satellites,parameterTable);
             break; 
         case str2int("adjustableISLdevice_printSatellitesDeviceStateOfDay"):
             adjustableISLdevice_printSatellitesDeviceStateOfDay(satellites, ISLtable ,parameterTable);

@@ -20,7 +20,7 @@ namespace satellite
     bool judgeElevation(double acceptableElevationDif, double otherSatElevation);
     bool judgeRange(double acceptableRange, double otherSatRange);
     //回傳某個特定時刻，行星群的連線狀態(112*112的二維vetcor，可以連的話填上距離，不可連的話填上0，自己連自己也是填0)
-    std::vector<std::vector<int>> getConstellationState(int time, int PAT_time, const AER &acceptableAER_diff, std::map<int, satellite> &satellites);
+    std::vector<std::vector<int>> getConstellationState(long unsigned int satCountPerOrbit, long unsigned int totalSatCount, int time, int PAT_time, const AER &acceptableAER_diff, std::map<int, satellite> &satellites);
     std::map<std::set<int>, ISL> getISLtable(std::map<int, satellite> &satellites);
     //計算出所有ISL的stateOfDay
     void setupAllISLstateOfDay(int PATtime, const AER &acceptableAER_diff, std::map<int, satellite> &satellites);
@@ -52,7 +52,7 @@ namespace satellite
 
     class satellite{
     public: 
-        satellite(Tle _tle, SGP4 _sgp4, int _id, int ISLfrontAngle, int ISLrightAngle, int ISLbackAngle, int ISLleftAngle);
+        satellite(std::string constellationType, Tle _tle, SGP4 _sgp4, int _id, int ISLfrontAngle, int ISLrightAngle, int ISLbackAngle, int ISLleftAngle);
         void buildNeighborSatsAndISLs(std::map<int, satellite> &satellites, std::map<std::set<int>, ISL> &ISLtable);
         Tle getTle();
         SGP4 getSgp4();

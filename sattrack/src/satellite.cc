@@ -41,24 +41,24 @@ namespace satellite
     }
 
     //將衛星編號轉成二微陣列的index
-    size_t satIdtoIndex(int SatId){
+    size_t satIdtoIndex(int SatId, long unsigned int satCountPerOrbit){
         const int satNum = SatId%100;
         const int orbitNum = (SatId-satNum)/100;
-        return  (size_t)(orbitNum-1)*16 + (size_t)(satNum-1);
+        return  (size_t)(orbitNum-1)*satCountPerOrbit + (size_t)(satNum-1);
     }
 
-    //回傳某個特定時刻，行星群的連線狀態(112*112的二維vetcor，可以連的話填上距離，不可連的話填上0，自己連自己也是填0)
-    std::vector<std::vector<int>> getConstellationState(int time, int PAT_time, const AER &acceptableAER_diff, std::map<int, satellite> &satellites){
-        std::vector<std::vector<int>> constellationState(112, std::vector<int>(112, -1));
-        for(size_t i = 0; i < 112; ++i){
+    //回傳某個特定時刻，行星群的連線狀態(totalSatCount*totalSatCount的二維vetcor，可以連的話填上距離，不可連的話填上0，自己連自己也是填0)
+    std::vector<std::vector<int>> getConstellationState(long unsigned int satCountPerOrbit, long unsigned int totalSatCount, int time, int PAT_time, const AER &acceptableAER_diff, std::map<int, satellite> &satellites){
+        std::vector<std::vector<int>> constellationState(totalSatCount, std::vector<int>(totalSatCount, -1));
+        for(size_t i = 0; i < totalSatCount; ++i){
             constellationState[i][i] = 0; //衛星自己
         }
         for(auto &sat:satellites){
-            size_t satIndex = satIdtoIndex(sat.second.getId());
-            size_t rightSatIndex = satIdtoIndex(sat.second.getRightSatId());
-            size_t leftSatIndex = satIdtoIndex(sat.second.getLeftSatId());
-            size_t frontSatIndex = satIdtoIndex(sat.second.getFrontSatId());
-            size_t backSatIndex = satIdtoIndex(sat.second.getBackSatId());
+            size_t satIndex = satIdtoIndex(sat.second.getId(), satCountPerOrbit);
+            size_t rightSatIndex = satIdtoIndex(sat.second.getRightSatId(), satCountPerOrbit);
+            size_t leftSatIndex = satIdtoIndex(sat.second.getLeftSatId(), satCountPerOrbit);
+            size_t frontSatIndex = satIdtoIndex(sat.second.getFrontSatId(), satCountPerOrbit);
+            size_t backSatIndex = satIdtoIndex(sat.second.getBackSatId(), satCountPerOrbit);
             // std::cout<< "satIndex: "<<satIndex<<", rightSatIndex: "<<rightSatIndex<<", leftSatIndex: "<<leftSatIndex<<", frontSatIndex: "<<frontSatIndex<<", backSatIndex: "<<backSatIndex<<"\n";
             if(constellationState[satIndex][rightSatIndex] < 0){
                 constellationState[satIndex][rightSatIndex] = constellationState[rightSatIndex][satIndex] = sat.second.judgeRightISLwithPAT(time, PAT_time, acceptableAER_diff);
@@ -190,29 +190,59 @@ namespace satellite
 
     /*------------------Satellite class 的函式  start------------------*/
     //satellite的建構子，初始化衛星的各個資訊
-    satellite::satellite(Tle _tle, SGP4 _sgp4, int _id, int ISLfrontAngle, int ISLrightAngle, int ISLbackAngle, int ISLleftAngle) : tle(_tle), sgp4(_sgp4), id(_id) {
-        neighbors = std::vector<std::pair<int,double>>(4);//right left front back <satId, ISLangle>
-        neighbors[0].second = ISLrightAngle;
-        neighbors[1].second = ISLleftAngle;
-        neighbors[2].second = ISLfrontAngle;
-        neighbors[3].second = ISLbackAngle;
-        const int satNum = id%100;
-        const int orbitNum = (id-satNum)/100;
-        // std::cout<<"orbitNum: "<<orbitNum<<", satNum: "<<satNum<<"\n";
-        //right
-        neighbors[0].first = satNum - 2 < 1 ? 100*(orbitNum+1)+satNum-2+16 : 100*(orbitNum+1)+satNum-2;
-        if(orbitNum == 7){
-            neighbors[0].first = 100+satNum;
+    satellite::satellite(std::string constellationType, Tle _tle, SGP4 _sgp4, int _id, int ISLfrontAngle, int ISLrightAngle, int ISLbackAngle, int ISLleftAngle) : tle(_tle), sgp4(_sgp4), id(_id) {
+        if(constellationType == "7P_16Sats"){
+            neighbors = std::vector<std::pair<int,double>>(4);//right left front back 的 <satId, ISLangle>
+            neighbors[0].second = ISLrightAngle;
+            neighbors[1].second = ISLleftAngle;
+            neighbors[2].second = ISLfrontAngle;
+            neighbors[3].second = ISLbackAngle;
+            const int satNum = id%100;
+            const int orbitNum = (id-satNum)/100;
+            // std::cout<<"orbitNum: "<<orbitNum<<", satNum: "<<satNum<<"\n";
+            //right
+            neighbors[0].first = satNum - 2 < 1 ? 100*(orbitNum+1)+satNum-2+16 : 100*(orbitNum+1)+satNum-2;
+            if(orbitNum == 7){
+                neighbors[0].first = 100+satNum;
+            }
+            //left
+            neighbors[1].first = satNum + 2 > 16 ? 100*(orbitNum-1)+satNum+2-16 : 100*(orbitNum-1)+satNum+2;
+            if(orbitNum == 1){
+                neighbors[1].first = 700+satNum;
+            }
+            //front
+            neighbors[2].first = satNum == 16 ? 100*orbitNum+1 : 100*orbitNum+satNum+1;
+            //back
+            neighbors[3].first = satNum == 1 ? 100*orbitNum+16 : 100*orbitNum+satNum-1;
         }
-        //left
-        neighbors[1].first = satNum + 2 > 16 ? 100*(orbitNum-1)+satNum+2-16 : 100*(orbitNum-1)+satNum+2;
-        if(orbitNum == 1){
-            neighbors[1].first = 700+satNum;
+        else if(constellationType == "6P_22Sats"){
+            neighbors = std::vector<std::pair<int,double>>(4);//right left front back 的 <satId, ISLangle>
+            neighbors[0].second = ISLrightAngle;
+            neighbors[1].second = ISLleftAngle;
+            neighbors[2].second = ISLfrontAngle;
+            neighbors[3].second = ISLbackAngle;
+            const int satNum = id%100;
+            const int orbitNum = (id-satNum)/100;
+            // std::cout<<"orbitNum: "<<orbitNum<<", satNum: "<<satNum<<"\n";
+            //right
+            neighbors[0].first = satNum - 3 < 1 ? 100*(orbitNum+1)+satNum-3+22 : 100*(orbitNum+1)+satNum-3;
+            if(orbitNum == 6){
+                neighbors[0].first = satNum - 2 < 1 ? 100+satNum-2+22 : 100+satNum-2;
+            }
+            //left
+            neighbors[1].first = satNum + 3 > 22 ? 100*(orbitNum-1)+satNum+3-22 : 100*(orbitNum-1)+satNum+3;
+            if(orbitNum == 1){
+                neighbors[1].first = satNum + 2 > 22 ? 600+satNum+2-22 : 600+satNum+2;
+            }
+            //front
+            neighbors[2].first = satNum == 22 ? 100*orbitNum+1 : 100*orbitNum+satNum+1;
+            //back
+            neighbors[3].first = satNum == 1 ? 100*orbitNum+22 : 100*orbitNum+satNum-1;        
         }
-        //front
-        neighbors[2].first = satNum == 16 ? 100*orbitNum+1 : 100*orbitNum+satNum+1;
-        //back
-        neighbors[3].first = satNum == 1 ? 100*orbitNum+16 : 100*orbitNum+satNum-1;
+        else{
+            std::cout<<"unknown constellationType!\n";
+            exit(-1);
+        }
     }
 
     //將四個衛星物件還有ISL的指標，指到對應的衛星衛星物件上
@@ -224,7 +254,6 @@ namespace satellite
         this->leftSatPtr = &satellites.at(leftSatId);
         this->frontSatPtr = &satellites.at(this->getFrontSatId());
         this->backSatPtr = &satellites.at(this->getBackSatId());
-        
         this->leftISLptr = &ISLtable.at(std::set<int>({selfSatId,leftSatId}));
         this->rightISLptr = &ISLtable.at(std::set<int>({selfSatId,rightSatId}));
     }
