@@ -160,6 +160,10 @@ namespace satellite
         this->stateOfDay[time] = state;
     }
 
+    bool ISL::getSecondState(size_t time){
+        return this->stateOfDay[time];
+    }
+
     void ISL::setStateOfDay(std::bitset<86400> _stateOfDay){
         stateOfDay = _stateOfDay;
         calculated = true;

@@ -34,8 +34,8 @@
     需設定parameter: acceptableAzimuthDif、acceptableElevationDif、acceptableRange、time、ISLrightAngle、ISLleftAngle(目前是當成前後一定可以連線)
 **********************************************************************************************
 
->>(TLE_inputFileName): (TLE_6P_22Sats.txt) <--填入記錄星群TLE的fileName
->>(execute_function): (compareDifferentAcceptableAzimuthDif) <-- 填入要執行的function名稱
+>>(TLE_inputFileName): (TLE_7P_16Sats.txt) <--填入記錄星群TLE的fileName
+>>(execute_function): (adjustableISLdevice_printSatellitesDeviceStateOfDay) <-- 填入要執行的function名稱
 
 >>(observerId): (101) <-- 填入觀察者的衛星編號
 >>(otherId): (215) <-- 填入被觀察者的衛星編號
@@ -44,10 +44,10 @@
 >>(acceptableElevationDif): (45)  <-- 可接受仰角誤差
 >>(acceptableRange): (5000)  <-- 可接受range
 
->>(ISLfrontAngle):(315) <-- 前方ISL設置角度
->>(ISLrightAngle):(45) <-- 右方ISL設置角度
->>(ISLbackAngle):(135) <-- 後方ISL設置角度
->>(ISLleftAngle):(225) <-- 左方ISL設置角度
+>>(ISLfrontAngle):(0) <-- 前方ISL設置角度
+>>(ISLrightAngle):(90) <-- 右方ISL設置角度
+>>(ISLbackAngle):(180) <-- 後方ISL設置角度
+>>(ISLleftAngle):(270) <-- 左方ISL設置角度
 
 >>(time):(40) <-- 欲計算的特定時間點
 >>(PAT_time):(30) <--建立連線所需花的時間

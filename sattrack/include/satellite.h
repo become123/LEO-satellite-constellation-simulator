@@ -37,6 +37,7 @@ namespace satellite
         void printISL2SatId();
         std::bitset<86400>  getStateOfDay();
         void setSecondState(size_t time, bool state);
+        bool getSecondState(size_t time);
         void setStateOfDay(std::bitset<86400> _stateOfDay);
         void setStateOfDay();
         void resetStateOfDay(); //reset標記程尚未計算過stateOfDay

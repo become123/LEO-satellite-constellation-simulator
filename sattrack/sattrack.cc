@@ -275,33 +275,49 @@ void adjustableISLdevice_printSatellitesDeviceStateOfDay(std::map<int, satellite
         for(size_t t = 0; t < 86400; ++t){
             satellite::satellite sat = satellites.at(101);
             output<<sat.getCertainTimeISLdeviceState(t);
+            if(sat.getRightISL().getSecondState(t)) output<<"-";
+            else    output<<"X";
             sat = sat.getRightSat();
             while(sat.getId() != 101){
                 output<<sat.getCertainTimeISLdeviceState(t);
+                if(sat.getRightISL().getSecondState(t)) output<<"-";
+                else    output<<"X";
                 sat = sat.getRightSat();
             }
-            output<<" ";
+            output<<"  ";
             sat = satellites.at(102);
             output<<sat.getCertainTimeISLdeviceState(t);
+            if(sat.getRightISL().getSecondState(t)) output<<"-";
+            else    output<<"X";            
             sat = sat.getRightSat();
             while(sat.getId() != 102){
                 output<<sat.getCertainTimeISLdeviceState(t);
+                if(sat.getRightISL().getSecondState(t)) output<<"-";
+                else    output<<"X";                
                 sat = sat.getRightSat();
             }
-            output<<" ";
+            output<<"  ";
             sat = satellites.at(103);
             output<<sat.getCertainTimeISLdeviceState(t);
+            if(sat.getRightISL().getSecondState(t)) output<<"-";
+            else    output<<"X";            
             sat = sat.getRightSat();
             while(sat.getId() != 103){
                 output<<sat.getCertainTimeISLdeviceState(t);
+                if(sat.getRightISL().getSecondState(t)) output<<"-";
+                else    output<<"X";                
                 sat = sat.getRightSat();
             }
-            output<<" ";
+            output<<"  ";
             sat = satellites.at(104);
+            if(sat.getRightISL().getSecondState(t)) output<<"-";
+            else    output<<"X";            
             output<<sat.getCertainTimeISLdeviceState(t);
             sat = sat.getRightSat();
             while(sat.getId() != 104){
                 output<<sat.getCertainTimeISLdeviceState(t);
+                if(sat.getRightISL().getSecondState(t)) output<<"-";
+                else    output<<"X";                
                 sat = sat.getRightSat();
             }                                  
             output<<"\n";
@@ -391,7 +407,34 @@ int main()
             std::cout<<"running test!"<<"\n";
             /*-------------test-------------*/
             std::ofstream output("./output.txt");
-
+            double acceptableAzimuthDif = std::stod(parameterTable.at("acceptableAzimuthDif"));
+            double acceptableElevationDif = std::stod(parameterTable.at("acceptableElevationDif"));
+            double acceptableRange = std::stod(parameterTable.at("acceptableRange"));
+            AER acceptableAER_diff("acceptableAER_diff", acceptableAzimuthDif, acceptableElevationDif, acceptableRange);
+            satellite::adjustableISLdeviceSetupAllISLstateOfDay(-1, acceptableAER_diff, satellites, ISLtable); 
+            // int rightAvailableTimeOfAllSat = 0;
+            // int leftAvailableTimeOfAllSat = 0;   
+            std::vector<int> connectionCount(86400,0);
+            std::vector<std::vector<std::set<int>>> connectionFailPairs(86400);         
+            for(auto &ISLpair: ISLtable){
+                /*----------scenario2--記得註解掉上方scenario2的adjustableISLdeviceSetupAllISLstateOfDay----------*/ 
+                std::bitset<86400> rightISLstateOfDay = ISLpair.second.getStateOfDay();  
+                for(size_t i = 0; i < 86400; ++i){
+                    if(rightISLstateOfDay[i]){
+                        connectionCount[i]++;
+                    }
+                    else{
+                        connectionFailPairs[i].push_back(ISLpair.first);
+                    }
+                }           
+            }   
+            for(size_t i = 0; i < 86400; ++i){
+                output<<connectionCount[i];
+                for(auto satPair:connectionFailPairs[i]){
+                    output<<", "<<" ("<<*satPair.begin()<<","<<*satPair.rbegin()<<")";
+                }
+                output<<"\n";
+            }
 
             output.close();
             /*------------end test---------*/
