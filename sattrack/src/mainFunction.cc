@@ -306,9 +306,13 @@ namespace mainFunction
             for(size_t t = 0; t < 86400; ++t){
                 satellite::satellite sat = satellites.at(101);
                 output<<sat.getCertainTimeISLdeviceState(t);
+                if(sat.getRightISL().getSecondState(t)) output<<"-";
+                else    output<<"X";                
                 sat = sat.getRightSat();
                 while(sat.getId() != 101){
                     output<<sat.getCertainTimeISLdeviceState(t);
+                    if(sat.getRightISL().getSecondState(t)) output<<"-";
+                    else    output<<"X";                    
                     sat = sat.getRightSat();
                 }
                 output<<"\n";
