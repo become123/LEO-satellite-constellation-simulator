@@ -313,7 +313,7 @@ namespace satellite
     }
 
     //獲得某個時間點觀測另一個衛星的AER
-    AER satellite::getAER(int time, satellite other){
+    AER satellite::getAER(int time, satellite &other){
         DateTime dt = this->getTle().Epoch().AddSeconds(time);
         Eci observerEci = this->getSgp4().FindPosition(dt);
         Eci otherEci = other.getSgp4().FindPosition(dt);

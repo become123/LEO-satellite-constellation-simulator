@@ -59,7 +59,7 @@ namespace satellite
         Tle getTle();
         SGP4 getSgp4();
         int getId();
-        AER getAER(int time, satellite other);
+        AER getAER(int time, satellite &other);
         int getRightSatId();
         int getLeftSatId();
         int getFrontSatId();
