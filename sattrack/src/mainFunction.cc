@@ -320,6 +320,25 @@ namespace mainFunction
         } 
         output.close();    
     }
+
+    //印出某個特定時刻，行星群的hop count狀態(totalSatCount*totalSatCount的對稱二維vetcor，內容意義為衛星最少要經過幾個ISL才會抵達另一個衛星)到sattrack/output.txt中
+    void printConstellationHopCountFile(long unsigned int satCountPerOrbit, long unsigned int totalSatCount, std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){
+        std::ofstream output("./output.txt");
+        double acceptableAzimuthDif = std::stod(parameterTable.at("acceptableAzimuthDif"));
+        double acceptableElevationDif = std::stod(parameterTable.at("acceptableElevationDif"));
+        double acceptableRange = std::stod(parameterTable.at("acceptableRange"));
+        AER acceptableAER_diff("acceptableAER_diff", acceptableAzimuthDif, acceptableElevationDif, acceptableRange);
+        int time = std::stoi(parameterTable.at("time"));
+        int PAT_time = std::stoi(parameterTable.at("PAT_time"));
+        std::vector<std::vector<int>> constellationHopCount = satellite::getConstellationHopCount(satCountPerOrbit, totalSatCount, time, PAT_time, acceptableAER_diff, satellites);
+        for(auto row: constellationHopCount){
+            for(auto i: row){
+                output<<std::setw(4)<<i;
+            }
+            output<<"\n";
+        }
+        output.close(); 
+    }
 }
 
 

@@ -9,6 +9,7 @@
 #include <map>
 #include <bitset>
 #include <set>
+#include <climits>
 #include "rectifyAzimuth.h"
 #include "satellite.h"
 #include "AER.h"
@@ -47,7 +48,7 @@ namespace satellite
         return  (size_t)(orbitNum-1)*satCountPerOrbit + (size_t)(satNum-1);
     }
 
-    //回傳某個特定時刻，行星群的連線狀態(totalSatCount*totalSatCount的二維vetcor，可以連的話填上距離，不可連的話填上0，自己連自己也是填0)
+    //回傳某個特定時刻，行星群的連線狀態(totalSatCount*totalSatCount的對稱二維vetcor，可以連的話填上距離，不可連的話填上0，自己連自己也是填0)
     std::vector<std::vector<int>> getConstellationState(long unsigned int satCountPerOrbit, long unsigned int totalSatCount, int time, int PAT_time, const AER &acceptableAER_diff, std::map<int, satellite> &satellites){
         std::vector<std::vector<int>> constellationState(totalSatCount, std::vector<int>(totalSatCount, -1));
         for(size_t i = 0; i < totalSatCount; ++i){
@@ -81,6 +82,42 @@ namespace satellite
         }
         return constellationState;
     }
+
+    //回傳某個特定時刻，行星群的hop count狀態(totalSatCount*totalSatCount的對稱二維vetcor，內容意義為衛星最少要經過幾個ISL才會抵達另一個衛星)
+    std::vector<std::vector<int>> getConstellationHopCount(long unsigned int satCountPerOrbit, long unsigned int totalSatCount, int time, int PAT_time, const AER &acceptableAER_diff, std::map<int, satellite> &satellites){
+        std::vector<std::vector<int>> constellationHopCount = getConstellationState(satCountPerOrbit, totalSatCount, time, PAT_time, acceptableAER_diff, satellites);
+        for(size_t rowIdx = 0; rowIdx < totalSatCount; ++rowIdx){
+            for(size_t colIdx = 0; colIdx < totalSatCount; ++colIdx){
+                if(constellationHopCount[rowIdx][colIdx] == 0){
+                    if(rowIdx != colIdx){
+                        constellationHopCount[rowIdx][colIdx] = INT_MAX;
+                    }
+                }
+                else{
+                    constellationHopCount[rowIdx][colIdx] = 1;
+                }
+            }
+        }
+        //Floyd Warshall Algorithm
+        for (size_t k = 0; k < totalSatCount; k++) {
+            // Pick all vertices as source one by one
+            for (size_t i = 0; i < totalSatCount; i++) {
+                // Pick all vertices as destination for the
+                // above picked source
+                for (size_t j = 0; j < totalSatCount; j++) {
+                    // If vertex k is on the shortest path from
+                    // i to j, then update the value of
+                    // dist[i][j]
+                    if ((constellationHopCount[k][j] != INT_MAX && constellationHopCount[i][k] != INT_MAX)
+                            && constellationHopCount[i][j] > (constellationHopCount[i][k] + constellationHopCount[k][j]))
+                        constellationHopCount[i][j] = constellationHopCount[i][k] + constellationHopCount[k][j];
+                }
+            }
+        }
+        return constellationHopCount;
+    }
+
+        
 
     //建出ISLtable讓每個衛星可以指到屬於自己的2個ISL上
     std::map<std::set<int>, ISL> getISLtable(std::map<int, satellite> &satellites){
@@ -129,6 +166,7 @@ namespace satellite
         }
     }
 
+    //將所有衛星換回state 0
     void resetAllSat(std::map<int, satellite> &satellites){
         for(auto &satPair: satellites){
             satPair.second.resetState();
@@ -292,7 +330,6 @@ namespace satellite
         double R = topo.range;
         AER ret(dt.ToString(), rectifiedA, E, R);
         return ret;
-
     }
 
     int satellite::getRightSatId(){

@@ -106,41 +106,18 @@ int main()
             break; 
         case str2int("adjustableISLdevice_printSatellitesDeviceStateOfDay"):
             mainFunction::adjustableISLdevice_printSatellitesDeviceStateOfDay(satellites, ISLtable ,parameterTable);
+            break;
+        case str2int("printConstellationHopCountFile"):
+            mainFunction::printConstellationHopCountFile(satCountPerOrbit, totalSatCount, satellites,parameterTable);
             break;                  
         default:
             std::cout<<"running test!"<<"\n";
             /*-------------test-------------*/
             std::ofstream output("./output.txt");
-            double acceptableAzimuthDif = std::stod(parameterTable.at("acceptableAzimuthDif"));
-            double acceptableElevationDif = std::stod(parameterTable.at("acceptableElevationDif"));
-            double acceptableRange = std::stod(parameterTable.at("acceptableRange"));
-            AER acceptableAER_diff("acceptableAER_diff", acceptableAzimuthDif, acceptableElevationDif, acceptableRange);
-            satellite::adjustableISLdeviceSetupAllISLstateOfDay(-1, acceptableAER_diff, satellites, ISLtable); 
-            // int rightAvailableTimeOfAllSat = 0;
-            // int leftAvailableTimeOfAllSat = 0;   
-            std::vector<int> connectionCount(86400,0);
-            std::vector<std::vector<std::set<int>>> connectionFailPairs(86400);         
-            for(auto &ISLpair: ISLtable){
-                /*----------scenario2--記得註解掉上方scenario2的adjustableISLdeviceSetupAllISLstateOfDay----------*/ 
-                std::bitset<86400> rightISLstateOfDay = ISLpair.second.getStateOfDay();  
-                for(size_t i = 0; i < 86400; ++i){
-                    if(rightISLstateOfDay[i]){
-                        connectionCount[i]++;
-                    }
-                    else{
-                        connectionFailPairs[i].push_back(ISLpair.first);
-                    }
-                }           
-            }   
-            for(size_t i = 0; i < 86400; ++i){
-                output<<connectionCount[i];
-                for(auto satPair:connectionFailPairs[i]){
-                    output<<", "<<" ("<<*satPair.begin()<<","<<*satPair.rbegin()<<")";
-                }
-                output<<"\n";
-            }
 
-            output.close();
+
+
+             output.close();
             /*------------end test---------*/
 
 

@@ -54,6 +54,8 @@ LEO satellite simulator
         - 需設定parameter: acceptableAzimuthDif、acceptableElevationDif、acceptableRange、PAT_time、time、ISLrightAngle、ISLleftAngle(目前是當成前後一定可以連線)
     10. **adjustableISLdevice_printSatellitesDeviceStateOfDay**: 印出所有衛星(相鄰的會排在一起)，一天86400秒的ISL設置state
         - 需設定parameter: acceptableAzimuthDif、acceptableElevationDif、acceptableRange、time、ISLrightAngle、ISLleftAngle(目前是當成前後一定可以連線)
+    11. **printConstellationHopCountFile**: 印出某個特定時刻，行星群的hop count狀態(totalSatCount*totalSatCount的對稱二維vetcor，內容意義為衛星最少要經過幾個ISL才會抵達另一個衛星)到sattrack/output.txt中
+        - 需設定parameter: acceptableAzimuthDif、acceptableElevationDif、acceptableRange、PAT_time、time、ISLrightAngle、ISLleftAngle(目前是當成前後一定可以連線)
 - 進入到sgp4/sattrack中執行sattrack
     
     ```bash
