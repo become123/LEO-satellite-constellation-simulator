@@ -108,16 +108,13 @@ namespace satellite
                     // If vertex k is on the shortest path from
                     // i to j, then update the value of
                     // dist[i][j]
-                    if ((constellationHopCount[k][j] != INT_MAX && constellationHopCount[i][k] != INT_MAX)
-                            && constellationHopCount[i][j] > (constellationHopCount[i][k] + constellationHopCount[k][j]))
+                    if ((constellationHopCount[k][j] != INT_MAX && constellationHopCount[i][k] != INT_MAX) && constellationHopCount[i][j] > (constellationHopCount[i][k] + constellationHopCount[k][j]))
                         constellationHopCount[i][j] = constellationHopCount[i][k] + constellationHopCount[k][j];
                 }
             }
         }
         return constellationHopCount;
     }
-
-        
 
     //建出ISLtable讓每個衛星可以指到屬於自己的2個ISL上
     std::map<std::set<int>, ISL> getISLtable(std::map<int, satellite> &satellites){
@@ -441,7 +438,11 @@ namespace satellite
     void satellite::resetState(){
         if(this->ISLdeviceState == 1)
             this->changeState();
-    }    
+    }  
+
+    std::bitset<86400> satellite::getISLsettingStateOfDay(){
+        return this->ISLsettingStateOfDay;
+    }
 
     //設定右方ISL一天中86400秒的連線狀態
     void satellite::setRightStateOfDate(std::bitset<86400> stateOfDay){ 

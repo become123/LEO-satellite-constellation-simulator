@@ -80,7 +80,8 @@ namespace satellite
         void setCertainTimeISLdeviceState(size_t t, bool state);  
         int getCertainTimeISLdeviceState(size_t t); 
         void changeState();  
-        void resetState();  
+        void resetState(); 
+        std::bitset<86400> getISLsettingStateOfDay();
 
         //設定右方ISL一天中86400秒的連線狀態
         void setRightStateOfDate(std::bitset<86400> stateOfDay);
