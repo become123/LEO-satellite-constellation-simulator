@@ -41,25 +41,31 @@ namespace satellite
         return otherSatRange < AcceptableRange;
     }
 
-    //將衛星編號轉成二微陣列的index
-    size_t satIdtoIndex(int SatId, long unsigned int satCountPerOrbit){
+    //將衛星編號轉成二維陣列的index
+    size_t satIdToIndex(int SatId, size_t satCountPerOrbit){
         const int satNum = SatId%100;
         const int orbitNum = (SatId-satNum)/100;
         return  (size_t)(orbitNum-1)*satCountPerOrbit + (size_t)(satNum-1);
     }
+    //將二維陣列的index轉成衛星編號
+    size_t indexToSatId(size_t IndexNumber, size_t satCountPerOrbit){
+        size_t satNum = IndexNumber%satCountPerOrbit+1;
+        size_t orbitNum = (IndexNumber-(satNum-1))/satCountPerOrbit;
+        return  orbitNum*100+satNum;
+    }
 
     //回傳某個特定時刻，行星群的連線狀態(totalSatCount*totalSatCount的對稱二維vetcor，可以連的話填上距離，不可連的話填上0，自己連自己也是填0)
-    std::vector<std::vector<int>> getConstellationState(long unsigned int satCountPerOrbit, long unsigned int totalSatCount, int time, int PAT_time, const AER &acceptableAER_diff, std::map<int, satellite> &satellites){
+    std::vector<std::vector<int>> getConstellationState(size_t satCountPerOrbit, size_t totalSatCount, int time, int PAT_time, const AER &acceptableAER_diff, std::map<int, satellite> &satellites){
         std::vector<std::vector<int>> constellationState(totalSatCount, std::vector<int>(totalSatCount, -1));
         for(size_t i = 0; i < totalSatCount; ++i){
             constellationState[i][i] = 0; //衛星自己
         }
         for(auto &sat:satellites){
-            size_t satIndex = satIdtoIndex(sat.second.getId(), satCountPerOrbit);
-            size_t rightSatIndex = satIdtoIndex(sat.second.getRightSatId(), satCountPerOrbit);
-            size_t leftSatIndex = satIdtoIndex(sat.second.getLeftSatId(), satCountPerOrbit);
-            size_t frontSatIndex = satIdtoIndex(sat.second.getFrontSatId(), satCountPerOrbit);
-            size_t backSatIndex = satIdtoIndex(sat.second.getBackSatId(), satCountPerOrbit);
+            size_t satIndex = satIdToIndex(sat.second.getId(), satCountPerOrbit);
+            size_t rightSatIndex = satIdToIndex(sat.second.getRightSatId(), satCountPerOrbit);
+            size_t leftSatIndex = satIdToIndex(sat.second.getLeftSatId(), satCountPerOrbit);
+            size_t frontSatIndex = satIdToIndex(sat.second.getFrontSatId(), satCountPerOrbit);
+            size_t backSatIndex = satIdToIndex(sat.second.getBackSatId(), satCountPerOrbit);
             // std::cout<< "satIndex: "<<satIndex<<", rightSatIndex: "<<rightSatIndex<<", leftSatIndex: "<<leftSatIndex<<", frontSatIndex: "<<frontSatIndex<<", backSatIndex: "<<backSatIndex<<"\n";
             if(constellationState[satIndex][rightSatIndex] < 0){
                 constellationState[satIndex][rightSatIndex] = constellationState[rightSatIndex][satIndex] = sat.second.judgeRightISLwithPAT(time, PAT_time, acceptableAER_diff);
@@ -84,7 +90,7 @@ namespace satellite
     }
 
     //回傳某個特定時刻，行星群的hop count狀態(totalSatCount*totalSatCount的對稱二維vetcor，內容意義為衛星最少要經過幾個ISL才會抵達另一個衛星)
-    std::vector<std::vector<int>> getConstellationHopCount(long unsigned int satCountPerOrbit, long unsigned int totalSatCount, int time, int PAT_time, const AER &acceptableAER_diff, std::map<int, satellite> &satellites){
+    std::vector<std::vector<int>> getConstellationHopCount(size_t satCountPerOrbit, size_t totalSatCount, int time, int PAT_time, const AER &acceptableAER_diff, std::map<int, satellite> &satellites){
         std::vector<std::vector<int>> constellationHopCount = getConstellationState(satCountPerOrbit, totalSatCount, time, PAT_time, acceptableAER_diff, satellites);
         for(size_t rowIdx = 0; rowIdx < totalSatCount; ++rowIdx){
             for(size_t colIdx = 0; colIdx < totalSatCount; ++colIdx){
@@ -114,6 +120,64 @@ namespace satellite
             }
         }
         return constellationHopCount;
+    }
+
+    //回傳某個特定時刻，行星群的hop count狀態(totalSatCount*totalSatCount的對稱二維vetcor，內容意義為衛星最少要經過幾個ISL才會抵達另一個衛星)，同時記錄中間點(shortest path經過的點)，以用來計算shortest path
+    std::vector<std::vector<int>> getConstellationHopCountRecordMedium(size_t satCountPerOrbit, size_t totalSatCount, int time, int PAT_time, const AER &acceptableAER_diff, std::map<int, satellite> &satellites, std::vector<std::vector<int>> &medium){
+        std::vector<std::vector<int>> constellationHopCount = getConstellationState(satCountPerOrbit, totalSatCount, time, PAT_time, acceptableAER_diff, satellites);
+        for(size_t rowIdx = 0; rowIdx < totalSatCount; ++rowIdx){
+            for(size_t colIdx = 0; colIdx < totalSatCount; ++colIdx){
+                if(constellationHopCount[rowIdx][colIdx] == 0){
+                    if(rowIdx != colIdx){
+                        constellationHopCount[rowIdx][colIdx] = INT_MAX;
+                    }
+                }
+                else{
+                    constellationHopCount[rowIdx][colIdx] = 1;
+                }
+            }
+        }
+        //Floyd Warshall Algorithm
+        for (size_t k = 0; k < totalSatCount; k++) {
+            // Pick all vertices as source one by one
+            for (size_t i = 0; i < totalSatCount; i++) {
+                // Pick all vertices as destination for the
+                // above picked source
+                for (size_t j = 0; j < totalSatCount; j++) {
+                    // If vertex k is on the shortest path from
+                    // i to j, then update the value of
+                    // dist[i][j]
+                    if ((constellationHopCount[k][j] != INT_MAX && constellationHopCount[i][k] != INT_MAX) && constellationHopCount[i][j] > (constellationHopCount[i][k] + constellationHopCount[k][j])){
+                        constellationHopCount[i][j] = constellationHopCount[i][k] + constellationHopCount[k][j];
+                        medium[i][j] = k;
+                    }
+                }
+            }
+        }
+        return constellationHopCount;
+    }
+
+    std::vector<int> getPath(size_t satCountPerOrbit, size_t sourceSatId, size_t destSatId, const std::vector<std::vector<int>> &medium, std::vector<std::vector<int>> shortestPath){
+        std::vector<int> path;
+        size_t source = satIdToIndex(sourceSatId, satCountPerOrbit);
+        size_t dest = satIdToIndex(destSatId, satCountPerOrbit);
+        if(shortestPath[sourceSatId][destSatId] == INT_MAX){
+            path.push_back(-1); //-1代表沒路 XD
+            return path;
+        }
+        path.push_back(sourceSatId);
+        find_path(satCountPerOrbit, source, dest, path, medium);
+        path.push_back(destSatId);
+        return path;
+    }
+
+    //getPath function helper
+    void find_path(size_t satCountPerOrbit, size_t source, size_t dest, std::vector<int> &path, const std::vector<std::vector<int>> &medium){
+        if (medium[source][dest] == -1) return; // 沒有中繼點就結束
+
+        find_path(satCountPerOrbit, source, (size_t)medium[source][dest], path, medium);     // 前半段最短路徑
+        path.push_back(indexToSatId((size_t)medium[source][dest], satCountPerOrbit));         // 中繼點
+        find_path(satCountPerOrbit, (size_t)medium[source][dest], dest, path, medium);     // 後半段最短路徑        
     }
 
     //建出ISLtable讓每個衛星可以指到屬於自己的2個ISL上

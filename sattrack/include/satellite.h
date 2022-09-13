@@ -19,9 +19,23 @@ namespace satellite
     bool judgeAzimuth(double ISLdirAzimuth, double acceptableAzimuthDif, double otherSatAzimuth);
     bool judgeElevation(double acceptableElevationDif, double otherSatElevation);
     bool judgeRange(double acceptableRange, double otherSatRange);
+
+    //將衛星編號轉成二維陣列的index
+    size_t satIdToIndex(int SatId, size_t satCountPerOrbit);
+
+    //將二維陣列的index轉成衛星編號
+    size_t indexToSatId(int IndexNumber, size_t satCountPerOrbit);
+
     //回傳某個特定時刻，行星群的連線狀態(112*112的二維vetcor，可以連的話填上距離，不可連的話填上0，自己連自己也是填0)
-    std::vector<std::vector<int>> getConstellationState(long unsigned int satCountPerOrbit, long unsigned int totalSatCount, int time, int PAT_time, const AER &acceptableAER_diff, std::map<int, satellite> &satellites);
-    std::vector<std::vector<int>> getConstellationHopCount(long unsigned int satCountPerOrbit, long unsigned int totalSatCount, int time, int PAT_time, const AER &acceptableAER_diff, std::map<int, satellite> &satellites);
+    std::vector<std::vector<int>> getConstellationState(size_t satCountPerOrbit, size_t totalSatCount, int time, int PAT_time, const AER &acceptableAER_diff, std::map<int, satellite> &satellites);
+    std::vector<std::vector<int>> getConstellationHopCount(size_t satCountPerOrbit, size_t totalSatCount, int time, int PAT_time, const AER &acceptableAER_diff, std::map<int, satellite> &satellites);
+    
+    //回傳某個特定時刻，行星群的hop count狀態(totalSatCount*totalSatCount的對稱二維vetcor，內容意義為衛星最少要經過幾個ISL才會抵達另一個衛星)，同時記錄中間點(shortest path經過的點)，以用來計算shortest path
+    std::vector<std::vector<int>> getConstellationHopCountRecordMedium(size_t satCountPerOrbit, size_t totalSatCount, int time, int PAT_time, const AER &acceptableAER_diff, std::map<int, satellite> &satellites, std::vector<std::vector<int>> &medium);
+    
+    std::vector<int> getPath(size_t satCountPerOrbit, size_t sourceSatId, size_t destSatId, const std::vector<std::vector<int>> &medium, std::vector<std::vector<int>> shortestPath);
+    //getPath function helper
+    void find_path(size_t satCountPerOrbit, size_t source, size_t dest, std::vector<int> &path, const std::vector<std::vector<int>> &medium);
     std::map<std::set<int>, ISL> getISLtable(std::map<int, satellite> &satellites);
     //計算出所有ISL的stateOfDay
     void setupAllISLstateOfDay(int PATtime, const AER &acceptableAER_diff, std::map<int, satellite> &satellites);
