@@ -27,7 +27,8 @@
 
 #include <iostream>
 #include <iomanip>
-#include<map>
+#include <vector>
+#include <map>
 #include<fstream>
 #include <utility>
 #include <numeric>
@@ -110,14 +111,16 @@ int main()
         case str2int("printConstellationHopCountFile"):
             mainFunction::printConstellationHopCountFile(satCountPerOrbit, totalSatCount, satellites,parameterTable);
             break;                  
+        case str2int("printConstellationHopCountFileAndOutputCertainPath"):
+            mainFunction::printConstellationHopCountFileAndOutputCertainPath(satCountPerOrbit, totalSatCount, satellites,parameterTable);
+            break;                  
         default:
             std::cout<<"running test!"<<"\n";
             /*-------------test-------------*/
             std::ofstream output("./output.txt");
 
 
-
-             output.close();
+            output.close();
             /*------------end test---------*/
 
 

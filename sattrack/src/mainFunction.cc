@@ -5,6 +5,7 @@
 #include "getFileData.h"
 #include "satellite.h"
 #include "AER.h"
+#include "mainFunction.h"
 
 #include <iostream>
 #include <iomanip>
@@ -327,7 +328,6 @@ namespace mainFunction
         output.close();    
     }
 
-
     //印出某個特定時刻，行星群的hop count狀態(totalSatCount*totalSatCount的對稱二維vetcor，內容意義為衛星最少要經過幾個ISL才會抵達另一個衛星)到sattrack/output.txt中
     void printConstellationHopCountFile(long unsigned int satCountPerOrbit, long unsigned int totalSatCount, std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){
         std::ofstream output("./output.txt");
@@ -356,6 +356,47 @@ namespace mainFunction
             output<<"\n";
         }
         output.close(); 
+    }
+
+    //印出某個特定時刻，行星群的hop count狀態(totalSatCount*totalSatCount的對稱二維vetcor，內容意義為衛星最少要經過幾個ISL才會抵達另一個衛星)到sattrack/output.txt中，並且在terminal中印出由observerId的衛星到otherId衛星的路徑
+    void printConstellationHopCountFileAndOutputCertainPath(long unsigned int satCountPerOrbit, long unsigned int totalSatCount, std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){
+        std::ofstream output("./output.txt");
+        double acceptableAzimuthDif = std::stod(parameterTable.at("acceptableAzimuthDif"));
+        double acceptableElevationDif = std::stod(parameterTable.at("acceptableElevationDif"));
+        double acceptableRange = std::stod(parameterTable.at("acceptableRange"));
+        AER acceptableAER_diff("acceptableAER_diff", acceptableAzimuthDif, acceptableElevationDif, acceptableRange);
+        int time = std::stoi(parameterTable.at("time"));
+        int PAT_time = std::stoi(parameterTable.at("PAT_time"));
+        std::vector<std::vector<int>> medium(totalSatCount, std::vector<int>(totalSatCount, -1));
+        std::vector<std::vector<int>> constellationHopCount = satellite::getConstellationHopCountRecordMedium(satCountPerOrbit, totalSatCount, time, PAT_time, acceptableAER_diff, satellites, medium);
+        output<<"     ";
+        for(size_t i = 0; i < constellationHopCount.size(); ++i){ //印出表格的第一列
+            output<<std::setw(3)<<satellite::indexToSatId(i, satCountPerOrbit)<<" |";
+        }
+        output<<"\n";
+        int lineWidth = 4*totalSatCount;
+        for(int dash = 0; dash < lineWidth; ++dash) output<<"-"; //印出分隔線
+        output<<"\n";
+        for(size_t i = 0; i < constellationHopCount.size(); ++i){ //印出整個hop count array
+            output<<std::setw(4)<<satellite::indexToSatId(i, satCountPerOrbit)<<"|";
+            for(size_t j = 0; j < constellationHopCount.size(); ++j){
+                output<<std::setw(3)<<constellationHopCount[i][j]<<" |";
+            }
+            output<<"\n";
+            for(int dash = 0; dash < lineWidth; ++dash) output<<"-";
+            output<<"\n";
+        }
+
+        size_t sourceId = (size_t)std::stoi(parameterTable.at("observerId"));
+        size_t destId = (size_t)std::stoi(parameterTable.at("otherId"));
+        std::vector<int> path = satellite::getPath(satCountPerOrbit, sourceId, destId, medium, constellationHopCount);
+        std::cout<<"\n\n\n---------------------------------------------\n";
+        //在terminal中印出observerId衛星到otherId衛星所經過的衛星
+        std::cout<<"path from sat"<<sourceId<<" to "<<"sat"<<destId<<":\n";
+        for(auto v: path)
+            std::cout<<v<<" ";
+        std::cout<<"\n---------------------------------------------\n";
+        output.close();        
     }
 
 }

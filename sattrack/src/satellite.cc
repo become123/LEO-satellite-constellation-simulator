@@ -158,14 +158,16 @@ namespace satellite
     }
 
     std::vector<int> getPath(size_t satCountPerOrbit, size_t sourceSatId, size_t destSatId, const std::vector<std::vector<int>> &medium, std::vector<std::vector<int>> shortestPath){
+        // std::cout<<"start getPath function\n";
         std::vector<int> path;
         size_t source = satIdToIndex(sourceSatId, satCountPerOrbit);
         size_t dest = satIdToIndex(destSatId, satCountPerOrbit);
-        if(shortestPath[sourceSatId][destSatId] == INT_MAX){
+        if(shortestPath[source][dest] == INT_MAX){
             path.push_back(-1); //-1代表沒路 XD
             return path;
         }
         path.push_back(sourceSatId);
+        // std::cout<<"start find path function\n";
         find_path(satCountPerOrbit, source, dest, path, medium);
         path.push_back(destSatId);
         return path;
@@ -173,6 +175,7 @@ namespace satellite
 
     //getPath function helper
     void find_path(size_t satCountPerOrbit, size_t source, size_t dest, std::vector<int> &path, const std::vector<std::vector<int>> &medium){
+        // std::cout<<"medium: "<<medium[source][dest]<<"\n";
         if (medium[source][dest] == -1) return; // 沒有中繼點就結束
 
         find_path(satCountPerOrbit, source, (size_t)medium[source][dest], path, medium);     // 前半段最短路徑
