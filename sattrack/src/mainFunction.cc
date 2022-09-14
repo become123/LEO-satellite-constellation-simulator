@@ -230,10 +230,16 @@ namespace mainFunction
         int time = std::stoi(parameterTable.at("time"));
         int PAT_time = std::stoi(parameterTable.at("PAT_time"));
         std::vector<std::vector<int>> constellationState = satellite::getConstellationState(satCountPerOrbit, totalSatCount, time, PAT_time, acceptableAER_diff, satellites);
-        //印出totalSatCount*totalSatCount二維陣列
-        for(auto row: constellationState){
-            for(auto i: row){
-                output<<std::setw(5)<<i;
+         //印出totalSatCount*totalSatCount二維陣列
+        output<<"     ";
+        for(size_t i = 0; i < constellationState.size(); ++i){
+            output<<std::setw(5)<<satellite::indexToSatId(i, satCountPerOrbit);
+        }
+        output<<"\n";
+        for(size_t i = 0; i < constellationState.size(); ++i){
+            output<<std::setw(5)<<satellite::indexToSatId(i, satCountPerOrbit);
+            for(size_t j = 0; j < constellationState.size(); ++j){
+                output<<std::setw(5)<<constellationState[i][j];
             }
             output<<"\n";
         }
@@ -321,6 +327,7 @@ namespace mainFunction
         output.close();    
     }
 
+
     //印出某個特定時刻，行星群的hop count狀態(totalSatCount*totalSatCount的對稱二維vetcor，內容意義為衛星最少要經過幾個ISL才會抵達另一個衛星)到sattrack/output.txt中
     void printConstellationHopCountFile(long unsigned int satCountPerOrbit, long unsigned int totalSatCount, std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){
         std::ofstream output("./output.txt");
@@ -331,14 +338,26 @@ namespace mainFunction
         int time = std::stoi(parameterTable.at("time"));
         int PAT_time = std::stoi(parameterTable.at("PAT_time"));
         std::vector<std::vector<int>> constellationHopCount = satellite::getConstellationHopCount(satCountPerOrbit, totalSatCount, time, PAT_time, acceptableAER_diff, satellites);
-        for(auto row: constellationHopCount){
-            for(auto i: row){
-                output<<std::setw(4)<<i;
+        output<<"     ";
+        for(size_t i = 0; i < constellationHopCount.size(); ++i){
+            output<<std::setw(3)<<satellite::indexToSatId(i, satCountPerOrbit)<<" |";
+        }
+        output<<"\n";
+        int lineWidth = 4*totalSatCount;
+        for(int dash = 0; dash < lineWidth; ++dash) output<<"-";
+        output<<"\n";
+        for(size_t i = 0; i < constellationHopCount.size(); ++i){
+            output<<std::setw(4)<<satellite::indexToSatId(i, satCountPerOrbit)<<"|";
+            for(size_t j = 0; j < constellationHopCount.size(); ++j){
+                output<<std::setw(3)<<constellationHopCount[i][j]<<" |";
             }
+            output<<"\n";
+            for(int dash = 0; dash < lineWidth; ++dash) output<<"-";
             output<<"\n";
         }
         output.close(); 
     }
+
 }
 
 
