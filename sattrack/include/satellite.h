@@ -24,7 +24,7 @@ namespace satellite
     size_t satIdToIndex(int SatId, size_t satCountPerOrbit);
 
     //將二維陣列的index轉成衛星編號
-    size_t indexToSatId(int IndexNumber, size_t satCountPerOrbit);
+    int indexToSatId(size_t IndexNumber, size_t satCountPerOrbit);
 
     //回傳某個特定時刻，行星群的連線狀態(112*112的二維vetcor，可以連的話填上距離，不可連的話填上0，自己連自己也是填0)
     std::vector<std::vector<int>> getConstellationState(size_t satCountPerOrbit, size_t totalSatCount, int time, int PAT_time, const AER &acceptableAER_diff, std::map<int, satellite> &satellites);

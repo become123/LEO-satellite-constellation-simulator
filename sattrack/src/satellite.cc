@@ -43,14 +43,14 @@ namespace satellite
 
     //將衛星編號轉成二維陣列的index
     size_t satIdToIndex(int SatId, size_t satCountPerOrbit){
-        const int satNum = SatId%100;
+        const int satNum = SatId%100; 
         const int orbitNum = (SatId-satNum)/100;
         return  (size_t)(orbitNum-1)*satCountPerOrbit + (size_t)(satNum-1);
     }
     //將二維陣列的index轉成衛星編號
-    size_t indexToSatId(size_t IndexNumber, size_t satCountPerOrbit){
+    int indexToSatId(size_t IndexNumber, size_t satCountPerOrbit){
         size_t satNum = IndexNumber%satCountPerOrbit+1;
-        size_t orbitNum = (IndexNumber-(satNum-1))/satCountPerOrbit;
+        size_t orbitNum = IndexNumber/satCountPerOrbit+1;
         return  orbitNum*100+satNum;
     }
 
