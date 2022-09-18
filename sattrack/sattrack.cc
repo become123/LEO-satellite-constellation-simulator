@@ -113,7 +113,13 @@ int main()
             break;                  
         case str2int("printConstellationHopCountFileAndOutputCertainPath"):
             mainFunction::printConstellationHopCountFileAndOutputCertainPath(satCountPerOrbit, totalSatCount, satellites,parameterTable);
+            break;   
+        case str2int("printConstellationDistanceFile"):
+            mainFunction::printConstellationDistanceFile(satCountPerOrbit, totalSatCount, satellites,parameterTable);
             break;                  
+        case str2int("printConstellationDistanceAndOutputCertainPath"):
+            mainFunction::printConstellationDistanceAndOutputCertainPath(satCountPerOrbit, totalSatCount, satellites,parameterTable);
+            break;                
         default:
             std::cout<<"running test!"<<"\n";
             /*-------------test-------------*/
@@ -141,15 +147,3 @@ int main()
 }
 
 
-
-//測試function satellite::judgeAzimuth，印出acceptableAngle介於0~180，連線裝置設在角度ISLdirAngle，觀測衛星位在角度otherSatAngle時，可否連線
-void testJudgeAzimuthFunction(int ISLdirAngle, int otherSatAngle){
-    for(int acceptableAngle = 0; acceptableAngle < 180; ++acceptableAngle){
-        if(satellite::judgeAzimuth(ISLdirAngle, acceptableAngle, otherSatAngle)){
-            std::cout<<"acceptableAngle: "<<acceptableAngle<<"->"<<"can connect"<<"\n";
-        }
-        else{
-            std::cout<<"acceptableAngle: "<<acceptableAngle<<"->"<<"can not connect"<<"\n";
-        }
-    }    
-}
