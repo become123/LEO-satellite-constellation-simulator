@@ -157,6 +157,68 @@ namespace satellite
         return constellationHopCount;
     }
 
+    //回傳某個特定時刻，行星群的shortest path狀態(totalSatCount*totalSatCount的對稱二維vetcor，內容意義為衛星最少要經過多少距離才會抵達另一個衛星)
+    std::vector<std::vector<int>> getConstellationShortestPath(size_t satCountPerOrbit, size_t totalSatCount, int time, int PAT_time, const AER &acceptableAER_diff, std::map<int, satellite> &satellites){
+        std::vector<std::vector<int>> constellationShortestPath = getConstellationState(satCountPerOrbit, totalSatCount, time, PAT_time, acceptableAER_diff, satellites);
+        for(size_t rowIdx = 0; rowIdx < totalSatCount; ++rowIdx){
+            for(size_t colIdx = 0; colIdx < totalSatCount; ++colIdx){
+                if(constellationShortestPath[rowIdx][colIdx] == 0){
+                    if(rowIdx != colIdx){
+                        constellationShortestPath[rowIdx][colIdx] = INT_MAX;
+                    }
+                }
+            }
+        }
+        //Floyd Warshall Algorithm
+        for (size_t k = 0; k < totalSatCount; k++) {
+            // Pick all vertices as source one by one
+            for (size_t i = 0; i < totalSatCount; i++) {
+                // Pick all vertices as destination for the
+                // above picked source
+                for (size_t j = 0; j < totalSatCount; j++) {
+                    // If vertex k is on the shortest path from
+                    // i to j, then update the value of
+                    // dist[i][j]
+                    if ((constellationShortestPath[k][j] != INT_MAX && constellationShortestPath[i][k] != INT_MAX) && constellationShortestPath[i][j] > (constellationShortestPath[i][k] + constellationShortestPath[k][j]))
+                        constellationShortestPath[i][j] = constellationShortestPath[i][k] + constellationShortestPath[k][j];
+                }
+            }
+        }
+        return constellationShortestPath;
+    }
+
+    //回傳某個特定時刻，行星群的shortest path狀態(totalSatCount*totalSatCount的對稱二維vetcor，內容意義為衛星最少要經過多少距離才會抵達另一個衛星)，同時記錄中間點(shortest path經過的點)，以用來計算shortest path
+    std::vector<std::vector<int>> getConstellationShortestPathRecordMedium(size_t satCountPerOrbit, size_t totalSatCount, int time, int PAT_time, const AER &acceptableAER_diff, std::map<int, satellite> &satellites, std::vector<std::vector<int>> &medium){
+        std::vector<std::vector<int>> constellationShortestPath = getConstellationState(satCountPerOrbit, totalSatCount, time, PAT_time, acceptableAER_diff, satellites);
+        for(size_t rowIdx = 0; rowIdx < totalSatCount; ++rowIdx){
+            for(size_t colIdx = 0; colIdx < totalSatCount; ++colIdx){
+                if(constellationShortestPath[rowIdx][colIdx] == 0){
+                    if(rowIdx != colIdx){
+                        constellationShortestPath[rowIdx][colIdx] = INT_MAX;
+                    }
+                }
+            }
+        }
+        //Floyd Warshall Algorithm
+        for (size_t k = 0; k < totalSatCount; k++) {
+            // Pick all vertices as source one by one
+            for (size_t i = 0; i < totalSatCount; i++) {
+                // Pick all vertices as destination for the
+                // above picked source
+                for (size_t j = 0; j < totalSatCount; j++) {
+                    // If vertex k is on the shortest path from
+                    // i to j, then update the value of
+                    // dist[i][j]
+                    if ((constellationShortestPath[k][j] != INT_MAX && constellationShortestPath[i][k] != INT_MAX) && constellationShortestPath[i][j] > (constellationShortestPath[i][k] + constellationShortestPath[k][j])){
+                        constellationShortestPath[i][j] = constellationShortestPath[i][k] + constellationShortestPath[k][j];
+                        medium[i][j] = k;
+                    }
+                }
+            }
+        }
+        return constellationShortestPath;
+    }    
+
     std::vector<int> getPath(size_t satCountPerOrbit, size_t sourceSatId, size_t destSatId, const std::vector<std::vector<int>> &medium, std::vector<std::vector<int>> shortestPath){
         // std::cout<<"start getPath function\n";
         std::vector<int> path;
