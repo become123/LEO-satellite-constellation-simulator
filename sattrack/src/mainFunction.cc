@@ -345,7 +345,7 @@ namespace mainFunction
         output<<"\n-----";
         int lineWidth = 5*totalSatCount;
         for(int dash = 0; dash < lineWidth; ++dash) output<<"-";
-        output<<"\n-----";
+        output<<"\n";
         for(size_t i = 0; i < constellationHopCount.size(); ++i){
             output<<std::setw(4)<<satellite::indexToSatId(i, satCountPerOrbit)<<"|";
             for(size_t j = 0; j < constellationHopCount.size(); ++j){
@@ -353,7 +353,7 @@ namespace mainFunction
             }
             output<<"\n";
             for(int dash = 0; dash < lineWidth; ++dash) output<<"-";
-            output<<"\n";
+            output<<"-----\n";
         }
         output.close(); 
     }
