@@ -12,7 +12,8 @@ add_executable(sattrack
     src/getFileData.cc
     src/rectifyAzimuth.cc
     src/satellite.cc
-    src/mainFunction.cc)
+    src/mainFunction.cc
+    src/groundStation.cc)
 
 target_include_directories(sattrack PUBLIC include)
 
