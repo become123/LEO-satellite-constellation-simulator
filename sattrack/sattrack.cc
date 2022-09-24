@@ -24,6 +24,7 @@
 #include "satellite.h"
 #include "AER.h"
 #include "mainFunction.h"
+#include "groundStation.h"
 
 #include <iostream>
 #include <iomanip>
@@ -119,7 +120,10 @@ int main()
             break;                  
         case str2int("printConstellationDistanceAndOutputCertainPath"):
             mainFunction::printConstellationDistanceAndOutputCertainPath(satCountPerOrbit, totalSatCount, satellites,parameterTable);
-            break;                
+            break;
+        case str2int("printStationAllSatConnectionTime"):
+            mainFunction::printStationAllSatConnectionTime(satellites, parameterTable);
+            break;                 
         default:
             std::cout<<"running test!"<<"\n";
             /*-------------test-------------*/

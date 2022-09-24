@@ -45,10 +45,13 @@
 14. printConstellationDistanceAndOutputCertainPath --> 印出某個特定時刻，行星群的shortest path狀態，並且在terminal中印出由observerId的衛星到otherId衛星的路徑
     需設定parameter: acceptableAzimuthDif、acceptableElevationDif、acceptableRange、PAT_time、time、ISLrightAngle、ISLleftAngle(目前是當成前後一定可以連線)
 
+15. printStationAllSatConnectionTime --> 印出根據parameter.txt設置位置的地面站，與星群中每一個衛星一天中有那些時間是可以連線的
+    需設定parameter: stationLongitude、stationLongitude、stationAltitude、groundStationAcceptableElevation、groundStationAcceptableDistance
+
 **********************************************************************************************
 
 >>(TLE_inputFileName): (TLE_7P_16Sats.txt) <--填入記錄星群TLE的fileName
->>(execute_function): (test) <-- 填入要執行的function名稱
+>>(execute_function): (printStationAllSatConnectionTime) <-- 填入要執行的function名稱
 
 >>(observerId): (101) <-- 填入觀察者的衛星編號
 >>(otherId): (215) <-- 填入被觀察者的衛星編號
@@ -65,6 +68,9 @@
 >>(time):(40)second <-- 欲計算的特定時間點
 >>(PAT_time):(30)second <--建立連線所需花的時間
 
+>>(stationLatitude):(24.9713)
+>>(stationLongitude):(121.192)
+>>(stationAltitude):(0.192742)
 >>(groundStationAcceptableElevation):(30)degree
 >>(groundStationAcceptableDistance):(1500)km
 

@@ -62,6 +62,8 @@ LEO satellite simulator
         - 需設定parameter: acceptableAzimuthDif、acceptableElevationDif、acceptableRange、PAT_time、time、ISLrightAngle、ISLleftAngle(目前是當成前後一定可以連線)
     14. **printConstellationDistanceAndOutputCertainPath**: 印出某個特定時刻，行星群的shortest path狀態，並且在terminal中印出由observerId的衛星到otherId衛星的路徑
         - 需設定parameter: acceptableAzimuthDif、acceptableElevationDif、acceptableRange、PAT_time、time、ISLrightAngle、ISLleftAngle(目前是當成前後一定可以連線)
+    15. **printStationAllSatConnectionTime**:印出根據parameter.txt設置位置的地面站，與星群中每一個衛星一天中有那些時間是可以連線的
+        - 需設定parameter: stationLongitude、stationLongitude、stationAltitude、groundStationAcceptableElevation、groundStationAcceptableDistance        
 - 進入到sgp4/sattrack中執行sattrack
     
     ```bash

@@ -6,6 +6,7 @@
 #include "satellite.h"
 #include "AER.h"
 #include "mainFunction.h"
+#include "groundStation.h"
 
 #include <iostream>
 #include <iomanip>
@@ -464,6 +465,32 @@ namespace mainFunction
         std::cout<<"\n---------------------------------------------\n";
         output.close();        
     }    
+
+    //印出根據parameter.txt設置位置的地面站，與星群中每一個衛星一天中有那些時間是可以連線的
+    void printStationAllSatConnectionTime(std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){
+        std::ofstream output("./output.txt");
+
+        groundStation::groundStation station(std::stod(parameterTable.at("stationLatitude"))
+                                            ,std::stod(parameterTable.at("stationLongitude"))
+                                            ,std::stod(parameterTable.at("stationAltitude")));
+        int groundStationAcceptableElevation = std::stoi(parameterTable.at("groundStationAcceptableElevation"));
+        int groundStationAcceptableDistance = std::stoi(parameterTable.at("groundStationAcceptableDistance"));
+        for(auto &satPair: satellites){
+            std::vector<std::pair<size_t, bool>> stateChangeInfoOfDay = station.getStateChangeInfoOfDay(satPair.second, groundStationAcceptableElevation, groundStationAcceptableDistance);
+            output<<"sat"<<satPair.first<<" connecting time: ";
+            for(size_t i = 0; i < stateChangeInfoOfDay.size(); ++i){
+                if(stateChangeInfoOfDay[i].second){
+                    output<<std::setw(5)<<stateChangeInfoOfDay[i].first<<"~";
+                }
+                else{
+                    output<<std::setw(5)<<stateChangeInfoOfDay[i].first<<", ";
+                }
+            }  
+            output<<"\n";              
+        }
+
+        output.close();
+    }
 
 }
 
