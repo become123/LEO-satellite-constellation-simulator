@@ -251,6 +251,19 @@ namespace mainFunction
     //印出所有衛星(相鄰的會排在一起)，一天86400秒的ISL設置state(ex: 0-0-0-0X1-1-1-1X0-0-0)
     void adjustableISLdevice_printSatellitesDeviceStateOfDay(std::map<int, satellite::satellite> &satellites, std::map<std::set<int>, satellite::ISL> &ISLtable, std::map<std::string, std::string> &parameterTable){
         std::ofstream output("./output.txt");
+        auto printISLdeviceState = [](std::map<int, satellite::satellite> &LambdaSatellites, int &LambdaSatId, size_t &LambdaT, std::ofstream &LambdaOutput) { 
+            LambdaOutput<<LambdaSatellites.at(LambdaSatId).getCertainTimeISLdeviceState(LambdaT);           
+        };
+                
+        auto printRightLinkStatus = [](std::map<int, satellite::satellite> &LambdaSatellites, int &LambdaSatId, size_t &LambdaT, std::ofstream &LambdaOutput) { 
+            if(LambdaSatellites.at(LambdaSatellites.at(LambdaSatId).getRightSatId()).getRightISL().getSecondState(LambdaT)){
+                LambdaOutput<<"-";
+            } 
+            else{
+                LambdaOutput<<"X";  
+            }        
+        };
+
 
 
         double acceptableAzimuthDif = std::stod(parameterTable.at("acceptableAzimuthDif"));
@@ -261,50 +274,42 @@ namespace mainFunction
         if(parameterTable.at("TLE_inputFileName") == "TLE_7P_16Sats.txt"){
             for(size_t t = 0; t < 86400; ++t){
                 int satId = 101;
-                output<<satellites.at(satId).getCertainTimeISLdeviceState(t);
-                if(satellites.at(satellites.at(satId).getRightSatId()).getRightISL().getSecondState(t)) output<<"-";
-                else    output<<"X";
+                printISLdeviceState(satellites, satId, t, output);
+                printRightLinkStatus(satellites, satId, t, output);
                 satId = satellites.at(satId).getRightSatId();
                 while(satId != 101){
-                    output<<satellites.at(satId).getCertainTimeISLdeviceState(t);
-                    if(satellites.at(satellites.at(satId).getRightSatId()).getRightISL().getSecondState(t)) output<<"-";
-                    else    output<<"X";
+                    printISLdeviceState(satellites, satId, t, output);
+                    printRightLinkStatus(satellites, satId, t, output);
                     satId = satellites.at(satId).getRightSatId();
                 }
                 output<<"  ";
                 satId  = 102;
-                output<<satellites.at(satId).getCertainTimeISLdeviceState(t);
-                if(satellites.at(satellites.at(satId).getRightSatId()).getRightISL().getSecondState(t)) output<<"-";
-                else    output<<"X";            
+                printISLdeviceState(satellites, satId, t, output);
+                printRightLinkStatus(satellites, satId, t, output);           
                 satId = satellites.at(satId).getRightSatId();
                 while(satId != 102){
-                    output<<satellites.at(satId).getCertainTimeISLdeviceState(t);
-                    if(satellites.at(satellites.at(satId).getRightSatId()).getRightISL().getSecondState(t)) output<<"-";
-                    else    output<<"X";                
+                    printISLdeviceState(satellites, satId, t, output);
+                    printRightLinkStatus(satellites, satId, t, output);                
                     satId = satellites.at(satId).getRightSatId();
                 }
                 output<<"  ";
                 satId  = 103;
-                output<<satellites.at(satId).getCertainTimeISLdeviceState(t);
-                if(satellites.at(satellites.at(satId).getRightSatId()).getRightISL().getSecondState(t)) output<<"-";
-                else    output<<"X";            
+                printISLdeviceState(satellites, satId, t, output);
+                printRightLinkStatus(satellites, satId, t, output);            
                 satId = satellites.at(satId).getRightSatId();
                 while(satId != 103){
-                    output<<satellites.at(satId).getCertainTimeISLdeviceState(t);
-                    if(satellites.at(satellites.at(satId).getRightSatId()).getRightISL().getSecondState(t)) output<<"-";
-                    else    output<<"X";                
+                    printISLdeviceState(satellites, satId, t, output);
+                    printRightLinkStatus(satellites, satId, t, output);                
                     satId = satellites.at(satId).getRightSatId();
                 }
                 output<<"  ";
                 satId  = 104;
-                if(satellites.at(satellites.at(satId).getRightSatId()).getRightISL().getSecondState(t)) output<<"-";
-                else    output<<"X";            
-                output<<satellites.at(satId).getCertainTimeISLdeviceState(t);
+                printRightLinkStatus(satellites, satId, t, output);            
+                printISLdeviceState(satellites, satId, t, output);
                 satId = satellites.at(satId).getRightSatId();
                 while(satId != 104){
-                    output<<satellites.at(satId).getCertainTimeISLdeviceState(t);
-                    if(satellites.at(satellites.at(satId).getRightSatId()).getRightISL().getSecondState(t)) output<<"-";
-                    else    output<<"X";                
+                    printISLdeviceState(satellites, satId, t, output);
+                    printRightLinkStatus(satellites, satId, t, output);                
                     satId = satellites.at(satId).getRightSatId();
                 }                                  
                 output<<"\n";
@@ -313,14 +318,12 @@ namespace mainFunction
         else if(parameterTable.at("TLE_inputFileName") == "TLE_6P_22Sats.txt"){
             for(size_t t = 0; t < 86400; ++t){
                 int satId = 101;
-                output<<satellites.at(satId).getCertainTimeISLdeviceState(t);
-                if(satellites.at(satellites.at(satId).getRightSatId()).getRightISL().getSecondState(t)) output<<"-";
-                else    output<<"X";                
+                printISLdeviceState(satellites, satId, t, output);
+                printRightLinkStatus(satellites, satId, t, output);                
                 satId = satellites.at(satId).getRightSatId();
                 while(satId != 101){
-                    output<<satellites.at(satId).getCertainTimeISLdeviceState(t);
-                    if(satellites.at(satellites.at(satId).getRightSatId()).getRightISL().getSecondState(t)) output<<"-";
-                    else    output<<"X";                    
+                    printISLdeviceState(satellites, satId, t, output);
+                    printRightLinkStatus(satellites, satId, t, output);                   
                     satId = satellites.at(satId).getRightSatId();
                 }
                 output<<"\n";
