@@ -304,8 +304,8 @@ namespace mainFunction
                 }
                 output<<"  ";
                 satId  = 104;
-                printRightLinkStatus(satellites, satId, t, output);            
                 printISLdeviceState(satellites, satId, t, output);
+                printRightLinkStatus(satellites, satId, t, output);            
                 satId = satellites.at(satId).getRightSatId();
                 while(satId != 104){
                     printISLdeviceState(satellites, satId, t, output);
