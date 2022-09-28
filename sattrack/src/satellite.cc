@@ -16,13 +16,18 @@
 
 namespace satellite
 {
-    //檢查對其他衛星的方位角是否符合可連線標準
-    bool judgeAzimuth(double ISLdirAzimuth, double AcceptableAzimuthDif, double otherSatAzimuth){
-        double AngleDif1 = ISLdirAzimuth-otherSatAzimuth;
-        double AngleDif2 = otherSatAzimuth-ISLdirAzimuth;
+    double getAngleDiff(double angle1, double angle2){
+        double AngleDif1 = angle1-angle2;
+        double AngleDif2 = angle2-angle1;
         if(AngleDif1 < 0) AngleDif1+=360;
         if(AngleDif2 < 0) AngleDif2+=360;
-        return std::min(AngleDif1, AngleDif2) < AcceptableAzimuthDif;
+        return std::min(AngleDif1, AngleDif2);
+    }
+
+
+    //檢查對其他衛星的方位角是否符合可連線標準
+    bool judgeAzimuth(double ISLdirAzimuth, double AcceptableAzimuthDif, double otherSatAzimuth){
+        return getAngleDiff(ISLdirAzimuth, otherSatAzimuth) < AcceptableAzimuthDif;
     }
 
     //檢查對其他衛星的仰角是否符合可連線標準

@@ -16,6 +16,7 @@ namespace satellite
 {
     class satellite;
     class ISL;
+    double getAngleDiff(double angle1, double angle2);
     bool judgeAzimuth(double ISLdirAzimuth, double acceptableAzimuthDif, double otherSatAzimuth);
     bool judgeElevation(double acceptableElevationDif, double otherSatElevation);
     bool judgeRange(double acceptableRange, double otherSatRange);
