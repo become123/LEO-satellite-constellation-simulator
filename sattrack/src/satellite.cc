@@ -274,9 +274,17 @@ namespace satellite
         }          
     }
 
+    //根據方位角將每個衛星都設置好初始state
+    void initConstellation(std::map<int, satellite> &satellites, int ISLrightAngle, int ISLleftAngle){
+        //將每個衛星都設置好初始state
+        for(auto &satPair: satellites){
+            satPair.second.setState(0, ISLrightAngle, ISLleftAngle);
+        }        
+    }
+
     //計算出所有ISL的stateOfDay(且左側右側ISL可以連P+1或P-1軌道(沒有固定)，尚未考慮PAT)
-    void adjustableISLdeviceSetupAllISLstateOfDay(int PATtime, const AER &acceptableAER_diff, std::map<int, satellite> &satellites, std::map<std::set<int>, ISL> &ISLtable){
-        // satellite sat = satellites.at(705);
+    void adjustableISLdeviceSetupAllISLstateOfDay(int PATtime, int ISLrightAngle, int ISLleftAngle, const AER &acceptableAER_diff, std::map<int, satellite> &satellites, std::map<std::set<int>, ISL> &ISLtable){
+        initConstellation(satellites, ISLrightAngle, ISLleftAngle);
         for(size_t time = 0; time < 86400; ++time){
             for(auto &sat: satellites){
                 sat.second.getRightISL().setSecondState(time, sat.second.adjustableISLdeviceJudgeRight(time, acceptableAER_diff));
@@ -775,6 +783,31 @@ namespace satellite
             }
         }
         return this->judgeLeftISL(time, acceptableAER_diff);
+    }
+
+    //根據方位角設置衛星的ISL setting state
+    void satellite::setState(size_t _t, const int &_ISLrightAngle, const int &_ISLleftAngle){
+        double lookRightA = this->getAER(_t, getRightSat()).A;
+        double lookLeftA = this->getAER(_t, this->getLeftSat()).A;
+        // std::cout<<leftLookRightA<<","<<rightLookLeftA;
+        double leftState0AngleDiff = getAngleDiff(lookLeftA, _ISLleftAngle);
+        double leftState1AngleDiff = getAngleDiff(lookLeftA, _ISLrightAngle);
+        double rightState0AngleDiff = getAngleDiff(lookRightA, _ISLrightAngle);
+        double rightState1AngleDiff = getAngleDiff(lookRightA, _ISLleftAngle); 
+        //將連線左方與連線右方衛星的裝置設置成方位角差距比較小的那一個              
+        int leftState = leftState0AngleDiff < leftState1AngleDiff ? 0 : 1;
+        int rightState = rightState0AngleDiff < rightState1AngleDiff ? 0 : 1;
+        if(leftState == rightState){//若左方右方使用不同的ISL裝置->沒問題
+            if(this->getCurrentISLdeviceState() != leftState)
+                this->changeState();
+        }
+        else{ //leftState != rightState，左方右方使用到同一個ISL裝置，則方位角差較小的那一側優先使用
+            double leftStateAngleDiff = std::min(leftState0AngleDiff, leftState1AngleDiff);
+            double rightStateAngleDiff = std::min(rightState0AngleDiff, rightState1AngleDiff);
+            int curSatState = leftStateAngleDiff < rightStateAngleDiff ? leftState : rightState;
+            if(this->getCurrentISLdeviceState() != curSatState)
+                this->changeState();                   
+        }
     }
 
     //回傳特定時刻可否建立右方的ISL(要彼此可以連線到彼此才可以建立)，且左側右側ISL可以連P+1或P-1軌道(沒有固定)，尚未考慮PAT

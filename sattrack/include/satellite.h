@@ -46,7 +46,9 @@ namespace satellite
     std::map<std::set<int>, ISL> getISLtable(std::map<int, satellite> &satellites);
     //計算出所有ISL的stateOfDay
     void setupAllISLstateOfDay(int PATtime, const AER &acceptableAER_diff, std::map<int, satellite> &satellites);
-    void adjustableISLdeviceSetupAllISLstateOfDay(int PATtime, const AER &acceptableAER_diff, std::map<int, satellite> &satellites, std::map<std::set<int>, ISL> &ISLtable);
+    //根據方位角將每個衛星都設置好初始state
+    void initConstellation(std::map<int, satellite> &satellites, int ISLrightAngle, int ISLleftAngle);
+    void adjustableISLdeviceSetupAllISLstateOfDay(int PATtime, int ISLrightAngle, int ISLleftAngle, const AER &acceptableAER_diff, std::map<int, satellite> &satellites, std::map<std::set<int>, ISL> &ISLtable);
     //reset所有ISL的stateOfDay(標記成尚未計算過)
     void resetAllISL(std::map<std::set<int>, ISL> &ISLtable);
     void resetAllSat(std::map<int, satellite> &satellites);
@@ -154,6 +156,9 @@ namespace satellite
 
         //回傳特定時刻可否建立左方的ISL(要彼此可以連線到彼此才可以建立)，且有考慮PAT，可連線則回傳距離，不可連線則回傳0
         int judgeLeftISLwithPAT(int time, int PAT_time, const AER &acceptableAER_diff);
+
+        //根據方位角設置衛星的ISL setting state
+        void setState(size_t _t, const int &_ISLrightAngle, const int &_ISLleftAngle);
 
         //回傳特定時刻可否建立右方的ISL(要彼此可以連線到彼此才可以建立)，且左側右側ISL可以連P+1或P-1軌道(沒有固定)，尚未考慮PAT
         bool adjustableISLdeviceJudgeRight(int time, const AER &acceptableAER_diff);

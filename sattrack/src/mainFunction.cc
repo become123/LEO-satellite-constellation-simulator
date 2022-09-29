@@ -126,7 +126,7 @@ namespace mainFunction
         output << std::setprecision(5) << std::fixed; 
         double acceptableElevationDif = std::stod(parameterTable.at("acceptableElevationDif"));
         double acceptableRange = std::stod(parameterTable.at("acceptableRange"));
-        int PATtime = std::stoi(parameterTable.at("PAT_time"));
+        // int PATtime = std::stoi(parameterTable.at("PAT_time"));
         for(int acceptableAzimuthDif = 80; acceptableAzimuthDif <= 175; acceptableAzimuthDif+=5){
             satellite::resetAllISL(ISLtable);
             satellite::resetAllSat(satellites);
@@ -134,7 +134,7 @@ namespace mainFunction
             double rightAvailableTimeOfAllSat = 0;
             double leftAvailableTimeOfAllSat = 0;
             /*----------scenario2----------*/          
-            // satellite::adjustableISLdeviceSetupAllISLstateOfDay(-1, acceptableAER_diff, satellites, ISLtable);
+            satellite::adjustableISLdeviceSetupAllISLstateOfDay(-1, std::stoi(parameterTable.at("ISLrightAngle")), std::stoi(parameterTable.at("ISLleftAngle")), acceptableAER_diff, satellites, ISLtable);   
             /*-----------------------------*/                              
             for(auto &sat: satellites){
                 /*----------不考慮PAT----------*/
@@ -148,16 +148,16 @@ namespace mainFunction
                 // leftAvailableTimeOfAllSat += leftAvailableTime;
 
                 /*----------考慮PAT----------*/
-                std::bitset<86400> rightISLstateOfDay = sat.second.getRightISLstateOfDay(PATtime, acceptableAER_diff);  
-                std::bitset<86400> leftISLstateOfDay = sat.second.getLeftISLstateOfDay(PATtime, acceptableAER_diff);
-                rightAvailableTimeOfAllSat += rightISLstateOfDay.count(); 
-                leftAvailableTimeOfAllSat += leftISLstateOfDay.count();  
+                // std::bitset<86400> rightISLstateOfDay = sat.second.getRightISLstateOfDay(PATtime, acceptableAER_diff);  
+                // std::bitset<86400> leftISLstateOfDay = sat.second.getLeftISLstateOfDay(PATtime, acceptableAER_diff);
+                // rightAvailableTimeOfAllSat += rightISLstateOfDay.count(); 
+                // leftAvailableTimeOfAllSat += leftISLstateOfDay.count();  
 
                 /*----------scenario2--記得註解掉上方scenario2的adjustableISLdeviceSetupAllISLstateOfDay----------*/ 
-                // std::bitset<86400> rightISLstateOfDay = sat.second.getRightISL().getStateOfDay();  
-                // std::bitset<86400> leftISLstateOfDay = sat.second.getLeftISL().getStateOfDay(); 
-                // rightAvailableTimeOfAllSat += rightISLstateOfDay.count();
-                // leftAvailableTimeOfAllSat += leftISLstateOfDay.count();                     
+                std::bitset<86400> rightISLstateOfDay = sat.second.getRightISL().getStateOfDay();  
+                std::bitset<86400> leftISLstateOfDay = sat.second.getLeftISL().getStateOfDay(); 
+                rightAvailableTimeOfAllSat += rightISLstateOfDay.count();
+                leftAvailableTimeOfAllSat += leftISLstateOfDay.count();                     
             }   
             double rightAvgAvailableTime = rightAvailableTimeOfAllSat / totalSatCount;
             double leftAvgAvailableTime = leftAvailableTimeOfAllSat / totalSatCount;
@@ -270,7 +270,7 @@ namespace mainFunction
         double acceptableElevationDif = std::stod(parameterTable.at("acceptableElevationDif"));
         double acceptableRange = std::stod(parameterTable.at("acceptableRange"));
         AER acceptableAER_diff("acceptableAER_diff", acceptableAzimuthDif, acceptableElevationDif, acceptableRange);
-        satellite::adjustableISLdeviceSetupAllISLstateOfDay(-1, acceptableAER_diff, satellites, ISLtable);   
+        satellite::adjustableISLdeviceSetupAllISLstateOfDay(-1, std::stoi(parameterTable.at("ISLrightAngle")), std::stoi(parameterTable.at("ISLleftAngle")), acceptableAER_diff, satellites, ISLtable);   
         if(parameterTable.at("TLE_inputFileName") == "TLE_7P_16Sats.txt"){
             for(size_t t = 0; t < 86400; ++t){
                 int satId = 101;
