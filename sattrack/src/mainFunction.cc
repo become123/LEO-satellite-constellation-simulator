@@ -256,7 +256,7 @@ namespace mainFunction
         };
                 
         auto printRightLinkStatus = [](std::map<int, satellite::satellite> &LambdaSatellites, int &LambdaSatId, size_t &LambdaT, std::ofstream &LambdaOutput) { 
-            if(LambdaSatellites.at(LambdaSatellites.at(LambdaSatId).getRightSatId()).getRightISL().getSecondState(LambdaT)){
+            if(LambdaSatellites.at(LambdaSatId).getRightISL().getSecondState(LambdaT)){
                 LambdaOutput<<"-";
             } 
             else{
