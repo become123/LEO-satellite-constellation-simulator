@@ -134,7 +134,7 @@ namespace mainFunction
             double rightAvailableTimeOfAllSat = 0;
             double leftAvailableTimeOfAllSat = 0;
             /*----------scenario2----------*/          
-            satellite::adjustableISLdeviceSetupAllISLstateOfDay(-1, std::stoi(parameterTable.at("ISLrightAngle")), std::stoi(parameterTable.at("ISLleftAngle")), acceptableAER_diff, satellites, ISLtable);   
+            satellite::adjustableISLdeviceSetupAllISLstateOfDay2(std::stoi(parameterTable.at("ISLrightAngle")), std::stoi(parameterTable.at("ISLleftAngle")), acceptableAER_diff, satellites, ISLtable);   
             /*-----------------------------*/                              
             for(auto &sat: satellites){
                 /*----------不考慮PAT----------*/
@@ -270,7 +270,7 @@ namespace mainFunction
         double acceptableElevationDif = std::stod(parameterTable.at("acceptableElevationDif"));
         double acceptableRange = std::stod(parameterTable.at("acceptableRange"));
         AER acceptableAER_diff("acceptableAER_diff", acceptableAzimuthDif, acceptableElevationDif, acceptableRange);
-        satellite::adjustableISLdeviceSetupAllISLstateOfDay(-1, std::stoi(parameterTable.at("ISLrightAngle")), std::stoi(parameterTable.at("ISLleftAngle")), acceptableAER_diff, satellites, ISLtable);   
+        satellite::adjustableISLdeviceSetupAllISLstateOfDay2(std::stoi(parameterTable.at("ISLrightAngle")), std::stoi(parameterTable.at("ISLleftAngle")), acceptableAER_diff, satellites, ISLtable);   
         if(parameterTable.at("TLE_inputFileName") == "TLE_7P_16Sats.txt"){
             for(size_t t = 0; t < 86400; ++t){
                 int satId = 101;

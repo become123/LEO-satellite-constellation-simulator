@@ -283,7 +283,7 @@ namespace satellite
     }
 
     //計算出所有ISL的stateOfDay(且左側右側ISL可以連P+1或P-1軌道(沒有固定)，尚未考慮PAT)
-    void adjustableISLdeviceSetupAllISLstateOfDay(int PATtime, int ISLrightAngle, int ISLleftAngle, const AER &acceptableAER_diff, std::map<int, satellite> &satellites, std::map<std::set<int>, ISL> &ISLtable){
+    void adjustableISLdeviceSetupAllISLstateOfDay(int ISLrightAngle, int ISLleftAngle, const AER &acceptableAER_diff, std::map<int, satellite> &satellites, std::map<std::set<int>, ISL> &ISLtable){
         initConstellation(satellites, ISLrightAngle, ISLleftAngle);
         for(size_t time = 0; time < 86400; ++time){
             for(auto &sat: satellites){
@@ -296,6 +296,36 @@ namespace satellite
         for(auto &pair: ISLtable){
             pair.second.setStateOfDay();
         }                
+    }
+
+    void adjustableISLdeviceSetupAllISLstateOfDay2(int ISLrightAngle, int ISLleftAngle, const AER &acceptableAER_diff, std::map<int, satellite> &satellites, std::map<std::set<int>, ISL> &ISLtable){
+        initConstellation(satellites, ISLrightAngle, ISLleftAngle);
+        for(size_t time = 0; time < 86400; ++time){
+            judgeBreakingAndResetState(time, ISLrightAngle, ISLleftAngle, acceptableAER_diff, satellites);
+            for(auto &sat: satellites){
+                sat.second.getRightISL().setSecondState(time, (bool)sat.second.judgeRightISL(time, acceptableAER_diff));
+                sat.second.setCertainTimeISLdeviceState(time, sat.second.getCurrentISLdeviceState());
+            }           
+        }
+        for(auto &pair: ISLtable){
+            pair.second.setStateOfDay();
+        }         
+    }
+
+    void judgeBreakingAndResetState(size_t time, int ISLrightAngle, int ISLleftAngle, const AER &acceptableAER_diff, std::map<int, satellite> &satellites){
+        std::map<size_t, bool> table;
+        for(auto &satPair: satellites){
+            if(satPair.second.judgeRightISL(time, acceptableAER_diff) == 0){
+                if(table[(size_t)satPair.second.getId()]){//若已為true，代表另一側也沒辦法連線
+                    satPair.second.setState(time, ISLrightAngle, ISLleftAngle);
+                }
+                if(table[(size_t)satPair.second.getRightSatId()]){//若已為true，代表另一側也沒辦法連線
+                    satPair.second.getRightSat().setState(time, ISLrightAngle, ISLleftAngle);
+                }
+                table[(size_t)satPair.second.getRightSatId()] = true;
+                table[(size_t)satPair.second.getId()] = true;
+            }
+        }
     }
 
     //reset所有ISL的stateOfDay(標記成尚未計算過)
@@ -346,6 +376,7 @@ namespace satellite
         calculated = true;
     }
 
+    //標記成已經計算過
     void ISL::setStateOfDay(){
         calculated = true;
     }

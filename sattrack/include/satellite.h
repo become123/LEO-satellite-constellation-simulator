@@ -12,6 +12,7 @@
 #include "AER.h"
 
 
+
 namespace satellite
 {
     class satellite;
@@ -48,7 +49,12 @@ namespace satellite
     void setupAllISLstateOfDay(int PATtime, const AER &acceptableAER_diff, std::map<int, satellite> &satellites);
     //根據方位角將每個衛星都設置好初始state
     void initConstellation(std::map<int, satellite> &satellites, int ISLrightAngle, int ISLleftAngle);
-    void adjustableISLdeviceSetupAllISLstateOfDay(int PATtime, int ISLrightAngle, int ISLleftAngle, const AER &acceptableAER_diff, std::map<int, satellite> &satellites, std::map<std::set<int>, ISL> &ISLtable);
+    void adjustableISLdeviceSetupAllISLstateOfDay(int ISLrightAngle, int ISLleftAngle, const AER &acceptableAER_diff, std::map<int, satellite> &satellites, std::map<std::set<int>, ISL> &ISLtable);
+    
+    void adjustableISLdeviceSetupAllISLstateOfDay2(int ISLrightAngle, int ISLleftAngle, const AER &acceptableAER_diff, std::map<int, satellite> &satellites, std::map<std::set<int>, ISL> &ISLtable);
+
+    void judgeBreakingAndResetState(size_t time, int ISLrightAngle, int ISLleftAngle, const AER &acceptableAER_diff, std::map<int, satellite> &satellites);
+
     //reset所有ISL的stateOfDay(標記成尚未計算過)
     void resetAllISL(std::map<std::set<int>, ISL> &ISLtable);
     void resetAllSat(std::map<int, satellite> &satellites);
@@ -63,6 +69,7 @@ namespace satellite
         void setSecondState(size_t time, bool state);
         bool getSecondState(size_t time);
         void setStateOfDay(std::bitset<86400> _stateOfDay);
+        //標記成已經計算過
         void setStateOfDay();
         void resetStateOfDay(); //reset標記程尚未計算過stateOfDay
         std::vector<std::pair<int, bool>> getStateChangeInfo();//回傳一個vector，裡面是紀錄每個connection state改變的時間點，及他是Link Breaking(false)還是connecting(true)
@@ -176,6 +183,11 @@ namespace satellite
         ISL *rightISLptr = nullptr , *leftISLptr = nullptr ;
         int ISLdeviceState = 0;
         std::bitset<86400> ISLsettingStateOfDay; //一天中86400秒的ISL裝置設定狀態
+
+
+        
+
+
     };
 
 
