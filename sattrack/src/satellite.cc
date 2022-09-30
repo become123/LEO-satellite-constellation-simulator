@@ -817,14 +817,14 @@ namespace satellite
     }
 
     //根據方位角設置衛星的ISL setting state
-    void satellite::setState(size_t _t, const int &_ISLrightAngle, const int &_ISLleftAngle){
-        double lookRightA = this->getAER(_t, getRightSat()).A;
-        double lookLeftA = this->getAER(_t, this->getLeftSat()).A;
+    void satellite::setState(size_t t, const int &ISLrightAngle, const int &ISLleftAngle){
+        double lookRightA = this->getAER(t, getRightSat()).A;
+        double lookLeftA = this->getAER(t, this->getLeftSat()).A;
         // std::cout<<leftLookRightA<<","<<rightLookLeftA;
-        double leftState0AngleDiff = getAngleDiff(lookLeftA, _ISLleftAngle);
-        double leftState1AngleDiff = getAngleDiff(lookLeftA, _ISLrightAngle);
-        double rightState0AngleDiff = getAngleDiff(lookRightA, _ISLrightAngle);
-        double rightState1AngleDiff = getAngleDiff(lookRightA, _ISLleftAngle); 
+        double leftState0AngleDiff = getAngleDiff(lookLeftA, ISLleftAngle);
+        double leftState1AngleDiff = getAngleDiff(lookLeftA, ISLrightAngle);
+        double rightState0AngleDiff = getAngleDiff(lookRightA, ISLrightAngle);
+        double rightState1AngleDiff = getAngleDiff(lookRightA, ISLleftAngle); 
         //將連線左方與連線右方衛星的裝置設置成方位角差距比較小的那一個              
         int leftState = leftState0AngleDiff < leftState1AngleDiff ? 0 : 1;
         int rightState = rightState0AngleDiff < rightState1AngleDiff ? 0 : 1;
