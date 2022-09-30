@@ -821,20 +821,20 @@ namespace satellite
         double lookRightA = this->getAER(t, getRightSat()).A;
         double lookLeftA = this->getAER(t, this->getLeftSat()).A;
         // std::cout<<leftLookRightA<<","<<rightLookLeftA;
-        double leftState0AngleDiff = getAngleDiff(lookLeftA, ISLleftAngle);
-        double leftState1AngleDiff = getAngleDiff(lookLeftA, ISLrightAngle);
-        double rightState0AngleDiff = getAngleDiff(lookRightA, ISLrightAngle);
-        double rightState1AngleDiff = getAngleDiff(lookRightA, ISLleftAngle); 
+        double leftDefaultAngleDiff = getAngleDiff(lookLeftA, ISLleftAngle);
+        double leftSwitchedAngleDiff = getAngleDiff(lookLeftA, ISLrightAngle);
+        double rightDefaultAngleDiff = getAngleDiff(lookRightA, ISLrightAngle);
+        double rightSwitchedAngleDiff = getAngleDiff(lookRightA, ISLleftAngle); 
         //將連線左方與連線右方衛星的裝置設置成方位角差距比較小的那一個              
-        int leftState = leftState0AngleDiff < leftState1AngleDiff ? 0 : 1;
-        int rightState = rightState0AngleDiff < rightState1AngleDiff ? 0 : 1;
+        int leftState = leftDefaultAngleDiff < leftSwitchedAngleDiff ? 0 : 1;
+        int rightState = rightDefaultAngleDiff < rightSwitchedAngleDiff ? 0 : 1;
         if(leftState == rightState){//若左方右方使用不同的ISL裝置->沒問題
             if(this->getCurrentISLdeviceState() != leftState)
                 this->changeState();
         }
         else{ //leftState != rightState，左方右方使用到同一個ISL裝置，則方位角差較小的那一側優先使用
-            double leftStateAngleDiff = std::min(leftState0AngleDiff, leftState1AngleDiff);
-            double rightStateAngleDiff = std::min(rightState0AngleDiff, rightState1AngleDiff);
+            double leftStateAngleDiff = std::min(leftDefaultAngleDiff, leftSwitchedAngleDiff);
+            double rightStateAngleDiff = std::min(rightDefaultAngleDiff, rightSwitchedAngleDiff);
             int curSatState = leftStateAngleDiff < rightStateAngleDiff ? leftState : rightState;
             if(this->getCurrentISLdeviceState() != curSatState)
                 this->changeState();                   
