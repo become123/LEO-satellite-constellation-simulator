@@ -301,11 +301,7 @@ namespace satellite
     void adjustableISLdeviceSetupAllISLstateOfDay2(int ISLrightAngle, int ISLleftAngle, const AER &acceptableAER_diff, std::map<int, satellite> &satellites, std::map<std::set<int>, ISL> &ISLtable){
         initConstellation(satellites, ISLrightAngle, ISLleftAngle);
         for(size_t time = 0; time < 86400; ++time){
-            judgeBreakingAndResetState(time, ISLrightAngle, ISLleftAngle, acceptableAER_diff, satellites);
-            for(auto &sat: satellites){
-                sat.second.getRightISL().setSecondState(time, (bool)sat.second.judgeRightISL(time, acceptableAER_diff));
-                sat.second.setCertainTimeISLdeviceState(time, sat.second.getCurrentISLdeviceState());
-            }           
+            judgeBreakingAndResetState(time, ISLrightAngle, ISLleftAngle, acceptableAER_diff, satellites);          
         }
         for(auto &pair: ISLtable){
             pair.second.setStateOfDay();
@@ -314,18 +310,40 @@ namespace satellite
 
     void judgeBreakingAndResetState(size_t time, int ISLrightAngle, int ISLleftAngle, const AER &acceptableAER_diff, std::map<int, satellite> &satellites){
         std::map<size_t, bool> table;
+        std::vector<satellite*> modifiedSats;//用來記錄哪些衛星有兩側都斷線
+        //掃過整個星群，若有衛星與P+1和P-1都無法連線，則將他的左右ISL設置device調換
         for(auto &satPair: satellites){
             if(satPair.second.judgeRightISL(time, acceptableAER_diff) == 0){
                 if(table[(size_t)satPair.second.getId()]){//若已為true，代表另一側也沒辦法連線
                     satPair.second.setState(time, ISLrightAngle, ISLleftAngle);
+                    modifiedSats.push_back(&(satPair.second));
                 }
                 if(table[(size_t)satPair.second.getRightSatId()]){//若已為true，代表另一側也沒辦法連線
                     satPair.second.getRightSat().setState(time, ISLrightAngle, ISLleftAngle);
+                    modifiedSats.push_back(&(satPair.second.getRightSat()));
                 }
                 table[(size_t)satPair.second.getRightSatId()] = true;
                 table[(size_t)satPair.second.getId()] = true;
             }
+            else{
+                //記錄下來此秒此link是可以連線的
+                satPair.second.getRightISL().setSecondState(time, true);
+            }
+            //記錄下來此顆衛星在此秒的ISL device state
+            satPair.second.setCertainTimeISLdeviceState(time, satPair.second.getCurrentISLdeviceState());
         }
+        // if(!modifiedSats.empty()){
+        //     std::cout<<"t = "<<time<<", reseted satIds: ";
+        // }   
+        for(auto sat: modifiedSats){//將兩側衛星都斷線後reset state的衛星們，重新判定並記錄此秒的兩側連線狀態，重新記錄此秒的衛星state
+            // std::cout<<sat->getId()<<",";
+            sat->getRightISL().setSecondState(time, (bool)sat->judgeRightISL(time, acceptableAER_diff));
+            sat->getLeftISL().setSecondState(time, (bool)sat->judgeLeftISL(time, acceptableAER_diff));
+            sat->setCertainTimeISLdeviceState(time, sat->getCurrentISLdeviceState());
+        }
+        // if(!modifiedSats.empty()){
+        //     std::cout<<"\n";
+        // }
     }
 
     //reset所有ISL的stateOfDay(標記成尚未計算過)
