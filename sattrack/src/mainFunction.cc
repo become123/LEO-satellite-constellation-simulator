@@ -38,10 +38,10 @@ namespace mainFunction
     }
 
     //印出編號observerId衛星觀察編號otherId衛星一天中的AER數值到sattrack/output.txt
-    void printAERfile(int observerId, int otherId, std::map<int, satellite::satellite> &satellites){
+    void printAERfile(int observerId, int otherId, std::map<int, satellite::satellite> &satellites, std::string OutputFileName){
         satellite::satellite observer = satellites.at(observerId);
         satellite::satellite other = satellites.at(otherId);
-        std::ofstream output("./output.txt");
+        std::ofstream output(OutputFileName);
         output << std::setprecision(8) << std::fixed;
         for (int i = 0; i < 86400; ++i)
         {
@@ -55,7 +55,7 @@ namespace mainFunction
     //印出編號observerId衛星一天中對飛行方向右方衛星的連線狀態(單向)到sattrack/output.txt中
     void printRightConnectabilityFile(int observerId, std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){
         satellite::satellite sat = satellites.at(observerId);
-        std::ofstream output("./output.txt");
+        std::ofstream output("./" + parameterTable.at("outputFileName"));
         double acceptableAzimuthDif = std::stod(parameterTable.at("acceptableAzimuthDif"));
         double acceptableElevationDif = std::stod(parameterTable.at("acceptableElevationDif"));
         double acceptableRange = std::stod(parameterTable.at("acceptableRange"));
@@ -77,7 +77,7 @@ namespace mainFunction
     //印出編號observerId衛星一天中對飛行方向左方衛星的連線狀態(單向)到sattrack/output.txt中
     void printLeftConnectabilityFile(int observerId, std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){
         satellite::satellite sat = satellites.at(observerId);
-        std::ofstream output("./output.txt");
+        std::ofstream output("./" + parameterTable.at("outputFileName"));
         double acceptableAzimuthDif = std::stod(parameterTable.at("acceptableAzimuthDif"));
         double acceptableElevationDif = std::stod(parameterTable.at("acceptableElevationDif"));
         double acceptableRange = std::stod(parameterTable.at("acceptableRange"));
@@ -122,7 +122,7 @@ namespace mainFunction
 
     //印出從方位角誤差80、85、90、...、170、175，所有衛星的左方與右方ISL平均可連線總時間到sattrack/output.txt中
     void compareDifferentAcceptableAzimuthDif(long unsigned int totalSatCount, std::map<int, satellite::satellite> &satellites, std::map<std::set<int>, satellite::ISL> &ISLtable, std::map<std::string, std::string> &parameterTable){
-        std::ofstream output("./output.txt");
+        std::ofstream output("./" + parameterTable.at("outputFileName"));
         output << std::setprecision(5) << std::fixed; 
         double acceptableElevationDif = std::stod(parameterTable.at("acceptableElevationDif"));
         double acceptableRange = std::stod(parameterTable.at("acceptableRange"));
@@ -170,7 +170,7 @@ namespace mainFunction
 
     //印出從方PAT_time從5、10、15、...、到60，所有衛星的左方與右方ISL平均可連線總時間到sattrack/output.txt中
     void compareDifferentPAT_time(long unsigned int totalSatCount, std::map<int, satellite::satellite> &satellites, std::map<std::set<int>, satellite::ISL> &ISLtable, std::map<std::string, std::string> &parameterTable){
-        std::ofstream output("./output.txt");
+        std::ofstream output("./" + parameterTable.at("outputFileName"));
         output << std::setprecision(5) << std::fixed; 
         double acceptableAzimuthDif = std::stod(parameterTable.at("acceptableAzimuthDif"));
         double acceptableElevationDif = std::stod(parameterTable.at("acceptableElevationDif"));
@@ -200,7 +200,7 @@ namespace mainFunction
     void printBreakingConnectingStatus(std::map<int, satellite::satellite> &satellites, std::map<std::set<int>, satellite::ISL> &ISLtable, std::map<std::string, std::string> &parameterTable){
             /*int是時間*/        /*set<int>是ISL的兩顆衛星編號*/   /*bool代表on or off*/
         std::map<int, std::set< std::pair<std::set<int>,  bool>>> breakingConnectingStatus;
-        std::ofstream output("./output.txt");
+        std::ofstream output("./" + parameterTable.at("outputFileName"));
         output << std::setprecision(5) << std::fixed; 
         double acceptableAzimuthDif = std::stod(parameterTable.at("acceptableAzimuthDif"));
         double acceptableElevationDif = std::stod(parameterTable.at("acceptableElevationDif"));
@@ -224,7 +224,7 @@ namespace mainFunction
 
     //印出某個特定時刻，行星群的連線狀態(totalSatCount*totalSatCount)到sattrack/output.txt中
     void printConstellationStateFile(long unsigned int satCountPerOrbit, long unsigned int totalSatCount, std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){
-        std::ofstream output("./output.txt");
+        std::ofstream output("./" + parameterTable.at("outputFileName"));
         double acceptableAzimuthDif = std::stod(parameterTable.at("acceptableAzimuthDif"));
         double acceptableElevationDif = std::stod(parameterTable.at("acceptableElevationDif"));
         double acceptableRange = std::stod(parameterTable.at("acceptableRange"));
@@ -250,7 +250,7 @@ namespace mainFunction
 
     //印出所有衛星(相鄰的會排在一起)，一天86400秒的ISL設置state(ex: 0-0-0-0X1-1-1-1X0-0-0)
     void adjustableISLdevice_printSatellitesDeviceStateOfDay(std::map<int, satellite::satellite> &satellites, std::map<std::set<int>, satellite::ISL> &ISLtable, std::map<std::string, std::string> &parameterTable){
-        std::ofstream output("./output.txt");
+        std::ofstream output("./" + parameterTable.at("outputFileName"));
         auto printISLdeviceState = [](std::map<int, satellite::satellite> &LambdaSatellites, int &LambdaSatId, size_t &LambdaT, std::ofstream &LambdaOutput) { 
             LambdaOutput<<LambdaSatellites.at(LambdaSatId).getCertainTimeISLdeviceState(LambdaT);           
         };
@@ -334,7 +334,7 @@ namespace mainFunction
 
     //印出某個特定時刻，行星群的hop count狀態(totalSatCount*totalSatCount的對稱二維vetcor，內容意義為衛星最少要經過幾個ISL才會抵達另一個衛星)到sattrack/output.txt中
     void printConstellationHopCountFile(long unsigned int satCountPerOrbit, long unsigned int totalSatCount, std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){
-        std::ofstream output("./output.txt");
+        std::ofstream output("./" + parameterTable.at("outputFileName"));
         double acceptableAzimuthDif = std::stod(parameterTable.at("acceptableAzimuthDif"));
         double acceptableElevationDif = std::stod(parameterTable.at("acceptableElevationDif"));
         double acceptableRange = std::stod(parameterTable.at("acceptableRange"));
@@ -364,7 +364,7 @@ namespace mainFunction
 
     //印出某個特定時刻，行星群的hop count狀態(totalSatCount*totalSatCount的對稱二維vetcor，內容意義為衛星最少要經過多少距離才會抵達另一個衛星)到sattrack/output.txt中，並且在terminal中印出由observerId的衛星到otherId衛星的路徑
     void printConstellationHopCountFileAndOutputCertainPath(long unsigned int satCountPerOrbit, long unsigned int totalSatCount, std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){
-        std::ofstream output("./output.txt");
+        std::ofstream output("./" + parameterTable.at("outputFileName"));
         double acceptableAzimuthDif = std::stod(parameterTable.at("acceptableAzimuthDif"));
         double acceptableElevationDif = std::stod(parameterTable.at("acceptableElevationDif"));
         double acceptableRange = std::stod(parameterTable.at("acceptableRange"));
@@ -405,7 +405,7 @@ namespace mainFunction
 
     //印出某個特定時刻，行星群的shortest path狀態(totalSatCount*totalSatCount的對稱二維vetcor，內容意義為衛星最少要經過多少距離才會抵達另一個衛星)到sattrack/output.txt中
     void printConstellationDistanceFile(long unsigned int satCountPerOrbit, long unsigned int totalSatCount, std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){
-        std::ofstream output("./output.txt");
+        std::ofstream output("./" + parameterTable.at("outputFileName"));
         double acceptableAzimuthDif = std::stod(parameterTable.at("acceptableAzimuthDif"));
         double acceptableElevationDif = std::stod(parameterTable.at("acceptableElevationDif"));
         double acceptableRange = std::stod(parameterTable.at("acceptableRange"));
@@ -435,7 +435,7 @@ namespace mainFunction
 
     //印出某個特定時刻，行星群的shortest path狀態，並且在terminal中印出由observerId的衛星到otherId衛星的路徑
     void printConstellationDistanceAndOutputCertainPath(long unsigned int satCountPerOrbit, long unsigned int totalSatCount, std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){
-        std::ofstream output("./output.txt");
+        std::ofstream output("./" + parameterTable.at("outputFileName"));
         double acceptableAzimuthDif = std::stod(parameterTable.at("acceptableAzimuthDif"));
         double acceptableElevationDif = std::stod(parameterTable.at("acceptableElevationDif"));
         double acceptableRange = std::stod(parameterTable.at("acceptableRange"));
@@ -471,7 +471,7 @@ namespace mainFunction
 
     //印出根據parameter.txt設置位置的地面站，與星群中每一個衛星一天中有那些時間是可以連線的
     void printStationAllSatConnectionTime(std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){
-        std::ofstream output("./output.txt");
+        std::ofstream output("./" + parameterTable.at("outputFileName"));
 
         groundStation::groundStation station(std::stod(parameterTable.at("stationLatitude"))
                                             ,std::stod(parameterTable.at("stationLongitude"))

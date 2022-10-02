@@ -28,7 +28,7 @@ namespace mainFunction
     void printAllSatNeighborId(std::map<int, satellite::satellite> &satellites);
 
     //印出編號observerId衛星觀察編號otherId衛星一天中的AER數值到sattrack/output.txt
-    void printAERfile(int observerId, int otherId, std::map<int, satellite::satellite> &satellites);
+    void printAERfile(int observerId, int otherId, std::map<int, satellite::satellite> &satellites, std::string outputFileName);
 
     //印出編號observerId衛星一天中對飛行方向右方衛星的連線狀態(單向)到sattrack/output.txt中
     void printRightConnectabilityFile(int observerId, std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable);
