@@ -861,27 +861,12 @@ namespace satellite
 
     //回傳特定時刻可否建立右方的ISL(要彼此可以連線到彼此才可以建立)，且左側右側ISL可以連P+1或P-1軌道(沒有固定)，尚未考慮PAT
     bool satellite::adjustableISLdeviceJudgeRight(int time, const AER &acceptableAER_diff){
-        if(this->judgeRightISL(time, acceptableAER_diff))
+        if(this->judgeRightISL(time, acceptableAER_diff)){
             return true;         
+        }
         int selfState = this->getCurrentISLdeviceState();
-        int rightSatState = this->getRightSat().getCurrentISLdeviceState();
         bool selfcanConnectLeft = this->judgeLeftISL(time, acceptableAER_diff);
         bool rightSatCanConnectRight = this->getRightSat().judgeRightISL(time, acceptableAER_diff);       
-        //ISLdevice setting state same        
-        if(selfState == rightSatState){
-            if(!selfcanConnectLeft && !rightSatCanConnectRight){ //檢查是否可以拿另外一側的裝置來使用
-                this->changeState();
-                this->getRightSat().changeState();
-                if(this->judgeRightISL(time, acceptableAER_diff))
-                    return true;
-                else{ //change back
-                    this->changeState();
-                    this->getRightSat().changeState();                        
-                }                    
-            }
-            return false;            
-        }
-        //ISLdevice setting state different
         if(!selfcanConnectLeft && !rightSatCanConnectRight){
             selfState == 0 ? this->getRightSat().changeState() : this->changeState();//change to both state0
             if(this->judgeRightISL(time, acceptableAER_diff))
