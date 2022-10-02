@@ -314,6 +314,7 @@ namespace satellite
         //掃過整個星群，若有衛星與P+1和P-1都無法連線，則將他的左右ISL設置device調換
         for(auto &satPair: satellites){
             if(satPair.second.judgeRightISL(time, acceptableAER_diff) == 0){
+                satPair.second.getRightISL().setSecondState(time, false);//先記錄下來此秒此link是不可連線的，若reset後可以連線會在下方程式更新到
                 if(table[(size_t)satPair.second.getId()]){//若已為true，代表另一側也沒辦法連線
                     satPair.second.setState(time, ISLrightAngle, ISLleftAngle);
                     modifiedSats.push_back(&(satPair.second));
@@ -331,7 +332,7 @@ namespace satellite
             }
             //記錄下來此顆衛星在此秒的ISL device state
             satPair.second.setCertainTimeISLdeviceState(time, satPair.second.getCurrentISLdeviceState());
-        }
+        } //此時，所有兩側斷線的衛星們都已經調整好ISL device負責的連線衛星，有可能經過調整後的設置，可以連線到相鄰軌道衛星
         // if(!modifiedSats.empty()){
         //     std::cout<<"t = "<<time<<", reseted satIds: ";
         // }   
@@ -402,6 +403,7 @@ namespace satellite
     //reset標記成尚未計算過stateOfDay
     void ISL::resetStateOfDay(){
         this->calculated = false;
+        this->stateOfDay.reset();
     }
 
     //回傳一個vector，裡面是紀錄每個connection state改變的時間點，及他是Link Breaking(false)還是connecting(true)
