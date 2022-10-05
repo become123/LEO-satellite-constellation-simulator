@@ -248,7 +248,7 @@ namespace mainFunction
         output.close();
     }
 
-    //印出所有衛星(相鄰的會排在一起)，一天86400秒的ISL設置state(ex: 0-0-0-0X1-1-1-1X0-0-0)
+    //印出所有衛星(相鄰的會排在一起)，一天86400秒的ISL設置state(ex: 0---0---0---0XXX1---1---1---1XXX0---0---0)
     void adjustableISLdevice_printSatellitesDeviceStateOfDay(std::map<int, satellite::satellite> &satellites, std::map<std::set<int>, satellite::ISL> &ISLtable, std::map<std::string, std::string> &parameterTable){
         std::ofstream output("./" + parameterTable.at("outputFileName"));
         auto printISLdeviceState = [](std::map<int, satellite::satellite> &LambdaSatellites, int &LambdaSatId, size_t &LambdaT, std::ofstream &LambdaOutput) { 
@@ -257,10 +257,10 @@ namespace mainFunction
                 
         auto printRightLinkStatus = [](std::map<int, satellite::satellite> &LambdaSatellites, int &LambdaSatId, size_t &LambdaT, std::ofstream &LambdaOutput) { 
             if(LambdaSatellites.at(LambdaSatId).getRightISL().getSecondState(LambdaT)){
-                LambdaOutput<<"-";
+                LambdaOutput<<"---";
             } 
             else{
-                LambdaOutput<<"X";  
+                LambdaOutput<<"XXX";  
             }        
         };
 
@@ -271,8 +271,54 @@ namespace mainFunction
         double acceptableRange = std::stod(parameterTable.at("acceptableRange"));
         AER acceptableAER_diff("acceptableAER_diff", acceptableAzimuthDif, acceptableElevationDif, acceptableRange);
         satellite::adjustableISLdeviceSetupAllISLstateOfDay2(std::stoi(parameterTable.at("ISLrightAngle")), std::stoi(parameterTable.at("ISLleftAngle")), acceptableAER_diff, satellites, ISLtable);   
+        //print first line(satellite numbers)
+        if(parameterTable.at("TLE_inputFileName") == "TLE_7P_16Sats.txt"){
+                int satId = 101;
+                output<<satId;
+                satId = satellites.at(satId).getRightSatId();
+                while(satId != 101){
+                    output<<std::setw(4)<<satId;
+                    satId = satellites.at(satId).getRightSatId();
+                }
+                output<<"  ";
+                satId  = 102;
+                output<<std::setw(4)<<satId;
+                satId = satellites.at(satId).getRightSatId();
+                while(satId != 102){
+                    output<<std::setw(4)<<satId;
+                    satId = satellites.at(satId).getRightSatId();
+                }
+                output<<"  ";
+                satId  = 103;
+                output<<std::setw(4)<<satId;         
+                satId = satellites.at(satId).getRightSatId();
+                while(satId != 103){
+                    output<<std::setw(4)<<satId;
+                    satId = satellites.at(satId).getRightSatId();
+                }
+                output<<"  ";
+                satId  = 104;
+                output<<std::setw(4)<<satId;          
+                satId = satellites.at(satId).getRightSatId();
+                while(satId != 104){
+                    output<<std::setw(4)<<satId;
+                    satId = satellites.at(satId).getRightSatId();
+                }                                  
+                output<<"\n";
+        }        
+        else if(parameterTable.at("TLE_inputFileName") == "TLE_6P_22Sats.txt"){
+                int satId = 101;
+                output<<satId;              
+                satId = satellites.at(satId).getRightSatId();
+                while(satId != 101){
+                    output<<std::setw(4)<<satId;
+                    satId = satellites.at(satId).getRightSatId();
+                }
+                output<<"\n";
+        } 
         if(parameterTable.at("TLE_inputFileName") == "TLE_7P_16Sats.txt"){
             for(size_t t = 0; t < 86400; ++t){
+                output<<" ";
                 int satId = 101;
                 printISLdeviceState(satellites, satId, t, output);
                 printRightLinkStatus(satellites, satId, t, output);
@@ -317,6 +363,7 @@ namespace mainFunction
         }        
         else if(parameterTable.at("TLE_inputFileName") == "TLE_6P_22Sats.txt"){
             for(size_t t = 0; t < 86400; ++t){
+                output<<" ";
                 int satId = 101;
                 printISLdeviceState(satellites, satId, t, output);
                 printRightLinkStatus(satellites, satId, t, output);                

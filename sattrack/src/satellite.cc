@@ -304,7 +304,7 @@ namespace satellite
             judgeBreakingAndResetState(time, ISLrightAngle, ISLleftAngle, acceptableAER_diff, satellites);          
         }
         for(auto &pair: ISLtable){
-            pair.second.setStateOfDay();
+            pair.second.setStateOfDay();//標記成已經計算過
         }         
     }
 
@@ -313,7 +313,7 @@ namespace satellite
         std::vector<satellite*> modifiedSats;//用來記錄哪些衛星有兩側都斷線
         //掃過整個星群，若有衛星與P+1和P-1都無法連線，則將他的左右ISL設置device調換
         for(auto &satPair: satellites){
-            if(satPair.second.judgeRightISL(time, acceptableAER_diff) == 0){
+            if(satPair.second.judgeRightISL(time, acceptableAER_diff) == 0){ //與P+1不可連線
                 satPair.second.getRightISL().setSecondState(time, false);//先記錄下來此秒此link是不可連線的，若reset後可以連線會在下方程式更新到
                 if(table[(size_t)satPair.second.getId()]){//若已為true，代表另一側也沒辦法連線
                     satPair.second.setState(time, ISLrightAngle, ISLleftAngle);
@@ -326,7 +326,7 @@ namespace satellite
                 table[(size_t)satPair.second.getRightSatId()] = true;
                 table[(size_t)satPair.second.getId()] = true;
             }
-            else{
+            else{//與P+1可連線
                 //記錄下來此秒此link是可以連線的
                 satPair.second.getRightISL().setSecondState(time, true);
             }
@@ -864,7 +864,7 @@ namespace satellite
     //回傳特定時刻可否建立右方的ISL(要彼此可以連線到彼此才可以建立)，且左側右側ISL可以連P+1或P-1軌道(沒有固定)，尚未考慮PAT
     bool satellite::adjustableISLdeviceJudgeRight(int time, const AER &acceptableAER_diff){
         if(this->judgeRightISL(time, acceptableAER_diff)){
-            return true;         
+            return true;
         }
         int selfState = this->getCurrentISLdeviceState();
         bool selfcanConnectLeft = this->judgeLeftISL(time, acceptableAER_diff);
