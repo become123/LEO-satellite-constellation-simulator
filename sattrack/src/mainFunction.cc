@@ -542,6 +542,131 @@ namespace mainFunction
         output.close();
     }
 
+    //印出自parameter.txt中的startTime到endTime每秒的衛星間方位角關係及角度差較小的ISL裝置設置角度
+    void printConstellationISLdeviceInfo(std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){
+        std::ofstream output("./" + parameterTable.at("outputFileName"));
+        auto printSatAngle = [](std::map<int, satellite::satellite> &_satellites, int &_satId, size_t &_t, std::ofstream &_output) { 
+            double lookRightA = _satellites.at(_satId).getAER(_t, _satellites.at(_satId).getRightSat()).A;
+            double lookLeftA = _satellites.at(_satId).getAER(_t, _satellites.at(_satId).getLeftSat()).A;
+            _output<<std::fixed<< std::setprecision(1);
+            _output<<"("<<std::setw(5)<<lookLeftA;    
+            _output<<"["<<_satId<<"]"; 
+            _output<<std::setw(5)<<lookRightA<<")-";          
+        };       
+
+        auto printSatState = [](int _ISLrightAngle, int _ISLleftAngle, std::map<int, satellite::satellite> &_satellites, int &_satId, size_t &_t, std::ofstream &_output) { 
+            double lookRightA = _satellites.at(_satId).getAER(_t, _satellites.at(_satId).getRightSat()).A;
+            double lookLeftA = _satellites.at(_satId).getAER(_t, _satellites.at(_satId).getLeftSat()).A;
+            _output<<"(  "<< std::setw(3) ;   
+            satellite::getAngleDiff(lookLeftA, _ISLrightAngle) < satellite::getAngleDiff(lookLeftA, _ISLleftAngle) ? _output << _ISLrightAngle : _output << _ISLleftAngle;
+            _output<<"["<<_satId<<"]"<< std::setw(3) ;       
+            satellite::getAngleDiff(lookRightA, _ISLrightAngle) < satellite::getAngleDiff(lookRightA, _ISLleftAngle) ? _output << _ISLrightAngle : _output << _ISLleftAngle;
+            _output<<"  )-";   
+        };
+        
+        int ISLrightAngle = std::stoi(parameterTable.at("ISLrightAngle"));
+        int ISLleftAngle = std::stoi(parameterTable.at("ISLleftAngle")); 
+        size_t startTime = (size_t)std::stoi(parameterTable.at("startTime"));
+        size_t endTime = (size_t)std::stoi(parameterTable.at("endTime"));
+
+        if(parameterTable.at("TLE_inputFileName") == "TLE_7P_16Sats.txt"){
+            for(size_t t = startTime; t <= endTime; ++t){
+                output<<"t = "<<t<<":\n";
+                //print angle
+                int satId = 101;
+                printSatAngle(satellites, satId, t, output);
+                satId = satellites.at(satId).getRightSatId();
+                while(satId != 101){
+                    printSatAngle(satellites, satId, t, output);
+                    satId = satellites.at(satId).getRightSatId();
+                }
+                output<<" | ";
+                satId  = 102;
+                printSatAngle(satellites, satId, t, output);
+                satId = satellites.at(satId).getRightSatId();
+                while(satId != 102){
+                    printSatAngle(satellites, satId, t, output);
+                    satId = satellites.at(satId).getRightSatId();
+                }
+                output<<" | ";
+                satId  = 103;
+                printSatAngle(satellites, satId, t, output);
+                satId = satellites.at(satId).getRightSatId();
+                while(satId != 103){
+                    printSatAngle(satellites, satId, t, output);
+                    satId = satellites.at(satId).getRightSatId();
+                }
+                output<<" | ";
+                satId  = 104;
+                printSatAngle(satellites, satId, t, output);
+                satId = satellites.at(satId).getRightSatId();
+                while(satId != 104){
+                    printSatAngle(satellites, satId, t, output);
+                    satId = satellites.at(satId).getRightSatId();
+                }    
+                output<<"\n";
+                //print smaller diff device
+                satId = 101;
+                printSatState(ISLrightAngle, ISLleftAngle, satellites, satId, t, output);
+                satId = satellites.at(satId).getRightSatId();
+                while(satId != 101){
+                    printSatState(ISLrightAngle, ISLleftAngle, satellites, satId, t, output);
+                    satId = satellites.at(satId).getRightSatId();
+                }
+                output<<" | ";
+                satId  = 102;
+                printSatState(ISLrightAngle, ISLleftAngle, satellites, satId, t, output);
+                satId = satellites.at(satId).getRightSatId();
+                while(satId != 102){
+                    printSatState(ISLrightAngle, ISLleftAngle, satellites, satId, t, output);
+                    satId = satellites.at(satId).getRightSatId();
+                }
+                output<<" | ";
+                satId  = 103;
+                printSatState(ISLrightAngle, ISLleftAngle, satellites, satId, t, output);
+                satId = satellites.at(satId).getRightSatId();
+                while(satId != 103){
+                    printSatState(ISLrightAngle, ISLleftAngle, satellites, satId, t, output);
+                    satId = satellites.at(satId).getRightSatId();
+                }
+                output<<" | ";
+                satId  = 104;
+                printSatState(ISLrightAngle, ISLleftAngle, satellites, satId, t, output);
+                satId = satellites.at(satId).getRightSatId();
+                while(satId != 104){
+                    printSatState(ISLrightAngle, ISLleftAngle, satellites, satId, t, output);
+                    satId = satellites.at(satId).getRightSatId();
+                }    
+                output<<"\n\n";
+            }
+        }
+        else if(parameterTable.at("TLE_inputFileName") == "TLE_6P_22Sats.txt"){
+            for(size_t t = startTime; t <= endTime; ++t){
+                output<<"t = "<<t<<":\n";
+                //print angle
+                int satId = 101;
+                printSatAngle(satellites, satId, t, output);
+                satId = satellites.at(satId).getRightSatId();
+                while(satId != 101){
+                    printSatAngle(satellites, satId, t, output);
+                    satId = satellites.at(satId).getRightSatId();
+                } 
+                output<<"\n";
+                //print smaller diff device
+                satId = 101;
+                printSatState(ISLrightAngle, ISLleftAngle, satellites, satId, t, output);
+                satId = satellites.at(satId).getRightSatId();
+                while(satId != 101){
+                    printSatState(ISLrightAngle, ISLleftAngle, satellites, satId, t, output);
+                    satId = satellites.at(satId).getRightSatId();
+                }
+                output<<"\n\n"; 
+            }   
+        }
+
+        output.close();
+    }
+
 }
 
 
