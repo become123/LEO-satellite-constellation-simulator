@@ -340,6 +340,12 @@ namespace satellite
             // std::cout<<sat->getId()<<",";
             sat->getRightISL().setSecondState(time, (bool)sat->judgeRightISL(time, acceptableAER_diff));
             sat->getLeftISL().setSecondState(time, (bool)sat->judgeLeftISL(time, acceptableAER_diff));
+            // if(sat->getRightISL().getSecondState(time)){
+            //     std::cout<<"At t="<<time<<" sat"<<sat->getId()<<" reconnect to sat"<<sat->getRightSatId()<<" because switch state\n";
+            // }
+            // if(sat->getLeftISL().getSecondState(time)){
+            //     std::cout<<"At t="<<time<<" sat"<<sat->getId()<<" reconnect to sat"<<sat->getLeftSatId()<<" because switch state\n";
+            // }
             sat->setCertainTimeISLdeviceState(time, sat->getCurrentISLdeviceState());
         }
         // if(!modifiedSats.empty()){
@@ -736,6 +742,12 @@ namespace satellite
         if(left && right){
             return left;
         }
+        // if(right == 0){
+        //     std::cout<<"At t="<<time<<" sat"<<this->getId()<<" disconnect to sat"<<this->getRightSatId()<<" due to unacceptable Azimuth\n";
+        // }
+        // if(left == 0){
+        //     std::cout<<"At t="<<time<<" sat"<<this->getRightSatId()<<" disconnect to sat"<<this->getId()<<" due to unacceptable Azimuth\n";
+        // }
         return 0;
     } 
 

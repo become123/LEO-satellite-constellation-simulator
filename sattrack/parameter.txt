@@ -27,7 +27,7 @@
 8. printBreakingConnectingStatus --> 印出整個衛星群的所有inter ISL的breaking及connecting time到sattrack/output.txt中，output每列為"time (sat1Id, sat2Id) 1或0"，1或0表connecting或breaking
     需設定parameter: acceptableAzimuthDif、acceptableElevationDif、acceptableRange、ISLrightAngle、ISLleftAngle、PAT_time, outputFileName
 
-9. printConstellationStateFile --> 印出某個特定時刻，行星群的連線狀態(116*116的二維陣列，可以連的話填上距離，不可連的話填上0，自己連自己也是填0)到sattrack/output.txt中
+9. printConstellationStateFile --> 印出某個特定時刻，行星群的連線狀態(衛星數量*衛星數量的二維陣列，可以連的話填上距離，不可連的話填上0，自己連自己也是填0)到sattrack/output.txt中
     需設定parameter: acceptableAzimuthDif、acceptableElevationDif、acceptableRange、PAT_time、time、ISLrightAngle、ISLleftAngle(目前是當成前後一定可以連線), outputFileName
 
 10. adjustableISLdevice_printSatellitesDeviceStateOfDay --> 印出所有衛星(相鄰的會排在一起)，一天86400秒的ISL設置state
@@ -54,13 +54,13 @@
 **********************************************************************************************
 
 >>(TLE_inputFileName): (TLE_7P_16Sats.txt) <--填入記錄星群TLE的fileName
->>(execute_function): (printConstellationISLdeviceInfo) <-- 填入要執行的function名稱
+>>(execute_function): (adjustableISLdevice_printSatellitesDeviceStateOfDay) <-- 填入要執行的function名稱
 >>(outputFileName): (output.txt)
 
 >>(observerId): (101) <-- 填入觀察者的衛星編號
 >>(otherId): (215) <-- 填入被觀察者的衛星編號
 
->>(acceptableAzimuthDif): (160)degree  <-- 可接受方位角誤差 
+>>(acceptableAzimuthDif): (155)degree  <-- 可接受方位角誤差 
 >>(acceptableElevationDif): (45)degree  <-- 可接受仰角誤差
 >>(acceptableRange): (5000)km  <-- 可接受range
 
@@ -70,8 +70,8 @@
 >>(ISLleftAngle):(270)degree <-- 左方ISL設置角度
 
 >>(time):(40)second <-- 欲計算的特定時間點
->>(startTime):(1000) <--欲計算的開始時間點
->>(endTime):(2000) <--欲計算的結束時間點
+>>(startTime):(660) <--欲計算的開始時間點
+>>(endTime):(712) <--欲計算的結束時間點
 >>(PAT_time):(30)second <--建立連線所需花的時間
 
 >>(stationLatitude):(24.9713)

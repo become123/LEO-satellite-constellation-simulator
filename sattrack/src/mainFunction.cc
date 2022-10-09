@@ -272,6 +272,7 @@ namespace mainFunction
         AER acceptableAER_diff("acceptableAER_diff", acceptableAzimuthDif, acceptableElevationDif, acceptableRange);
         satellite::adjustableISLdeviceSetupAllISLstateOfDay2(std::stoi(parameterTable.at("ISLrightAngle")), std::stoi(parameterTable.at("ISLleftAngle")), acceptableAER_diff, satellites, ISLtable);   
         //print first line(satellite numbers)
+        output<<"          ";
         if(parameterTable.at("TLE_inputFileName") == "TLE_7P_16Sats.txt"){
                 int satId = 101;
                 output<<satId;
@@ -318,7 +319,7 @@ namespace mainFunction
         } 
         if(parameterTable.at("TLE_inputFileName") == "TLE_7P_16Sats.txt"){
             for(size_t t = 0; t < 86400; ++t){
-                output<<" ";
+                output<<"t = "<<std::setw(5)<<t<<": ";
                 int satId = 101;
                 printISLdeviceState(satellites, satId, t, output);
                 printRightLinkStatus(satellites, satId, t, output);
@@ -363,7 +364,7 @@ namespace mainFunction
         }        
         else if(parameterTable.at("TLE_inputFileName") == "TLE_6P_22Sats.txt"){
             for(size_t t = 0; t < 86400; ++t){
-                output<<" ";
+                output<<"t = "<<std::setw(5)<<t<<": ";
                 int satId = 101;
                 printISLdeviceState(satellites, satId, t, output);
                 printRightLinkStatus(satellites, satId, t, output);                
