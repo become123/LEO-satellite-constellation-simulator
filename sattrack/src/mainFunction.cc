@@ -549,18 +549,18 @@ namespace mainFunction
         auto printSatAngle = [](std::map<int, satellite::satellite> &_satellites, int &_satId, size_t &_t, std::ofstream &_output) { 
             double lookRightA = _satellites.at(_satId).getAER(_t, _satellites.at(_satId).getRightSat()).A;
             double lookLeftA = _satellites.at(_satId).getAER(_t, _satellites.at(_satId).getLeftSat()).A;
-            _output<<std::fixed<< std::setprecision(1);
-            _output<<"("<<std::setw(5)<<lookLeftA;    
+            _output<<std::fixed<< std::setprecision(2);
+            _output<<"("<<std::setw(6)<<lookLeftA;    
             _output<<"["<<_satId<<"]"; 
-            _output<<std::setw(5)<<lookRightA<<")-";          
+            _output<<std::setw(6)<<lookRightA<<")-";          
         };       
 
         auto printSatState = [](int _ISLrightAngle, int _ISLleftAngle, std::map<int, satellite::satellite> &_satellites, int &_satId, size_t &_t, std::ofstream &_output) { 
             double lookRightA = _satellites.at(_satId).getAER(_t, _satellites.at(_satId).getRightSat()).A;
             double lookLeftA = _satellites.at(_satId).getAER(_t, _satellites.at(_satId).getLeftSat()).A;
-            _output<<"(  "<< std::setw(3) ;   
+            _output<<"(  "<< std::setw(4) ;   
             satellite::getAngleDiff(lookLeftA, _ISLrightAngle) < satellite::getAngleDiff(lookLeftA, _ISLleftAngle) ? _output << _ISLrightAngle : _output << _ISLleftAngle;
-            _output<<"["<<_satId<<"]"<< std::setw(3) ;       
+            _output<<"["<<_satId<<"]"<< std::setw(4) ;       
             satellite::getAngleDiff(lookRightA, _ISLrightAngle) < satellite::getAngleDiff(lookRightA, _ISLleftAngle) ? _output << _ISLrightAngle : _output << _ISLleftAngle;
             _output<<"  )-";   
         };
