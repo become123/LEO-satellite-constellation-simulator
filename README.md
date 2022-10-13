@@ -6,6 +6,11 @@ LEO satellite simulator
 ### 編譯流程
 
 ---
+- 需先安裝編譯會用到的cmake:
+    ```bash
+    sudo apt update
+    sudo apt install cmake
+    ```
 
 - 需先安裝修正方位角時會用到的C++ Eigen library:
     
