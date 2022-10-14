@@ -6,19 +6,26 @@ LEO satellite simulator
 ### 編譯流程
 
 ---
-- 需先安裝編譯會用到的cmake:
+
+- 安裝編譯會用到的build-essential:
+    ```bash
+    sudo apt-get update
+    sudo apt-get install build-essential
+    ```
+
+- 安裝編譯會用到的cmake:
     ```bash
     sudo apt update
     sudo apt install cmake
     ```
 
-- 需先安裝修正方位角時會用到的C++ Eigen library:
+- 安裝修正方位角時會用到的C++ Eigen library:
     
     ```bash
     sudo apt install libeigen3-dev
     ```
     
-- 進入到檔案位置sgp4/中進行cmake來產生Makefile，在sgp4/中輸入指令:
+- 進入到檔案位置LEO-satellite-constellation-simulator/中進行cmake來產生Makefile，在LEO-satellite-constellation-simulator/中輸入指令:
     
     ```bash
     cmake .
