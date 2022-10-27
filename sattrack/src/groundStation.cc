@@ -9,6 +9,7 @@
 #include <vector>
 #include <utility>
 #include <bitset>
+#include <algorithm>
 
 namespace groundStation
 {
@@ -63,6 +64,38 @@ namespace groundStation
             }
         }
         return availableSatsList;
+    }
+
+    //回傳一整天86400秒中，地面站每秒是否有任何一顆衛星是可以連上的
+    std::bitset<86400> groundStation::getAvailabilityOfDay(std::map<int, satellite::satellite> &satellites, int groundStationAcceptableElevation, int groundStationAcceptableDistance){
+        std::bitset<86400> availabilityOfDay;
+        std::vector<int> availableSatsList = this->getSecondAvailableSatsList(satellites, 0, groundStationAcceptableElevation, groundStationAcceptableDistance);
+        for(size_t t = 0; t < 86400; ++t){
+            std::vector<int>::iterator iter;
+            for (iter = availableSatsList.begin(); iter != availableSatsList.end(); ){ //刪除List中斷線的衛星
+                if(!this->judgeConnection(satellites.at(*iter), t, groundStationAcceptableElevation, groundStationAcceptableDistance))
+                    iter = availableSatsList.erase(iter);
+                else
+                    ++iter;
+            }
+            if(!availableSatsList.empty()){
+                availabilityOfDay[t] = true;
+            }
+            else{
+                availableSatsList = this->getSecondAvailableSatsList(satellites, t, groundStationAcceptableElevation, groundStationAcceptableDistance);
+                availabilityOfDay[t] = !availableSatsList.empty();
+            }
+        }
+        return availabilityOfDay;
+
+        // slow version
+        // std::bitset<86400> availabilityOfDay;
+        // std::vector<int> availableSatsList = this->getSecondAvailableSatsList(satellites, 0, groundStationAcceptableElevation, groundStationAcceptableDistance);
+        // for(size_t t = 0; t < 86400; ++t){
+        //     availableSatsList = this->getSecondAvailableSatsList(satellites, t, groundStationAcceptableElevation, groundStationAcceptableDistance);
+        //     availabilityOfDay[t] = !availableSatsList.empty();
+        // }
+        // return availabilityOfDay;
     }
 
     //回傳一個vector，裡面是紀錄每個connection state改變的時間點，及他是Link Breaking(false)還是connecting(true)
