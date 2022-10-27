@@ -123,15 +123,17 @@ int main()
             break;
         case str2int("printStationAllSatConnectionTime"):
             mainFunction::printStationAllSatConnectionTime(satellites, parameterTable);
-            break;        
+            break;                 
         case str2int("printConstellationISLdeviceInfo"):
             mainFunction::printConstellationISLdeviceInfo(satellites, parameterTable);
-            break;                        
+            break;  
+        case str2int("printStationAvailableSatsPerSecond"):
+            mainFunction::printStationAvailableSatsPerSecond(satellites, parameterTable);
+            break;                                     
         default:
             std::cout<<"running test!"<<"\n";
             /*-------------test-------------*/
             std::ofstream output("./output.txt");
-
         
             output.close();   
             /*------------end test---------*/

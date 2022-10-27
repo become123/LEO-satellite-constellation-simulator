@@ -668,6 +668,29 @@ namespace mainFunction
         output.close();
     }
 
+    //印出根據parameter.txt設置位置的地面站，一天中的每一秒有哪些衛星是可以連線的
+    void printStationAvailableSatsPerSecond(std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){
+        std::ofstream output("./" + parameterTable.at("outputFileName"));
+
+        groundStation::groundStation station(std::stod(parameterTable.at("stationLatitude"))
+                                            ,std::stod(parameterTable.at("stationLongitude"))
+                                            ,std::stod(parameterTable.at("stationAltitude")));
+        int groundStationAcceptableElevation = std::stoi(parameterTable.at("groundStationAcceptableElevation"));
+        int groundStationAcceptableDistance = std::stoi(parameterTable.at("groundStationAcceptableDistance"));
+        for(size_t t = 0; t < 86400; ++t){
+            std::vector<int> availableSatsList = station.getSecondAvailableSatsList(satellites, t, groundStationAcceptableElevation, groundStationAcceptableDistance);
+            output<<"t = "<<t<<":  ";
+            if(availableSatsList.empty()){
+                output<<"All can not connect!";
+            }
+            for(auto id: availableSatsList){
+                output<<id<<",  ";
+            }
+            output<<"\n";
+        }
+
+        output.close();       
+    }
 }
 
 

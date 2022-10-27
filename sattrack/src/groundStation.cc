@@ -54,6 +54,17 @@ namespace groundStation
         return res;
     }
 
+    //回傳特定時間地面站可以連線到的所有衛星ID的list
+    std::vector<int> groundStation::getSecondAvailableSatsList(std::map<int, satellite::satellite> &satellites,int time, int groundStationAcceptableElevation, int groundStationAcceptableDistance){
+        std::vector<int> availableSatsList;
+        for(auto &satPair: satellites){
+            if(this->judgeConnection(satPair.second, time, groundStationAcceptableElevation, groundStationAcceptableDistance)){
+                availableSatsList.push_back(satPair.second.getId());
+            }
+        }
+        return availableSatsList;
+    }
+
     //回傳一個vector，裡面是紀錄每個connection state改變的時間點，及他是Link Breaking(false)還是connecting(true)
     std::vector<std::pair<size_t, bool>> groundStation::getStateChangeInfoOfDay(satellite::satellite &sat, int groundStationAcceptableElevation, int groundStationAcceptableDistance){
         std::bitset<86400> stateOfDay = this->getConnectionOfDay(sat, groundStationAcceptableElevation, groundStationAcceptableDistance);

@@ -78,6 +78,8 @@ LEO satellite simulator
         - 需設定parameter: stationLongitude、stationLongitude、stationAltitude、groundStationAcceptableElevation、groundStationAcceptableDistance、outputFileName   
     16. **printConstellationISLdeviceInfo**:印出自parameter.txt中的startTime到endTime每秒的衛星間方位角關係及角度差較小的ISL裝置設置角度
         - 需設定parameter: startTime, endTime, ISLrightAngle, ISLleftAngle, outputFileName
+    17. **printStationAvailableSatsPerSecond**:印出根據parameter.txt設置位置的地面站，一天中的每一秒有哪些衛星是可以連線的
+        - 需設定parameter: stationLongitude、stationLongitude、stationAltitude、groundStationAcceptableElevation、groundStationAcceptableDistance、outputFileName  
 - 進入到sgp4/sattrack中執行sattrack
     
     ```bash
