@@ -75,6 +75,9 @@ namespace mainFunction
     //印出根據parameter.txt設置位置的地面站，與星群中每一個衛星一天中有那些時間是可以連線的
     void printStationAvailableSatsPerSecond(std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable);
 
+    //印出不同緯度的地面站86400秒中，有幾秒是有被衛星覆蓋的
+    void printDifferentLatitudeCoverTimeOfDay(std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable);
+
 }
 
 #endif

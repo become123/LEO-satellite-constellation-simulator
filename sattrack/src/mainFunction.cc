@@ -691,6 +691,22 @@ namespace mainFunction
 
         output.close();       
     }
+
+    //印出不同緯度的地面站86400秒中，有幾秒是有被衛星覆蓋的
+    void printDifferentLatitudeCoverTimeOfDay(std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){
+        std::ofstream output("./" + parameterTable.at("outputFileName"));
+        output<<"latitude : coverTimeofDay\n";
+        double stationLongitude = std::stod(parameterTable.at("stationLongitude"));
+        double stationAltitude = std::stod(parameterTable.at("stationAltitude"));
+        int groundStationAcceptableElevation = std::stoi(parameterTable.at("groundStationAcceptableElevation"));
+        int groundStationAcceptableDistance = std::stoi(parameterTable.at("groundStationAcceptableDistance"));
+        for(double latitude = -40; latitude <= 40; ++latitude){
+            groundStation::groundStation station(latitude, stationLongitude, stationAltitude);
+            std::bitset<86400> availabilityOfDay = station.getAvailabilityOfDay(satellites, groundStationAcceptableElevation, groundStationAcceptableDistance);
+            output<<(int)latitude<<"      :  "<<availabilityOfDay.count()<<"\n";
+        }
+        output.close();
+    }
 }
 
 
