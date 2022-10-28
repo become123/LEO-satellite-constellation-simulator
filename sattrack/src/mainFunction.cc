@@ -703,7 +703,7 @@ namespace mainFunction
         for(double latitude = -40; latitude <= 40; ++latitude){
             groundStation::groundStation station(latitude, stationLongitude, stationAltitude);
             std::bitset<86400> availabilityOfDay = station.getAvailabilityOfDay(satellites, groundStationAcceptableElevation, groundStationAcceptableDistance);
-            output<<(int)latitude<<"      :  "<<availabilityOfDay.count()<<"\n";
+            output<<std::setw(3)<<(int)latitude<<"      :  "<<availabilityOfDay.count()<<"\n";
         }
         output.close();
     }
