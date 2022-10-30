@@ -127,8 +127,8 @@ int main()
         case str2int("printConstellationISLdeviceInfo"):
             mainFunction::printConstellationISLdeviceInfo(satellites, parameterTable);
             break;  
-        case str2int("printStationAvailableSatsPerSecond"):
-            mainFunction::printStationAvailableSatsPerSecond(satellites, parameterTable);
+        case str2int("printStationCoverSatsPerSecond"):
+            mainFunction::printStationCoverSatsPerSecond(satellites, parameterTable);
             break;
         case str2int("printDifferentLatitudeCoverTimeOfDay"):
             mainFunction::printDifferentLatitudeCoverTimeOfDay(satellites, parameterTable);

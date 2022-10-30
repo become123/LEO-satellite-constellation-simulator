@@ -669,7 +669,7 @@ namespace mainFunction
     }
 
     //印出根據parameter.txt設置位置的地面站，一天中的每一秒有哪些衛星是可以連線的
-    void printStationAvailableSatsPerSecond(std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){
+    void printStationCoverSatsPerSecond(std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){
         std::ofstream output("./" + parameterTable.at("outputFileName"));
 
         groundStation::groundStation station(std::stod(parameterTable.at("stationLatitude"))
@@ -678,7 +678,7 @@ namespace mainFunction
         int groundStationAcceptableElevation = std::stoi(parameterTable.at("groundStationAcceptableElevation"));
         int groundStationAcceptableDistance = std::stoi(parameterTable.at("groundStationAcceptableDistance"));
         for(size_t t = 0; t < 86400; ++t){
-            std::vector<int> availableSatsList = station.getSecondAvailableSatsList(satellites, t, groundStationAcceptableElevation, groundStationAcceptableDistance);
+            std::vector<int> availableSatsList = station.getSecondCoverSatsList(satellites, t, groundStationAcceptableElevation, groundStationAcceptableDistance);
             output<<"t = "<<t<<":  ";
             if(availableSatsList.empty()){
                 output<<"All can not connect!";
@@ -702,7 +702,7 @@ namespace mainFunction
         int groundStationAcceptableDistance = std::stoi(parameterTable.at("groundStationAcceptableDistance"));
         for(double latitude = -40; latitude <= 40; ++latitude){
             groundStation::groundStation station(latitude, stationLongitude, stationAltitude);
-            std::bitset<86400> availabilityOfDay = station.getAvailabilityOfDay(satellites, groundStationAcceptableElevation, groundStationAcceptableDistance);
+            std::bitset<86400> availabilityOfDay = station.getCoverTimeOfDay(satellites, groundStationAcceptableElevation, groundStationAcceptableDistance);
             output<<std::setw(3)<<(int)latitude<<"      :  "<<availabilityOfDay.count()<<"\n";
         }
         output.close();

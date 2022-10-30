@@ -56,7 +56,7 @@ namespace groundStation
     }
 
     //回傳特定時間地面站可以連線到的所有衛星ID的list
-    std::vector<int> groundStation::getSecondAvailableSatsList(std::map<int, satellite::satellite> &satellites,int time, int groundStationAcceptableElevation, int groundStationAcceptableDistance){
+    std::vector<int> groundStation::getSecondCoverSatsList(std::map<int, satellite::satellite> &satellites,int time, int groundStationAcceptableElevation, int groundStationAcceptableDistance){
         std::vector<int> availableSatsList;
         for(auto &satPair: satellites){
             if(this->judgeConnection(satPair.second, time, groundStationAcceptableElevation, groundStationAcceptableDistance)){
@@ -67,9 +67,9 @@ namespace groundStation
     }
 
     //回傳一整天86400秒中，地面站每秒是否有任何一顆衛星是可以連上的
-    std::bitset<86400> groundStation::getAvailabilityOfDay(std::map<int, satellite::satellite> &satellites, int groundStationAcceptableElevation, int groundStationAcceptableDistance){
+    std::bitset<86400> groundStation::getCoverTimeOfDay(std::map<int, satellite::satellite> &satellites, int groundStationAcceptableElevation, int groundStationAcceptableDistance){
         std::bitset<86400> availabilityOfDay;
-        std::vector<int> availableSatsList = this->getSecondAvailableSatsList(satellites, 0, groundStationAcceptableElevation, groundStationAcceptableDistance);
+        std::vector<int> availableSatsList = this->getSecondCoverSatsList(satellites, 0, groundStationAcceptableElevation, groundStationAcceptableDistance);
         for(size_t t = 0; t < 86400; ++t){
             std::vector<int>::iterator iter;
             for (iter = availableSatsList.begin(); iter != availableSatsList.end(); ){ //刪除List中斷線的衛星
@@ -82,7 +82,7 @@ namespace groundStation
                 availabilityOfDay[t] = true;
             }
             else{
-                availableSatsList = this->getSecondAvailableSatsList(satellites, t, groundStationAcceptableElevation, groundStationAcceptableDistance);
+                availableSatsList = this->getSecondCoverSatsList(satellites, t, groundStationAcceptableElevation, groundStationAcceptableDistance);
                 availabilityOfDay[t] = !availableSatsList.empty();
             }
         }
@@ -90,9 +90,9 @@ namespace groundStation
 
         // slow version
         // std::bitset<86400> availabilityOfDay;
-        // std::vector<int> availableSatsList = this->getSecondAvailableSatsList(satellites, 0, groundStationAcceptableElevation, groundStationAcceptableDistance);
+        // std::vector<int> availableSatsList = this->getSecondCoverSatsList(satellites, 0, groundStationAcceptableElevation, groundStationAcceptableDistance);
         // for(size_t t = 0; t < 86400; ++t){
-        //     availableSatsList = this->getSecondAvailableSatsList(satellites, t, groundStationAcceptableElevation, groundStationAcceptableDistance);
+        //     availableSatsList = this->getSecondCoverSatsList(satellites, t, groundStationAcceptableElevation, groundStationAcceptableDistance);
         //     availabilityOfDay[t] = !availableSatsList.empty();
         // }
         // return availabilityOfDay;

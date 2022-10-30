@@ -29,10 +29,10 @@ namespace groundStation
         std::bitset<86400> getConnectionOfDay(satellite::satellite &sat, int groundStationAcceptableElevation, int groundStationAcceptableDistance);
 
         //回傳一整天86400秒中，地面站每秒是否有任何一顆衛星是可以連上的
-        std::bitset<86400> getAvailabilityOfDay(std::map<int, satellite::satellite> &satellites, int groundStationAcceptableElevation, int groundStationAcceptableDistance);
+        std::bitset<86400> getCoverTimeOfDay(std::map<int, satellite::satellite> &satellites, int groundStationAcceptableElevation, int groundStationAcceptableDistance);
         
         //回傳特定時間地面站可以連線到的所有衛星ID的list
-        std::vector<int> getSecondAvailableSatsList(std::map<int, satellite::satellite> &satellites,int time, int groundStationAcceptableElevation, int groundStationAcceptableDistance);
+        std::vector<int> getSecondCoverSatsList(std::map<int, satellite::satellite> &satellites,int time, int groundStationAcceptableElevation, int groundStationAcceptableDistance);
 
         //回傳一個vector，裡面是紀錄每個connection state改變的時間點，及他是Link Breaking(false)還是connecting(true)
         std::vector<std::pair<size_t, bool>> getStateChangeInfoOfDay(satellite::satellite &sat, int groundStationAcceptableElevation, int groundStationAcceptableDistance);
