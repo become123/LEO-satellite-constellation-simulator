@@ -519,6 +519,13 @@ namespace mainFunction
 
     //印出根據parameter.txt設置位置的地面站，與星群中每一個衛星一天中有那些時間是可以連線的
     void printStationAllSatConnectionTime(std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){
+        auto printTime = [](size_t t, std::ofstream &_output) { 
+            int second, min, hour;
+            hour = (int)t/3600;
+            min = (int)t/60-(hour*60);
+            second = (int)t-(min*60)-(hour*3600);
+            _output<<hour<<":"<<min<<":"<<second;
+        };       
         std::ofstream output("./" + parameterTable.at("outputFileName"));
 
         groundStation::groundStation station(std::stod(parameterTable.at("stationLatitude"))
@@ -531,10 +538,12 @@ namespace mainFunction
             output<<"sat"<<satPair.first<<" connecting time: ";
             for(size_t i = 0; i < stateChangeInfoOfDay.size(); ++i){
                 if(stateChangeInfoOfDay[i].second){
-                    output<<std::setw(5)<<stateChangeInfoOfDay[i].first<<"~";
+                    printTime(stateChangeInfoOfDay[i].first,output);
+                    output<<"~";
                 }
                 else{
-                    output<<std::setw(5)<<stateChangeInfoOfDay[i].first<<", ";
+                    printTime(stateChangeInfoOfDay[i].first,output);
+                    output<<", ";
                 }
             }  
             output<<"\n";              
