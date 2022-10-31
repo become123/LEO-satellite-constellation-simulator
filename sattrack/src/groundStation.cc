@@ -37,13 +37,14 @@ namespace groundStation
         DateTime t = sat.getTle().Epoch().AddSeconds(time);
         Eci eci = sat.getSgp4().FindPosition(t);
         CoordTopocentric topo = this->getObserver().GetLookAngle(eci);
-        double elevation =  Util::RadiansToDegrees(topo.elevation);
+        double doubleElevation =  Util::RadiansToDegrees(topo.elevation);
+        int elevation = (int)(doubleElevation+0.5-(doubleElevation<0));
         // std::cout<<"elevation: "<< elevation <<", "<<topo.range<<"\n";
         // if(elevation > groundStationAcceptableElevation && topo.range < groundStationAcceptableDistance){
         //     std::cout<<"sat"<<sat.getId()<<" at time "<<time<<": elevation: "<< elevation <<", "<<topo.range<<"\n";
         //     return true;
         // }
-        return elevation > groundStationAcceptableElevation && topo.range < groundStationAcceptableDistance;
+        return elevation >= groundStationAcceptableElevation && topo.range <= groundStationAcceptableDistance;
     }
 
     //回傳一整天86400秒中，地面站對特定一顆衛星的連線狀態
