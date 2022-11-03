@@ -23,6 +23,9 @@ namespace groundStation
                 stateChangeInfo.push_back(std::make_pair(i, currentState));
             }
         }
+        if(currentState){ //到一天中的最後一秒還是可以連
+            stateChangeInfo.push_back(std::make_pair(86400, false));
+        }
         return stateChangeInfo;
     }
 
@@ -39,9 +42,10 @@ namespace groundStation
         CoordTopocentric topo = this->getObserver().GetLookAngle(eci);
         double doubleElevation =  Util::RadiansToDegrees(topo.elevation);
         int elevation = (int)(doubleElevation+0.5-(doubleElevation<0));
+        // double elevation =  Util::RadiansToDegrees(topo.elevation);
         // std::cout<<"elevation: "<< elevation <<", "<<topo.range<<"\n";
-        // if(elevation > groundStationAcceptableElevation && topo.range < groundStationAcceptableDistance){
-        //     std::cout<<"sat"<<sat.getId()<<" at time "<<time<<": elevation: "<< elevation <<", "<<topo.range<<"\n";
+        // if(elevation >= groundStationAcceptableElevation && topo.range <= groundStationAcceptableDistance){
+        //     std::cout<<"sat"<<sat.getId()<<" at time "<<time<<": doubleElevation: "<<doubleElevation<<",elevation: "<< elevation <<", "<<topo.range<<"\n";
         //     return true;
         // }
         return elevation >= groundStationAcceptableElevation && topo.range <= groundStationAcceptableDistance;
