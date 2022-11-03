@@ -84,6 +84,6 @@
 >>(stationLongitude):(121.192)
 >>(stationAltitude):(0.192742)
 >>(groundStationAcceptableElevation):(30)degree
->>(groundStationAcceptableDistance):(1500)km
+>>(groundStationAcceptableDistance):(1000000000)km
 
 

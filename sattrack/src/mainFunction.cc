@@ -536,14 +536,17 @@ namespace mainFunction
         for(auto &satPair: satellites){
             std::vector<std::pair<size_t, bool>> stateChangeInfoOfDay = station.getStateChangeInfoOfDay(satPair.second, groundStationAcceptableElevation, groundStationAcceptableDistance);
             output<<"sat"<<satPair.first<<" connecting time: ";
+            // output<<"sat"<<satPair.first<<" connecting time: \n-----------------------------\n";
             for(size_t i = 0; i < stateChangeInfoOfDay.size(); ++i){
                 if(stateChangeInfoOfDay[i].second){
                     printTime(stateChangeInfoOfDay[i].first,output);
                     output<<"~";
+                    // output<<stateChangeInfoOfDay[i].first<<"\n";
                 }
                 else{
                     printTime(stateChangeInfoOfDay[i].first,output);
                     output<<", ";
+                    // output<<stateChangeInfoOfDay[i].first<<"\n";
                 }
             }  
             output<<"\n";              
