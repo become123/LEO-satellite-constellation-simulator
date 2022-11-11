@@ -85,6 +85,7 @@
 >>(stationAltitude):(0.192742)
 >>(groundStationAcceptableElevation):(30)degree
 >>(groundStationAcceptableDistance):(1000000000)km
->>(round):(N)<--仰角部分是否四捨五入，要的話輸入Y，不要的話輸入N
+>>(round):(N) <-- 仰角部分是否四捨五入，要的話輸入Y，不要的話輸入N
+>>(printSecond):(Y) <-- 時間是否用秒數表示
 
 

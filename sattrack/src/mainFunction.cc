@@ -519,12 +519,18 @@ namespace mainFunction
 
     //印出根據parameter.txt設置位置的地面站，與星群中每一個衛星一天中有那些時間是可以連線的
     void printStationAllSatConnectionTime(std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){
-        auto printTime = [](size_t t, std::ofstream &_output) { 
+        bool printSecond = parameterTable.at("printSecond") == "Y";
+        auto printTime = [](size_t t, std::ofstream &_output, bool _printSecond) { 
             int second, min, hour;
             hour = (int)t/3600;
             min = (int)t/60-(hour*60);
             second = (int)t-(min*60)-(hour*3600);
-            _output<<hour<<":"<<min<<":"<<second;
+            if(_printSecond){
+                _output<<t;
+            }
+            else{
+                _output<<hour<<":"<<min<<":"<<second;
+            }
         };       
         std::ofstream output("./" + parameterTable.at("outputFileName"));
 
@@ -540,12 +546,12 @@ namespace mainFunction
             // output<<"sat"<<satPair.first<<" connecting time: \n-----------------------------\n";
             for(size_t i = 0; i < stateChangeInfoOfDay.size(); ++i){
                 if(stateChangeInfoOfDay[i].second){
-                    printTime(stateChangeInfoOfDay[i].first,output);
+                    printTime(stateChangeInfoOfDay[i].first,output, printSecond);
                     output<<"~";
                     // output<<stateChangeInfoOfDay[i].first<<"\n";
                 }
                 else{
-                    printTime(stateChangeInfoOfDay[i].first,output);
+                    printTime(stateChangeInfoOfDay[i].first,output, printSecond);
                     output<<", ";
                     // output<<stateChangeInfoOfDay[i].first<<"\n";
                 }
