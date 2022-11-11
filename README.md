@@ -78,7 +78,7 @@ LEO satellite simulator
         - 需設定parameter: stationLatitude、stationLongitude、stationAltitude、groundStationAcceptableElevation、groundStationAcceptableDistance、outputFileName   
     16. **printConstellationISLdeviceInfo**:印出自parameter.txt中的startTime到endTime每秒的衛星間方位角關係及角度差較小的ISL裝置設置角度
         - 需設定parameter: startTime, endTime, ISLrightAngle, ISLleftAngle, outputFileName
-    17. **printStationAvailableSatsPerSecond**:印出根據parameter.txt設置位置的地面站，一天中的每一秒有哪些衛星是可以連線的
+    17. **printStationCoverSatsPerSecond**:印出根據parameter.txt設置位置的地面站，一天中的每一秒有哪些衛星是可以連線的
         - 需設定parameter: stationLatitude、stationLongitude、stationAltitude、groundStationAcceptableElevation、groundStationAcceptableDistance、outputFileName  
     18. **printDifferentLatitudeCoverTimeOfDay**:印出不同緯度的地面站86400秒中，有幾秒是有被衛星覆蓋的
         - 需設定parameter: stationLongitude、stationAltitude、groundStationAcceptableElevation、groundStationAcceptableDistance、outputFileName 
