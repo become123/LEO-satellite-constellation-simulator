@@ -533,8 +533,9 @@ namespace mainFunction
                                             ,std::stod(parameterTable.at("stationAltitude")));
         int groundStationAcceptableElevation = std::stoi(parameterTable.at("groundStationAcceptableElevation"));
         int groundStationAcceptableDistance = std::stoi(parameterTable.at("groundStationAcceptableDistance"));
+        bool round = parameterTable.at("round") == "Y";
         for(auto &satPair: satellites){
-            std::vector<std::pair<size_t, bool>> stateChangeInfoOfDay = station.getStateChangeInfoOfDay(satPair.second, groundStationAcceptableElevation, groundStationAcceptableDistance);
+            std::vector<std::pair<size_t, bool>> stateChangeInfoOfDay = station.getStateChangeInfoOfDay(satPair.second, groundStationAcceptableElevation, groundStationAcceptableDistance, round);
             output<<"sat"<<satPair.first<<" connecting time: ";
             // output<<"sat"<<satPair.first<<" connecting time: \n-----------------------------\n";
             for(size_t i = 0; i < stateChangeInfoOfDay.size(); ++i){
@@ -689,8 +690,9 @@ namespace mainFunction
                                             ,std::stod(parameterTable.at("stationAltitude")));
         int groundStationAcceptableElevation = std::stoi(parameterTable.at("groundStationAcceptableElevation"));
         int groundStationAcceptableDistance = std::stoi(parameterTable.at("groundStationAcceptableDistance"));
+        bool round = parameterTable.at("round") == "Y";
         for(size_t t = 0; t < 86400; ++t){
-            std::vector<int> availableSatsList = station.getSecondCoverSatsList(satellites, t, groundStationAcceptableElevation, groundStationAcceptableDistance);
+            std::vector<int> availableSatsList = station.getSecondCoverSatsList(satellites, t, groundStationAcceptableElevation, groundStationAcceptableDistance, round);
             output<<"t = "<<t<<":  ";
             if(availableSatsList.empty()){
                 output<<"All can not connect!";
@@ -712,9 +714,10 @@ namespace mainFunction
         double stationAltitude = std::stod(parameterTable.at("stationAltitude"));
         int groundStationAcceptableElevation = std::stoi(parameterTable.at("groundStationAcceptableElevation"));
         int groundStationAcceptableDistance = std::stoi(parameterTable.at("groundStationAcceptableDistance"));
+        bool round = parameterTable.at("round") == "Y";
         for(double latitude = -40; latitude <= 40; ++latitude){
             groundStation::groundStation station(latitude, stationLongitude, stationAltitude);
-            std::bitset<86400> availabilityOfDay = station.getCoverTimeOfDay(satellites, groundStationAcceptableElevation, groundStationAcceptableDistance);
+            std::bitset<86400> availabilityOfDay = station.getCoverTimeOfDay(satellites, groundStationAcceptableElevation, groundStationAcceptableDistance, round);
             output<<std::setw(3)<<(int)latitude<<"      :  "<<availabilityOfDay.count()<<"\n";
         }
         output.close();

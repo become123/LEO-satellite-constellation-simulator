@@ -36,35 +36,37 @@ namespace groundStation
     }
     
     //判斷地面站在某個特定時間能否連上特定一顆衛星
-    bool groundStation::judgeConnection(satellite::satellite &sat,int time, int groundStationAcceptableElevation, int groundStationAcceptableDistance){
+    bool groundStation::judgeConnection(satellite::satellite &sat,int time, int groundStationAcceptableElevation, int groundStationAcceptableDistance, bool round){
         DateTime t = sat.getTle().Epoch().AddSeconds(time);
         Eci eci = sat.getSgp4().FindPosition(t);
         CoordTopocentric topo = this->getObserver().GetLookAngle(eci);
         double doubleElevation =  Util::RadiansToDegrees(topo.elevation);
         int elevation = (int)(doubleElevation+0.5-(doubleElevation<0));
-        // double elevation =  Util::RadiansToDegrees(topo.elevation);
         // std::cout<<"elevation: "<< elevation <<", "<<topo.range<<"\n";
         // if(elevation >= groundStationAcceptableElevation && topo.range <= groundStationAcceptableDistance){
         //     std::cout<<"sat"<<sat.getId()<<" at time "<<time<<": doubleElevation: "<<doubleElevation<<",elevation: "<< elevation <<", "<<topo.range<<"\n";
         //     return true;
         // }
-        return elevation >= groundStationAcceptableElevation && topo.range <= groundStationAcceptableDistance;
+        if(round){
+            return elevation >= groundStationAcceptableElevation && topo.range <= groundStationAcceptableDistance;
+        }
+        return doubleElevation >= groundStationAcceptableElevation && topo.range <= groundStationAcceptableDistance;
     }
 
     //回傳一整天86400秒中，地面站對特定一顆衛星的連線狀態
-    std::bitset<86400> groundStation::getConnectionOfDay(satellite::satellite &sat, int groundStationAcceptableElevation, int groundStationAcceptableDistance){
+    std::bitset<86400> groundStation::getConnectionOfDay(satellite::satellite &sat, int groundStationAcceptableElevation, int groundStationAcceptableDistance, bool round){
         std::bitset<86400> res;
         for(size_t t = 0; t < 86400; ++t){
-            res[t] = this->judgeConnection(sat, t, groundStationAcceptableElevation, groundStationAcceptableDistance);
+            res[t] = this->judgeConnection(sat, t, groundStationAcceptableElevation, groundStationAcceptableDistance, round);
         }
         return res;
     }
 
     //回傳特定時間地面站可以連線到的所有衛星ID的list
-    std::vector<int> groundStation::getSecondCoverSatsList(std::map<int, satellite::satellite> &satellites,int time, int groundStationAcceptableElevation, int groundStationAcceptableDistance){
+    std::vector<int> groundStation::getSecondCoverSatsList(std::map<int, satellite::satellite> &satellites,int time, int groundStationAcceptableElevation, int groundStationAcceptableDistance, bool round){
         std::vector<int> availableSatsList;
         for(auto &satPair: satellites){
-            if(this->judgeConnection(satPair.second, time, groundStationAcceptableElevation, groundStationAcceptableDistance)){
+            if(this->judgeConnection(satPair.second, time, groundStationAcceptableElevation, groundStationAcceptableDistance, round)){
                 availableSatsList.push_back(satPair.second.getId());
             }
         }
@@ -72,13 +74,13 @@ namespace groundStation
     }
 
     //回傳一整天86400秒中，地面站每秒是否有任何一顆衛星是可以連上的
-    std::bitset<86400> groundStation::getCoverTimeOfDay(std::map<int, satellite::satellite> &satellites, int groundStationAcceptableElevation, int groundStationAcceptableDistance){
+    std::bitset<86400> groundStation::getCoverTimeOfDay(std::map<int, satellite::satellite> &satellites, int groundStationAcceptableElevation, int groundStationAcceptableDistance, bool round){
         std::bitset<86400> availabilityOfDay;
-        std::vector<int> availableSatsList = this->getSecondCoverSatsList(satellites, 0, groundStationAcceptableElevation, groundStationAcceptableDistance);
+        std::vector<int> availableSatsList = this->getSecondCoverSatsList(satellites, 0, groundStationAcceptableElevation, groundStationAcceptableDistance, round);
         for(size_t t = 0; t < 86400; ++t){
             std::vector<int>::iterator iter;
             for (iter = availableSatsList.begin(); iter != availableSatsList.end(); ){ //刪除List中斷線的衛星
-                if(!this->judgeConnection(satellites.at(*iter), t, groundStationAcceptableElevation, groundStationAcceptableDistance))
+                if(!this->judgeConnection(satellites.at(*iter), t, groundStationAcceptableElevation, groundStationAcceptableDistance, round))
                     iter = availableSatsList.erase(iter);
                 else
                     ++iter;
@@ -87,7 +89,7 @@ namespace groundStation
                 availabilityOfDay[t] = true;
             }
             else{
-                availableSatsList = this->getSecondCoverSatsList(satellites, t, groundStationAcceptableElevation, groundStationAcceptableDistance);
+                availableSatsList = this->getSecondCoverSatsList(satellites, t, groundStationAcceptableElevation, groundStationAcceptableDistance, round);
                 availabilityOfDay[t] = !availableSatsList.empty();
             }
         }
@@ -104,8 +106,8 @@ namespace groundStation
     }
 
     //回傳一個vector，裡面是紀錄每個connection state改變的時間點，及他是Link Breaking(false)還是connecting(true)
-    std::vector<std::pair<size_t, bool>> groundStation::getStateChangeInfoOfDay(satellite::satellite &sat, int groundStationAcceptableElevation, int groundStationAcceptableDistance){
-        std::bitset<86400> stateOfDay = this->getConnectionOfDay(sat, groundStationAcceptableElevation, groundStationAcceptableDistance);
+    std::vector<std::pair<size_t, bool>> groundStation::getStateChangeInfoOfDay(satellite::satellite &sat, int groundStationAcceptableElevation, int groundStationAcceptableDistance, bool round){
+        std::bitset<86400> stateOfDay = this->getConnectionOfDay(sat, groundStationAcceptableElevation, groundStationAcceptableDistance, round);
         std::vector<std::pair<size_t, bool>> stateChangeInfoOfDay = getStateChangeInfo(stateOfDay);
         return stateChangeInfoOfDay;
     }
