@@ -17,6 +17,7 @@
 #include <algorithm>
 #include <bitset>
 #include <set>
+#include <numeric>
 
 
 namespace mainFunction
@@ -727,6 +728,42 @@ namespace mainFunction
             output<<std::setw(3)<<(int)latitude<<"      :  "<<availabilityOfDay.count()<<"\n";
         }
         output.close();
+    }
+
+    //印出地面站對各個衛星一天中對星群中各個衛星的時間總合，總連線時間最長的衛星，總連線時間最短的衛星，以及各個衛星總連線時間的平均
+    void printGroundStationConnectingInfo(std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){    
+        std::ofstream output("./" + parameterTable.at("outputFileName"));
+
+        groundStation::groundStation station(std::stod(parameterTable.at("stationLatitude"))
+                                            ,std::stod(parameterTable.at("stationLongitude"))
+                                            ,std::stod(parameterTable.at("stationAltitude")));
+        int groundStationAcceptableElevation = std::stoi(parameterTable.at("groundStationAcceptableElevation"));
+        int groundStationAcceptableDistance = std::stoi(parameterTable.at("groundStationAcceptableDistance"));
+        bool round = parameterTable.at("round") == "Y";
+        std::vector<int> connectingTimesOfAllSats;
+        std::map<int, std::vector<int>> satConnectingRecord;
+        for(auto &satPair: satellites){
+            std::bitset<86400> connectingStatusOfDay = station.getConnectionOfDay(satPair.second, groundStationAcceptableElevation, groundStationAcceptableDistance, round);   
+            int totalConnectingTime = connectingStatusOfDay.count();
+            output<<"sat"<<satPair.first<<" total connecting time: "<<totalConnectingTime<<"\n";
+            connectingTimesOfAllSats.push_back(totalConnectingTime);
+            satConnectingRecord[totalConnectingTime].push_back(satPair.first);
+        }
+        std::pair<int, std::vector<int>> shortest = *satConnectingRecord.begin();
+        std::pair<int, std::vector<int>> longest = *satConnectingRecord.rbegin();
+        output<<"longest connecting time sat: ";
+        for(auto satId:longest.second){
+            output<<","<<satId;
+        }
+        output<<": "<<longest.first<<"\n";
+        output<<"shortest connecting time sat: ";
+        for(auto satId:shortest.second){
+            output<<","<<satId;
+        }
+        output<<": "<<shortest.first<<"\n";
+        output<<"mean connecting time:"<<(float)std::accumulate(connectingTimesOfAllSats.begin(), connectingTimesOfAllSats.end(),0)/connectingTimesOfAllSats.size()<<"\n";
+
+        output.close();        
     }
 }
 

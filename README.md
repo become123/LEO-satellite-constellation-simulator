@@ -75,14 +75,15 @@ LEO satellite simulator
     14. **printConstellationDistanceAndOutputCertainPath**: 印出某個特定時刻，行星群的shortest path狀態，並且在terminal中印出由observerId的衛星到otherId衛星的路徑
         - 需設定parameter: acceptableAzimuthDif, acceptableElevationDif, acceptableRange, PAT_time, time, ISLrightAngle, ISLleftAngle(目前是當成前後一定可以連線), outputFileName
     15. **printStationAllSatConnectionTime**:印出根據parameter.txt設置位置的地面站，與星群中每一個衛星一天中有那些時間是可以連線的
-        - 需設定parameter: stationLatitude, stationLongitude, stationAltitude, groundStationAcceptableElevation, groundStationAcceptableDistance, round, outputFileName   
+        - 需設定parameter: stationLatitude, stationLongitude, stationAltitude, groundStationAcceptableElevation, groundStationAcceptableDistance, round, printSecond, outputFileName
     16. **printConstellationISLdeviceInfo**:印出自parameter.txt中的startTime到endTime每秒的衛星間方位角關係及角度差較小的ISL裝置設置角度
         - 需設定parameter: startTime, endTime, ISLrightAngle, ISLleftAngle, outputFileName
     17. **printStationCoverSatsPerSecond**:印出根據parameter.txt設置位置的地面站，一天中的每一秒有哪些衛星是可以連線的
         - 需設定parameter: stationLatitude, stationLongitude, stationAltitude, groundStationAcceptableElevation, groundStationAcceptableDistance, round, outputFileName  
     18. **printDifferentLatitudeCoverTimeOfDay**:印出不同緯度的地面站86400秒中，有幾秒是有被衛星覆蓋的
         - 需設定parameter: stationLongitude, stationAltitude, groundStationAcceptableElevation, groundStationAcceptableDistance, round, outputFileName 
-
+    19. **printGroundStationConnectingInfo**:印出地面站對各個衛星一天中對星群中各個衛星的時間總合，總連線時間最長的衛星，總連線時間最短的衛星，以及各個衛星總連線時間的平均
+        - 需設定parameter: stationLatitude, stationLongitude, stationAltitude, groundStationAcceptableElevation, groundStationAcceptableDistance, round, outputFileName
 - 進入到sgp4/sattrack中執行sattrack
     
     ```bash

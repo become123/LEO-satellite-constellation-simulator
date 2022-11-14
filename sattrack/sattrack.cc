@@ -132,7 +132,10 @@ int main()
             break;
         case str2int("printDifferentLatitudeCoverTimeOfDay"):
             mainFunction::printDifferentLatitudeCoverTimeOfDay(satellites, parameterTable);
-            break;                                                 
+            break;    
+        case str2int("printGroundStationConnectingInfo"):
+            mainFunction::printGroundStationConnectingInfo(satellites, parameterTable);
+            break;                                                         
         default:
             std::cout<<"running test!"<<"\n";
             /*-------------test-------------*/
