@@ -82,7 +82,7 @@ LEO satellite simulator
         - 需設定parameter: stationLatitude, stationLongitude, stationAltitude, groundStationAcceptableElevation, groundStationAcceptableDistance, round, outputFileName  
     18. **printDifferentLatitudeCoverTimeOfDay**:印出不同緯度的地面站86400秒中，有幾秒是有被衛星覆蓋的
         - 需設定parameter: stationLongitude, stationAltitude, groundStationAcceptableElevation, groundStationAcceptableDistance, round, outputFileName 
-    19. **printGroundStationConnectingInfo**:印出地面站對各個衛星一天中對星群中各個衛星的時間總合，總連線時間最長的衛星，總連線時間最短的衛星，以及各個衛星總連線時間的平均
+    19. **printGroundStationConnectingInfo**:印出地面站對各個衛星一天中對星群中各個衛星的時間總合，總連線時間最長的衛星，總連線時間最短的衛星，以及各個衛星總連線時間的平均，若設定多個地面站，只要任一個可以連上，就算那一秒鐘可以連上
         - 需設定parameter: stationLatitude, stationLongitude, stationAltitude, groundStationAcceptableElevation, groundStationAcceptableDistance, round, outputFileName
 - 進入到sgp4/sattrack中執行sattrack
     

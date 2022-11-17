@@ -1,6 +1,8 @@
+#include "util.h"
 #include <vector>
 #include <string>
 #include <sstream>
+#include <bitset>
 
 namespace util
 {
@@ -15,5 +17,21 @@ namespace util
         }	
         return v;
     } 
+
+    std::vector<double> strVec2DoubleVec(const std::vector<std::string> &v){
+        std::vector<double> res;
+        for(auto str:v){
+            res.push_back(std::stod(str));
+        }
+        return res;
+    }
+
+    std::bitset<86400> orAllElement(const std::vector<std::bitset<86400>> v){
+        std::bitset<86400> res;
+        for(auto &element: v){
+            res |= element;
+        }
+        return res;
+    }
 }
 

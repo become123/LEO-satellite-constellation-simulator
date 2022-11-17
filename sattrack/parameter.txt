@@ -57,7 +57,7 @@
 18. printDifferentLatitudeCoverTimeOfDay --> 印出不同緯度的地面站86400秒中，有幾秒是有被衛星覆蓋的
     需設定parameter: stationLongitude, stationAltitude, groundStationAcceptableElevation, groundStationAcceptableDistance, round, outputFileName
 
-19. printGroundStationConnectingInfo --> 印出地面站對各個衛星一天中對星群中各個衛星的時間總合，總連線時間最長的衛星，總連線時間最短的衛星，以及各個衛星總連線時間的平均
+19. printGroundStationConnectingInfo --> 印出地面站對各個衛星一天中對星群中各個衛星的時間總合，總連線時間最長的衛星，總連線時間最短的衛星，以及各個衛星總連線時間的平均，若設定多個地面站，只要任一個可以連上，就算那一秒鐘可以連上
     需設定parameter: stationLatitude, stationLongitude, stationAltitude, groundStationAcceptableElevation, groundStationAcceptableDistance, round, outputFileName
 **********************************************************************************************
 
@@ -82,9 +82,11 @@
 >>(endTime):(712) <--欲計算的結束時間點
 >>(PAT_time):(30)second <--建立連線所需花的時間
 
->>(stationLatitude):(24.9713)
->>(stationLongitude):(121.192)
->>(stationAltitude):(0.192742)
+可設定多個地面站，依序排列在緯度，經度及海拔的括號中
+>>(stationLatitude):(25.04558, 21.924005, 23.564203, 24.482121, 26.152599) (24.9713)
+>>(stationLongitude):(121.55975, 120.840399, 119.609503, 118.409681, 119.942418) (121.192)
+>>(stationAltitude):(0.01, 0.01, 0.01, 0.01, 0.01) (0.192742)
+
 >>(groundStationAcceptableElevation):(30)degree
 >>(groundStationAcceptableDistance):(1000000000)km
 >>(round):(N) <-- 仰角部分是否四捨五入，要的話輸入Y，不要的話輸入N
