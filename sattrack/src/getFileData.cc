@@ -142,9 +142,9 @@ namespace getFileData
 
     //獲得parameter.txt中設置的經緯度們的地面站物件(不只一個)
     std::vector<groundStation::groundStation> getInputStations(const std::map<std::string, std::string> &parameterTable){
-        std::vector<std::string> stationLatStr = util::splitString(',', parameterTable.at("stationLatitude"));
-        std::vector<std::string> stationLongStr = util::splitString(',', parameterTable.at("stationLongitude"));
-        std::vector<std::string> stationAltStr = util::splitString(',', parameterTable.at("stationAltitude"));
+        std::vector<std::string> stationLatStr = util::splitString(',', parameterTable.at("areaStationLatitudes"));
+        std::vector<std::string> stationLongStr = util::splitString(',', parameterTable.at("areaStationLongitudes"));
+        std::vector<std::string> stationAltStr = util::splitString(',', parameterTable.at("areaStationAltitudes"));
         if(!((stationLatStr.size() == stationLongStr.size()) && (stationLongStr.size() == stationAltStr.size()))){
             std::cout<<"stations location setting error!"<<"\n";
             exit(-1);
