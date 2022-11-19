@@ -1,5 +1,7 @@
 #include "getFileData.h"
 #include "satellite.h"
+#include "groundStation.h"
+#include "util.h"
 #include <SGP4.h>
 #include <iostream>
 #include <iomanip>
@@ -11,6 +13,7 @@
 
 namespace getFileData
 {
+    //獲得satellite table
     std::map<int, satellite::satellite> getSatellitesTable(std::string fileName, int ISLfrontAngle, int ISLrightAngle, int ISLbackAngle, int ISLleftAngle){
         std::map<int, satellite::satellite> satellites;
         if(fileName == "TLE_7P_16Sats.txt"){
@@ -100,6 +103,7 @@ namespace getFileData
         return satellites;
     }
 
+    //獲得parameterTable，其中記錄模擬所設置的各種parameter
     std::map<std::string, std::string> getParameterdata(std::string fileName){
         std::map<std::string, std::string> parameterTable;
         std::ifstream ifs(fileName);
@@ -134,6 +138,25 @@ namespace getFileData
         }
         ifs.close();  
         return parameterTable;            
+    }
+
+    //獲得parameter.txt中設置的經緯度們的地面站物件(不只一個)
+    std::vector<groundStation::groundStation> getInputStations(const std::map<std::string, std::string> &parameterTable){
+        std::vector<std::string> stationLatStr = util::splitString(',', parameterTable.at("stationLatitude"));
+        std::vector<std::string> stationLongStr = util::splitString(',', parameterTable.at("stationLongitude"));
+        std::vector<std::string> stationAltStr = util::splitString(',', parameterTable.at("stationAltitude"));
+        if(!((stationLatStr.size() == stationLongStr.size()) && (stationLongStr.size() == stationAltStr.size()))){
+            std::cout<<"stations location setting error!"<<"\n";
+            exit(-1);
+        }
+        std::vector<double> stationLatitudes = util::strVec2DoubleVec(stationLatStr);
+        std::vector<double> stationLongitudes = util::strVec2DoubleVec(stationLongStr);
+        std::vector<double> stationAltitudes = util::strVec2DoubleVec(stationAltStr);
+        std::vector<groundStation::groundStation> stations;
+        for(size_t i = 0; i < stationLatitudes.size(); ++i){
+            stations.push_back(groundStation::groundStation(stationLatitudes[i], stationLongitudes[i], stationAltitudes[i]));
+        }       
+        return stations; 
     }
 }
 

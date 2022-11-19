@@ -734,26 +734,13 @@ namespace mainFunction
     //印出地面站對各個衛星一天中對星群中各個衛星的時間總合，總連線時間最長的衛星，總連線時間最短的衛星，以及各個衛星總連線時間的平均，若設定多個地面站，只要任一個可以連上，就算那一秒鐘可以連上
     void printGroundStationConnectingInfo(std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){    
         std::ofstream output("./" + parameterTable.at("outputFileName"));
+        std::vector<groundStation::groundStation> stations = getFileData::getInputStations(parameterTable);
 
-        std::vector<std::string> stationLatStr = util::splitString(',', parameterTable.at("stationLatitude"));
-        std::vector<std::string> stationLongStr = util::splitString(',', parameterTable.at("stationLongitude"));
-        std::vector<std::string> stationAltStr = util::splitString(',', parameterTable.at("stationAltitude"));
-        if(!((stationLatStr.size() == stationLongStr.size()) && (stationLongStr.size() == stationAltStr.size()))){
-            std::cout<<"stations location setting error!"<<"\n";
-            exit(-1);
-        }
-        std::vector<double> stationLatitudes = util::strVec2DoubleVec(stationLatStr);
-        std::vector<double> stationLongitudes = util::strVec2DoubleVec(stationLongStr);
-        std::vector<double> stationAltitudes = util::strVec2DoubleVec(stationAltStr);
-        std::vector<groundStation::groundStation> stations;
-        for(size_t i = 0; i < stationLatitudes.size(); ++i){
-            stations.push_back(groundStation::groundStation(stationLatitudes[i], stationLongitudes[i], stationAltitudes[i]));
-        }
 
         int groundStationAcceptableElevation = std::stoi(parameterTable.at("groundStationAcceptableElevation"));
         int groundStationAcceptableDistance = std::stoi(parameterTable.at("groundStationAcceptableDistance"));
         bool round = parameterTable.at("round") == "Y";
-        std::vector<int> connectingTimesOfAllSats;
+        std::vector<int> connectingTimesOfAllSats; // for calculate avg connecting time
         std::map<int, std::vector<int>> satConnectingRecord;
         for(auto &satPair: satellites){
 
