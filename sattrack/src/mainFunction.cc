@@ -546,7 +546,6 @@ namespace mainFunction
             std::vector<std::pair<size_t, bool>> stateChangeInfoOfDay = station.getStateChangeInfoOfDay(satPair.second, groundStationAcceptableElevation, groundStationAcceptableDistance, round);
             output<<"sat"<<satPair.first<<" connecting time: ";
             // output<<"sat"<<satPair.first<<" connecting time: \n-----------------------------\n";
-            int cnt = 1;
             for(size_t i = 0; i < stateChangeInfoOfDay.size(); ++i){
                 if(stateChangeInfoOfDay[i].second){
                     printTime(stateChangeInfoOfDay[i].first,output, printSecond);
@@ -555,7 +554,7 @@ namespace mainFunction
                 }
                 else{
                     printTime(stateChangeInfoOfDay[i].first,output, printSecond);
-                    output<<"(T"<<cnt++<<")";
+                    output<<"-"<<(int)((float)stateChangeInfoOfDay[i].first/6050.42)+1; //目前的設定,每天會繞地球14.28圈,每一圈86400/14.28 = 6,050.42秒
                     output<<", ";
                     // output<<stateChangeInfoOfDay[i].first<<"\n";
                 }
