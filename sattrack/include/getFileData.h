@@ -17,5 +17,8 @@ namespace getFileData
 
     //獲得parameter.txt中設置的經緯度們的地面站物件(不只一個)
     std::vector<groundStation::groundStation> getInputStations(const std::map<std::string, std::string> &parameterTable);
+
+    //獲得要關掉的Link的set
+    std::set<std::pair<int, int>> getCloseLinkSet(std::string fileName);
 }
 #endif

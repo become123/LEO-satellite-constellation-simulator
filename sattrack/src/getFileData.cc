@@ -5,11 +5,13 @@
 #include <SGP4.h>
 #include <iostream>
 #include <iomanip>
-#include<fstream>
-#include<string>
-#include<map>
+#include <fstream>
+#include <string>
+#include <map>
 #include<vector>
-#include<utility>
+#include <utility>
+#include <set>
+#include <algorithm>
 
 namespace getFileData
 {
@@ -157,6 +159,34 @@ namespace getFileData
             stations.push_back(groundStation::groundStation(stationLatitudes[i], stationLongitudes[i], stationAltitudes[i]));
         }       
         return stations; 
+    }
+
+    //獲得要關掉的Link的set
+    std::set<std::pair<int, int>> getCloseLinkSet(std::string fileName){
+        std::set<std::pair<int, int>> closeLinkSet;
+        std::ifstream ifs(fileName);
+        if (!ifs.is_open()) {
+            std::cout << "Failed to open file.\n";
+            exit(EXIT_FAILURE);
+        }  
+        std::string s;
+        while ( std::getline (ifs,s) ){
+            std::string leftBracket = "(";
+            std::string rightBracket = ")";
+            size_t leftPos = 0;
+            size_t rightPos = 0;
+            std::string token;
+            leftPos = s.find(leftBracket);
+            rightPos = s.find(rightBracket);
+            token = s.substr(leftPos, rightPos-leftPos);
+            token.erase(0, 1);
+            // std::cout<<token<<"\n";
+            std::vector<int> link = util::strVec2IntVec(util::splitString(',', token));
+            std::sort(link.begin(), link.end());//為了讓第一個都是比較小的元素
+            closeLinkSet.insert(std::make_pair(link[0],link[1]));
+        }
+        ifs.close();  
+        return closeLinkSet;        
     }
 }
 

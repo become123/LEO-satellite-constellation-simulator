@@ -71,6 +71,7 @@
 >>(TLE_inputFileName): (TLE_7P_16Sats.txt) <--填入記錄星群TLE的fileName
 >>(execute_function): (printAreaAllSatConnectionTime) <-- 填入要執行的function名稱
 >>(outputFileName): (output.txt)
+>>(closeLinkFileName): (7P_16Sats_closeLink.txt)
 
 >>(observerId): (101) <-- 填入觀察者的衛星編號
 >>(otherId): (215) <-- 填入被觀察者的衛星編號

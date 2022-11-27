@@ -14,6 +14,9 @@ namespace util
     //將字串vector轉換成double vector
     std::vector<double> strVec2DoubleVec(const std::vector<std::string> &v);
 
+    //將字串vector轉換成int vector
+    std::vector<int> strVec2IntVec(const std::vector<std::string> &v);
+
     //回傳vector中所有bitset進行OR operation的結果
     std::bitset<86400> orAllElement(const std::vector<std::bitset<86400>> v);
 
