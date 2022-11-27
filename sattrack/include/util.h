@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include <fstream>
 #include <bitset>
 
 namespace util
@@ -18,5 +19,8 @@ namespace util
 
     //根據input parameter stateOfDay，回傳一個vector，裡面是紀錄每個connection state改變的時間點，及他是Link Breaking(false)還是connecting(true)
     std::vector<std::pair<size_t, bool>> getStateChangeInfo(std::bitset<86400> &stateOfDay);
+
+    //印出時間
+    void printTime(size_t t, std::ofstream &_output, bool _printSecond);
 }
 #endif

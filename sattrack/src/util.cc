@@ -50,6 +50,20 @@ namespace util
             stateChangeInfo.push_back(std::make_pair(86400, false));
         }
         return stateChangeInfo;
-    }    
+    }  
+
+    //印出時間
+    void printTime(size_t t, std::ofstream &output, bool printSecond) { 
+        int second, min, hour;
+        hour = (int)t/3600;
+        min = (int)t/60-(hour*60);
+        second = (int)t-(min*60)-(hour*3600);
+        if(printSecond){
+            output<<t;
+        }
+        else{
+            output<<hour<<":"<<min<<":"<<second;
+        }
+    }
 }
 
