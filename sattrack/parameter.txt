@@ -62,10 +62,14 @@
 
 20. printAreaConnectingInfo --> 印出設定區域(多個地面站)內對各個衛星一天中對星群中各個衛星的可連線時間總合，總連線時間最長的衛星，總連線時間最短的衛星，以及各個衛星總連線時間的平均，多個地面站中只要任一個可以連上，就算那一秒鐘可以連上
     需設定parameter: areaStationLatitudes, areaStationLongitudes, areaStationAltitudes, groundStationAcceptableElevation, groundStationAcceptableDistance, round, outputFileName
+
+21. printAreaAllSatConnectionTime --> 印出根據parameter.txt設置的區域(多個地面站)，與星群中每一個衛星一天中有那些時間是可以連線的
+    需設定parameter: areaStationLatitudes, areaStationLongitudes, areaStationAltitudes, groundStationAcceptableElevation, groundStationAcceptableDistance, round, printSecond, outputFileName
+
 **********************************************************************************************
 
 >>(TLE_inputFileName): (TLE_7P_16Sats.txt) <--填入記錄星群TLE的fileName
->>(execute_function): (printAreaConnectingInfo) <-- 填入要執行的function名稱
+>>(execute_function): (printAreaAllSatConnectionTime) <-- 填入要執行的function名稱
 >>(outputFileName): (output.txt)
 
 >>(observerId): (101) <-- 填入觀察者的衛星編號
@@ -90,9 +94,9 @@
 >>(stationAltitude):(0.192742)
 
 設定多個地面站，依序排列在緯度，經度及海拔的括號中
->>(areaStationLatitudes):(25.04558, 21.924005, 23.564203, 24.482121, 26.152599)
->>(areaStationLongitudes):(121.55975, 120.840399, 119.609503, 118.409681, 119.942418)
->>(areaStationAltitudes):(0.01, 0.01, 0.01, 0.01, 0.01)
+>>(areaStationLatitudes): (26.15013 ,26.22531 ,24.45711 ,24.43836 ,23.57384 ,23.67324 ,25.03590 ,25.295102 ,24.15494 ,24.05902 ,23.00356 ,23.06135 ,22.63584 ,21.90526 ,23.99012 ,22.75994 )
+>>(areaStationLongitudes):(119.92937,119.98705,118.39513,118.24269,119.61019,119.59646,121.56177,121.572164,120.67258,120.52245,120.22416,120.12996,120.30226,120.85771,121.59893,121.13553)
+>>(areaStationAltitudes): (0.01     ,0.01     ,0.01     ,0.01     ,0.01     ,0.01     ,0.01     ,0.01      ,0.01     ,0.01     ,0.01     ,0.01     ,0.01     ,0.01     ,0.01     ,0.01     )
 
 >>(groundStationAcceptableElevation):(30)degree
 >>(groundStationAcceptableDistance):(1000000000)km

@@ -138,7 +138,10 @@ int main()
             break; 
         case str2int("printAreaConnectingInfo"):
             mainFunction::printAreaConnectingInfo(satellites, parameterTable);
-            break;                                                                      
+            break;       
+        case str2int("printAreaAllSatConnectionTime"):
+            mainFunction::printAreaAllSatConnectionTime(satellites, parameterTable);
+            break;                                                                                
         default:
             std::cout<<"running test!"<<"\n";
             /*-------------test-------------*/
