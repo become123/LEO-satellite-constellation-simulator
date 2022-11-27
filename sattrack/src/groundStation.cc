@@ -1,5 +1,6 @@
 
 #include "groundStation.h"
+#include "util.h"
 #include <CoordTopocentric.h>
 #include <CoordGeodetic.h>
 #include <Observer.h>
@@ -13,22 +14,6 @@
 
 namespace groundStation
 {
-    //根據input parameter stateOfDay，回傳一個vector，裡面是紀錄每個connection state改變的時間點，及他是Link Breaking(false)還是connecting(true)
-    std::vector<std::pair<size_t, bool>> getStateChangeInfo(std::bitset<86400> &stateOfDay){
-        std::vector<std::pair<size_t, bool>> stateChangeInfo;
-        bool currentState = false;
-        for(size_t i = 0; i < 86400; ++i){
-            if(stateOfDay[i] != currentState){
-                currentState = !currentState;
-                stateChangeInfo.push_back(std::make_pair(i, currentState));
-            }
-        }
-        if(currentState){ //到一天中的最後一秒還是可以連
-            stateChangeInfo.push_back(std::make_pair(86400, false));
-        }
-        return stateChangeInfo;
-    }
-
 
     groundStation::groundStation(const double latitude,const double longitude,const double altitude): obs(latitude, longitude, altitude){}
     Observer groundStation::getObserver(){
@@ -108,7 +93,7 @@ namespace groundStation
     //回傳一個vector，裡面是紀錄每個connection state改變的時間點，及他是Link Breaking(false)還是connecting(true)
     std::vector<std::pair<size_t, bool>> groundStation::getStateChangeInfoOfDay(satellite::satellite &sat, int groundStationAcceptableElevation, int groundStationAcceptableDistance, bool round){
         std::bitset<86400> stateOfDay = this->getConnectionOfDay(sat, groundStationAcceptableElevation, groundStationAcceptableDistance, round);
-        std::vector<std::pair<size_t, bool>> stateChangeInfoOfDay = getStateChangeInfo(stateOfDay);
+        std::vector<std::pair<size_t, bool>> stateChangeInfoOfDay = util::getStateChangeInfo(stateOfDay);
         return stateChangeInfoOfDay;
     }
 }
