@@ -392,22 +392,16 @@ namespace mainFunction
         int time = std::stoi(parameterTable.at("time"));
         int PAT_time = std::stoi(parameterTable.at("PAT_time"));
         std::vector<std::vector<int>> constellationHopCount = satellite::getConstellationHopCount(satCountPerOrbit, totalSatCount, time, PAT_time, acceptableAER_diff, satellites);
-        output<<"     ";
-        for(size_t i = 0; i < constellationHopCount.size(); ++i){
-            output<<std::setw(3)<<satellite::indexToSatId(i, satCountPerOrbit)<<" |";
-        }
-        output<<"\n-----";
+        util::printTableFirstLine(output, totalSatCount, satCountPerOrbit);
         int lineWidth = 5*totalSatCount;
-        for(int dash = 0; dash < lineWidth; ++dash) output<<"-";
-        output<<"\n";
+        util::printDashLine(output, lineWidth+5);
         for(size_t i = 0; i < constellationHopCount.size(); ++i){
             output<<std::setw(4)<<satellite::indexToSatId(i, satCountPerOrbit)<<"|";
             for(size_t j = 0; j < constellationHopCount.size(); ++j){
                 output<<std::setw(3)<<constellationHopCount[i][j]<<" |";
             }
             output<<"\n";
-            for(int dash = 0; dash < lineWidth; ++dash) output<<"-";
-            output<<"-----\n";
+            util::printDashLine(output, lineWidth+5);;
         }
         output.close(); 
     }

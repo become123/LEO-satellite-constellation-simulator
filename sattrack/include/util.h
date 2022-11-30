@@ -25,5 +25,11 @@ namespace util
 
     //印出時間
     void printTime(size_t t, std::ofstream &_output, bool _printSecond);
+
+    //印出虛線
+    void printDashLine(std::ofstream &outputint, int lineWidth);
+
+    //印出星群表格的第一列(每個衛星的ID)
+    void printTableFirstLine(std::ofstream &output, long unsigned int satCount, long unsigned int satCountPerOrbit);
 }
 #endif

@@ -1,4 +1,5 @@
 #include "util.h"
+#include "satellite.h"
 #include <vector>
 #include <string>
 #include <sstream>
@@ -73,6 +74,22 @@ namespace util
         else{
             output<<hour<<":"<<min<<":"<<second;
         }
+    }
+
+    //印出虛線
+    void printDashLine(std::ofstream &output, int lineWidth){
+        for(int dash = 0; dash < lineWidth; ++dash) 
+            output<<"-";
+        output<<"\n";
+    }
+
+    //印出星群表格的第一列(每個衛星的ID)
+    void printTableFirstLine(std::ofstream &output, long unsigned int satCount, long unsigned int satCountPerOrbit){
+        output<<"     ";
+        for(size_t i = 0; i < satCount; ++i){
+            output<<std::setw(3)<<satellite::indexToSatId(i, satCountPerOrbit)<<" |";
+        }
+        output<<"\n";        
     }
 }
 
