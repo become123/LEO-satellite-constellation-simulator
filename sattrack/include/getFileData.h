@@ -10,7 +10,7 @@
 namespace getFileData
 {
     //獲得satellite table
-    std::map<int, satellite::satellite> getSatellitesTable(std::string fileName, int ISLfrontAngle, int ISLrightAngle, int ISLbackAngle, int ISLleftAngle);
+    std::map<int, satellite::satellite> getSatellitesTable(std::string fileName, std::map<int, std::map<int, bool>> &closeLinksTable, int ISLfrontAngle, int ISLrightAngle, int ISLbackAngle, int ISLleftAngle);
 
     //獲得parameterTable，其中記錄模擬所設置的各種parameter
     std::map<std::string, std::string> getParameterdata(std::string fileName);
@@ -18,7 +18,7 @@ namespace getFileData
     //獲得parameter.txt中設置的經緯度們的地面站物件(不只一個)
     std::vector<groundStation::groundStation> getInputStations(const std::map<std::string, std::string> &parameterTable);
 
-    //獲得要關掉的Link的set
-    std::set<std::pair<int, int>> getCloseLinkSet(std::string fileName);
+    //獲得要關掉的Link的table(table[satId1][satId2]代表satId1與satId2之間的Link被關掉)
+    std::map<int, std::map<int, bool>> getCloseLinkTable(std::string fileName);
 }
 #endif

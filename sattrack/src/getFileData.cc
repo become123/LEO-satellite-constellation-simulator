@@ -16,7 +16,7 @@
 namespace getFileData
 {
     //獲得satellite table
-    std::map<int, satellite::satellite> getSatellitesTable(std::string fileName, int ISLfrontAngle, int ISLrightAngle, int ISLbackAngle, int ISLleftAngle){
+    std::map<int, satellite::satellite> getSatellitesTable(std::string fileName,std::map<int, std::map<int, bool>> &closeLinksTable, int ISLfrontAngle, int ISLrightAngle, int ISLbackAngle, int ISLleftAngle){
         std::map<int, satellite::satellite> satellites;
         if(fileName == "TLE_7P_16Sats.txt"){
             std::ifstream ifs(fileName);
@@ -54,7 +54,7 @@ namespace getFileData
                 const Tle satelliteTLE = Tle(satelliteNumbers[i], TLEs[i].first, TLEs[i].second);
                 SGP4 newSatelliteSGP4data(satelliteTLE);
                 int id = stoi(satelliteNumbers[i]);
-                satellite::satellite s("7P_16Sats", satelliteTLE,newSatelliteSGP4data, id, ISLfrontAngle, ISLrightAngle, ISLbackAngle, ISLleftAngle);
+                satellite::satellite s("7P_16Sats", satelliteTLE,newSatelliteSGP4data, id, closeLinksTable, ISLfrontAngle, ISLrightAngle, ISLbackAngle, ISLleftAngle);
                 satellites.insert(std::make_pair(id,s));
             }            
         }
@@ -94,7 +94,7 @@ namespace getFileData
                 const Tle satelliteTLE = Tle(satelliteNumbers[i], TLEs[i].first, TLEs[i].second);
                 SGP4 newSatelliteSGP4data(satelliteTLE);
                 int id = stoi(satelliteNumbers[i]);
-                satellite::satellite s("6P_22Sats", satelliteTLE,newSatelliteSGP4data, id, ISLfrontAngle, ISLrightAngle, ISLbackAngle, ISLleftAngle);
+                satellite::satellite s("6P_22Sats", satelliteTLE,newSatelliteSGP4data, id, closeLinksTable, ISLfrontAngle, ISLrightAngle, ISLbackAngle, ISLleftAngle);
                 satellites.insert(std::make_pair(id,s));
             } 
         }
@@ -161,9 +161,9 @@ namespace getFileData
         return stations; 
     }
 
-    //獲得要關掉的Link的set
-    std::set<std::pair<int, int>> getCloseLinkSet(std::string fileName){
-        std::set<std::pair<int, int>> closeLinkSet;
+    //獲得要關掉的Link的table(table[satId1][satId2]代表satId1與satId2之間的Link被關掉)
+    std::map<int, std::map<int, bool>> getCloseLinkTable(std::string fileName){
+        std::map<int, std::map<int, bool>> closeLinkTable;
         std::ifstream ifs(fileName);
         if (!ifs.is_open()) {
             std::cout << "Failed to open file.\n";
@@ -182,11 +182,11 @@ namespace getFileData
             token.erase(0, 1);
             // std::cout<<token<<"\n";
             std::vector<int> link = util::strVec2IntVec(util::splitString(',', token));
-            std::sort(link.begin(), link.end());//為了讓第一個都是比較小的元素
-            closeLinkSet.insert(std::make_pair(link[0],link[1]));
+            closeLinkTable[link[0]][link[1]] = true;
+            closeLinkTable[link[1]][link[0]] = true;
         }
         ifs.close();  
-        return closeLinkSet;        
+        return closeLinkTable;        
     }
 }
 

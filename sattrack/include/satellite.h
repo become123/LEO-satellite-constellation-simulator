@@ -84,7 +84,7 @@ namespace satellite
 
     class satellite{
     public: 
-        satellite(std::string constellationType, Tle _tle, SGP4 _sgp4, int _id, int ISLfrontAngle, int ISLrightAngle, int ISLbackAngle, int ISLleftAngle);
+        satellite(std::string constellationType, Tle _tle, SGP4 _sgp4, int _id,std::map<int, std::map<int, bool>> &closeLinksTable, int ISLfrontAngle, int ISLrightAngle, int ISLbackAngle, int ISLleftAngle);
         void buildNeighborSatsAndISLs(std::map<int, satellite> &satellites, std::map<std::set<int>, ISL> &ISLtable);
         Tle getTle();
         SGP4 getSgp4();
@@ -98,6 +98,14 @@ namespace satellite
         double getISLleftAngle();
         double getISLfrontAngle();
         double getISLbackAngle();
+        void closeRightLink();
+        void closeLeftLink();
+        void closeFrontLink();
+        void closeBackLink();
+        bool rightLinkClosed();
+        bool leftLinkClosed();
+        bool frontLinkClosed();
+        bool backLinkClosed();
         satellite& getRightSat();
         satellite& getLeftSat();
         satellite& getFrontSat();
@@ -180,6 +188,7 @@ namespace satellite
         int id;
         satellite *rightSatPtr = nullptr , *leftSatPtr = nullptr , *frontSatPtr = nullptr , *backSatPtr = nullptr ;
         std::vector<std::pair<int, double>> neighbors;//依序是 right left  front back 的<衛星編號，ISL角度>
+        bool rightClosed = false, leftClosed = false, backClosed = false, frontClosed = false;
         ISL *rightISLptr = nullptr , *leftISLptr = nullptr ;
         int ISLdeviceState = 0;
         std::bitset<86400> ISLsettingStateOfDay; //一天中86400秒的ISL裝置設定狀態

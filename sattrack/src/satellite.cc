@@ -428,7 +428,7 @@ namespace satellite
 
     /*------------------Satellite class 的函式  start------------------*/
     //satellite的建構子，初始化衛星的各個資訊
-    satellite::satellite(std::string constellationType, Tle _tle, SGP4 _sgp4, int _id, int ISLfrontAngle, int ISLrightAngle, int ISLbackAngle, int ISLleftAngle) : tle(_tle), sgp4(_sgp4), id(_id) {
+    satellite::satellite(std::string constellationType, Tle _tle, SGP4 _sgp4, int _id, std::map<int, std::map<int, bool>> &closeLinksTable, int ISLfrontAngle, int ISLrightAngle, int ISLbackAngle, int ISLleftAngle) : tle(_tle), sgp4(_sgp4), id(_id) {
         if(constellationType == "7P_16Sats"){
             neighbors = std::vector<std::pair<int,double>>(4);//right left front back 的 <satId, ISLangle>
             neighbors[0].second = ISLrightAngle;
@@ -480,6 +480,18 @@ namespace satellite
         else{
             std::cout<<"unknown constellationType!\n";
             exit(-1);
+        }
+        if(closeLinksTable[this->getId()][this->getRightSatId()]){
+            this->closeRightLink();
+        }
+        if(closeLinksTable[this->getId()][this->getLeftSatId()]){
+            this->closeLeftLink();
+        }
+        if(closeLinksTable[this->getId()][this->getFrontSatId()]){
+            this->closeFrontLink();
+        }
+        if(closeLinksTable[this->getId()][this->getBackSatId()]){
+            this->closeBackLink();
         }
     }
 
@@ -559,6 +571,38 @@ namespace satellite
     double satellite::getISLbackAngle(){
         return neighbors[3].second;
     }
+
+    void satellite::closeRightLink(){
+        this->rightClosed = true;
+    }
+
+    void satellite::closeLeftLink(){
+        this->leftClosed = true;
+    }
+
+    void satellite::closeFrontLink(){
+        this->frontClosed = true;
+    }
+
+    void satellite::closeBackLink(){
+        this->backClosed = true;
+    }
+    
+    bool satellite::rightLinkClosed(){
+        return this->rightClosed;
+    }
+    
+    bool satellite::leftLinkClosed(){
+        return this->leftClosed;
+    }
+
+    bool satellite::frontLinkClosed(){
+        return this->frontClosed;
+    }
+
+    bool satellite::backLinkClosed(){
+        return this->backClosed;
+    }    
 
     satellite& satellite::getRightSat(){
         if(!rightSatPtr){
@@ -814,6 +858,9 @@ namespace satellite
 
     //回傳特定時刻可否建立右方的ISL(要彼此可以連線到彼此才可以建立)，且有考慮PAT，可連線則回傳距離，不可連線則回傳0
     int satellite::judgeRightISLwithPAT(int time, int PAT_time, const AER &acceptableAER_diff){
+        if(this->rightLinkClosed()){
+            return 0;
+        }
         if(time < PAT_time){
             for(int setupTime = 0; setupTime < time; ++setupTime){
                 if(this->judgeRightISL(setupTime, acceptableAER_diff) == 0){
@@ -832,6 +879,9 @@ namespace satellite
 
     //回傳特定時刻可否建立左方的ISL(要彼此可以連線到彼此才可以建立)，且有考慮PAT，可連線則回傳距離，不可連線則回傳0
     int satellite::judgeLeftISLwithPAT(int time, int PAT_time, const AER &acceptableAER_diff){
+        if(this->leftLinkClosed()){
+            return 0;
+        }
         if(time < PAT_time){
             for(int setupTime = 0; setupTime < time; ++setupTime){
                 if(this->judgeLeftISL(setupTime, acceptableAER_diff) == 0){
