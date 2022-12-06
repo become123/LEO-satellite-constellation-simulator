@@ -5,6 +5,8 @@
 #include <sstream>
 #include <fstream>
 #include <bitset>
+#include <map>
+#include "satellite.h"
 
 namespace util
 {
@@ -31,5 +33,8 @@ namespace util
 
     //印出星群表格的第一列(每個衛星的ID)
     void printTableFirstLine(std::ofstream &output, long unsigned int satCount, long unsigned int satCountPerOrbit);
+
+    //印出要關掉的Link
+    void getClosedLinkFile(std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable);    
 }
 #endif

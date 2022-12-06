@@ -91,5 +91,62 @@ namespace util
         }
         output<<"\n";        
     }
+
+    //印出要關掉的Link
+    void getClosedLinkFile(std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){
+        std::ofstream output("./" + parameterTable.at("outputFileName"));
+        std::map<int, std::map<int, bool>> openLink;
+        for(int i = 101; i <= 116; i+=4){
+            openLink[i][satellites.at(i).getRightSatId()] = true;
+        }
+        for(int i = 201; i <= 216; i+=4){
+            openLink[i][satellites.at(i).getRightSatId()] = true;
+        }
+        for(int i = 301; i <= 316; i+=4){
+            openLink[i][satellites.at(i).getRightSatId()] = true;
+        }
+        for(int i = 401; i <= 416; i+=4){
+            openLink[i][satellites.at(i).getRightSatId()] = true;
+        }
+        for(int i = 501; i <= 516; i+=4){
+            openLink[i][satellites.at(i).getRightSatId()] = true;
+        }
+        for(int i = 601; i <= 616; i+=4){
+            openLink[i][satellites.at(i).getRightSatId()] = true;
+        }        
+        for(int i = 701; i <= 716; i+=4){
+            openLink[i][satellites.at(i).getRightSatId()] = true;
+        }    
+        
+        for(int i = 101; i <= 116; i++){
+            if(openLink[i][satellites.at(i).getRightSatId()]) continue;
+            output<<"("<<i<<","<<satellites.at(i).getRightSatId()<<")\n";
+        }
+        for(int i = 201; i <= 216; i++){
+            if(openLink[i][satellites.at(i).getRightSatId()]) continue;
+            output<<"("<<i<<","<<satellites.at(i).getRightSatId()<<")\n";
+        }
+        for(int i = 301; i <= 316; i++){
+            if(openLink[i][satellites.at(i).getRightSatId()]) continue;
+            output<<"("<<i<<","<<satellites.at(i).getRightSatId()<<")\n";
+        }
+        for(int i = 401; i <= 416; i++){
+            if(openLink[i][satellites.at(i).getRightSatId()]) continue;
+            output<<"("<<i<<","<<satellites.at(i).getRightSatId()<<")\n";
+        }
+        for(int i = 501; i <= 516; i++){
+            if(openLink[i][satellites.at(i).getRightSatId()]) continue;
+            output<<"("<<i<<","<<satellites.at(i).getRightSatId()<<")\n";
+        }
+        for(int i = 601; i <= 616; i++){
+            if(openLink[i][satellites.at(i).getRightSatId()]) continue;
+            output<<"("<<i<<","<<satellites.at(i).getRightSatId()<<")\n";
+        }        
+        for(int i = 701; i <= 716; i++){
+            if(openLink[i][satellites.at(i).getRightSatId()]) continue;
+            output<<"("<<i<<","<<satellites.at(i).getRightSatId()<<")\n";
+        }                 
+        output.close();    
+    }    
 }
 

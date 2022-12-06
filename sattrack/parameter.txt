@@ -69,9 +69,9 @@
 **********************************************************************************************
 
 >>(TLE_inputFileName): (TLE_7P_16Sats.txt) <--填入記錄星群TLE的fileName
->>(execute_function): (printAreaAllSatConnectionTime) <-- 填入要執行的function名稱
+>>(execute_function): (printConstellationHopCountFile) <-- 填入要執行的function名稱
 >>(outputFileName): (output.txt)
->>(closeLinkFileName): (7P_16Sats_closeLink.txt)
+>>(closeLinksFileName): (7P_16Sats_closeLink.txt)
 
 >>(observerId): (101) <-- 填入觀察者的衛星編號
 >>(otherId): (215) <-- 填入被觀察者的衛星編號
@@ -81,9 +81,9 @@
 >>(acceptableRange): (5000)km  <-- 可接受range
 
 >>(ISLfrontAngle):(0)degree <-- 前方ISL設置角度
->>(ISLrightAngle):(90)degree <-- 右方ISL設置角度
+>>(ISLrightAngle):(0)degree <-- 右方ISL設置角度
 >>(ISLbackAngle):(180)degree <-- 後方ISL設置角度
->>(ISLleftAngle):(270)degree <-- 左方ISL設置角度
+>>(ISLleftAngle):(180)degree <-- 左方ISL設置角度
 
 >>(time):(40)second <-- 欲計算的特定時間點
 >>(startTime):(660) <--欲計算的開始時間點

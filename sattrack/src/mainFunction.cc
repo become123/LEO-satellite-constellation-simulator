@@ -11,7 +11,7 @@
 
 #include <iostream>
 #include <iomanip>
-#include<map>
+#include <map>
 #include<fstream>
 #include <utility>
 #include <numeric>
@@ -403,6 +403,12 @@ namespace mainFunction
             output<<"\n";
             util::printDashLine(output, lineWidth+5);;
         }
+        // for(size_t i = 0; i < constellationHopCount.size(); ++i){
+        //     for(size_t j = 0; j < constellationHopCount.size(); ++j){
+        //         output<<constellationHopCount[i][j]<<",";
+        //     }
+        // }
+        // output<<"\n";
         output.close(); 
     }
 
