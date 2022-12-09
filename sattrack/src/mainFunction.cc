@@ -395,22 +395,31 @@ namespace mainFunction
         util::printTableFirstLine(output, totalSatCount, satCountPerOrbit);
         int lineWidth = 5*totalSatCount;
         util::printDashLine(output, lineWidth+5);
+        std::vector<int> hopCounts;
         for(size_t i = 0; i < constellationHopCount.size(); ++i){
             output<<std::setw(4)<<satellite::indexToSatId(i, satCountPerOrbit)<<"|";
             for(size_t j = 0; j < constellationHopCount.size(); ++j){
                 output<<std::setw(3)<<constellationHopCount[i][j]<<" |";
+                hopCounts.push_back(constellationHopCount[i][j]);
             }
             output<<"\n";
             util::printDashLine(output, lineWidth+5);;
         }
-        // for(size_t i = 0; i < constellationHopCount.size(); ++i){
-        //     for(size_t j = 0; j < constellationHopCount.size(); ++j){
-        //         output<<constellationHopCount[i][j]<<",";
-        //     }
-        // }
-        // output<<"\n";
-        output.close(); 
-    }
+
+        output<<"\n\nmean:"<<util::getAverage(hopCounts)<<"\n";
+        output<<"max:"<<*max_element(hopCounts.begin(), hopCounts.end())<<"\n";
+        output<<"min:"<<*min_element(hopCounts.begin(), hopCounts.end())<<"\n";
+        output<<"-----------------------------------------------------------------------\n";
+
+        std::vector<int> table(17, 0);
+        for(int hopCount:hopCounts){
+            table[(size_t)hopCount]++;
+        }
+        for(size_t i = 0; i < table.size(); ++i){
+            output<<i<<":"<<table[i]<<"\n";
+        }
+            output.close(); 
+        }
 
     //印出某個特定時刻，行星群的hop count狀態(totalSatCount*totalSatCount的對稱二維vetcor，內容意義為衛星最少要經過多少距離才會抵達另一個衛星)到sattrack/output.txt中，並且在terminal中印出由observerId的衛星到otherId衛星的路徑
     void printConstellationHopCountFileAndOutputCertainPath(long unsigned int satCountPerOrbit, long unsigned int totalSatCount, std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){
