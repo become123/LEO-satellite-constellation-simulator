@@ -25,6 +25,7 @@
 #include "AER.h"
 #include "mainFunction.h"
 #include "groundStation.h"
+#include "util.h"
 
 #include <iostream>
 #include <iomanip>
@@ -146,9 +147,7 @@ int main()
         default:
             std::cout<<"running test!"<<"\n";
             /*-------------test-------------*/
-            std::ofstream output("./output.txt");
-        
-            output.close();   
+            util::getClosedLinkFile(satellites, parameterTable);
             /*------------end test---------*/
 
 

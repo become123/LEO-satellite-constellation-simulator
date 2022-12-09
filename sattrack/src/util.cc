@@ -92,60 +92,48 @@ namespace util
         output<<"\n";        
     }
 
+    //獲得vector所有元素的平均
+    double getAverage(std::vector<int> const& v){
+        if (v.empty()){
+            return 0;
+        }
+        int cnt = 0;
+        for(auto num: v){
+            cnt += num;
+        }
+        return (double)cnt / v.size();
+    }
+
     //印出要關掉的Link
     void getClosedLinkFile(std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){
+        int period = 1;//open link與open link之間間隔幾個close link
         std::ofstream output("./" + parameterTable.at("outputFileName"));
         std::map<int, std::map<int, bool>> openLink;
-        for(int i = 101; i <= 116; i+=4){
-            openLink[i][satellites.at(i).getRightSatId()] = true;
+        int cnt, satId;
+        satId = 101;
+        openLink[satId][satellites.at(satId).getRightSatId()] = true;
+        std::cout<<"("<<satId<<","<<satellites.at(satId).getRightSatId()<<")\n";
+        cnt = 0;
+        satId = satellites.at(satId).getRightSatId();
+        while(satId != 101){
+            if(cnt >= period){
+                openLink[satId][satellites.at(satId).getRightSatId()] = true;
+                std::cout<<"("<<satId<<","<<satellites.at(satId).getRightSatId()<<")\n";
+                cnt = 0;
+            }
+            else{
+                cnt++;
+            }
+            satId = satellites.at(satId).getRightSatId();
         }
-        for(int i = 201; i <= 216; i+=4){
-            openLink[i][satellites.at(i).getRightSatId()] = true;
-        }
-        for(int i = 301; i <= 316; i+=4){
-            openLink[i][satellites.at(i).getRightSatId()] = true;
-        }
-        for(int i = 401; i <= 416; i+=4){
-            openLink[i][satellites.at(i).getRightSatId()] = true;
-        }
-        for(int i = 501; i <= 516; i+=4){
-            openLink[i][satellites.at(i).getRightSatId()] = true;
-        }
-        for(int i = 601; i <= 616; i+=4){
-            openLink[i][satellites.at(i).getRightSatId()] = true;
-        }        
-        for(int i = 701; i <= 716; i+=4){
-            openLink[i][satellites.at(i).getRightSatId()] = true;
-        }    
-        
-        for(int i = 101; i <= 116; i++){
-            if(openLink[i][satellites.at(i).getRightSatId()]) continue;
-            output<<"("<<i<<","<<satellites.at(i).getRightSatId()<<")\n";
-        }
-        for(int i = 201; i <= 216; i++){
-            if(openLink[i][satellites.at(i).getRightSatId()]) continue;
-            output<<"("<<i<<","<<satellites.at(i).getRightSatId()<<")\n";
-        }
-        for(int i = 301; i <= 316; i++){
-            if(openLink[i][satellites.at(i).getRightSatId()]) continue;
-            output<<"("<<i<<","<<satellites.at(i).getRightSatId()<<")\n";
-        }
-        for(int i = 401; i <= 416; i++){
-            if(openLink[i][satellites.at(i).getRightSatId()]) continue;
-            output<<"("<<i<<","<<satellites.at(i).getRightSatId()<<")\n";
-        }
-        for(int i = 501; i <= 516; i++){
-            if(openLink[i][satellites.at(i).getRightSatId()]) continue;
-            output<<"("<<i<<","<<satellites.at(i).getRightSatId()<<")\n";
-        }
-        for(int i = 601; i <= 616; i++){
-            if(openLink[i][satellites.at(i).getRightSatId()]) continue;
-            output<<"("<<i<<","<<satellites.at(i).getRightSatId()<<")\n";
-        }        
-        for(int i = 701; i <= 716; i++){
-            if(openLink[i][satellites.at(i).getRightSatId()]) continue;
-            output<<"("<<i<<","<<satellites.at(i).getRightSatId()<<")\n";
-        }                 
+
+
+        for(auto satPair: satellites){
+            if(openLink[satPair.first][satPair.second.getRightSatId()])
+                continue;
+            output<<"("<<satPair.first<<","<<satPair.second.getRightSatId()<<")\n";
+        }                    
+               
         output.close();    
     }    
 }

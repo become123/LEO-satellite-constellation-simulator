@@ -34,6 +34,9 @@ namespace util
     //印出星群表格的第一列(每個衛星的ID)
     void printTableFirstLine(std::ofstream &output, long unsigned int satCount, long unsigned int satCountPerOrbit);
 
+    //獲得vector所有元素的平均
+    double getAverage(std::vector<int> const& v);
+
     //印出要關掉的Link
     void getClosedLinkFile(std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable);    
 }
