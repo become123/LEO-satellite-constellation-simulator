@@ -266,6 +266,27 @@ namespace satellite
         return ISLtable;
     }
 
+    //獲得紀錄還有哪些Link是正常還沒壞掉或被關掉的set
+    std::set<std::set<int>> getOpenLinkSet(std::map<int, satellite> &satellites, std::map<int, std::map<int, bool>> &closeLinksTable){
+        std::set<std::set<int>> openLinkSet;
+        for(auto &satPair:satellites){
+            int satId = satPair.second.getId();
+            int rightId = satPair.second.getRightSatId();
+            int leftId = satPair.second.getLeftSatId();
+            int frontId = satPair.second.getFrontSatId();
+            int backId = satPair.second.getBackSatId();
+            openLinkSet.insert(std::set<int>({satId, frontId}));
+            openLinkSet.insert(std::set<int>({satId, backId}));
+            if(!closeLinksTable[satId][rightId]){
+                openLinkSet.insert(std::set<int>({satId, rightId}));
+            }
+            if(!closeLinksTable[satId][leftId]){
+                openLinkSet.insert(std::set<int>({satId, leftId}));
+            }         
+        }
+        return openLinkSet;
+    }
+
     //計算出所有ISL的stateOfDay
     void setupAllISLstateOfDay(int PATtime, const AER &acceptableAER_diff, std::map<int, satellite> &satellites){
         for(auto &sat: satellites){

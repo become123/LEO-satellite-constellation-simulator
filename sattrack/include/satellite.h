@@ -42,11 +42,19 @@ namespace satellite
     std::vector<std::vector<int>> getConstellationShortestPathRecordMedium(size_t satCountPerOrbit, size_t totalSatCount, int time, int PAT_time, const AER &acceptableAER_diff, std::map<int, satellite> &satellites, std::vector<std::vector<int>> &medium);  
     
     std::vector<int> getPath(size_t satCountPerOrbit, size_t sourceSatId, size_t destSatId, const std::vector<std::vector<int>> &medium, std::vector<std::vector<int>> shortestPath);
+    
     //getPath function helper
     void find_path(size_t satCountPerOrbit, size_t source, size_t dest, std::vector<int> &path, const std::vector<std::vector<int>> &medium);
+    
+    //建出ISLtable讓每個衛星可以指到屬於自己的2個ISL上
     std::map<std::set<int>, ISL> getISLtable(std::map<int, satellite> &satellites);
+
+    //獲得紀錄還有哪些Link是正常還沒壞掉或被關掉的set
+    std::set<std::set<int>> getOpenLinkSet(std::map<int, satellite> &satellites, std::map<int, std::map<int, bool>> &closeLinksTable);
+
     //計算出所有ISL的stateOfDay
     void setupAllISLstateOfDay(int PATtime, const AER &acceptableAER_diff, std::map<int, satellite> &satellites);
+
     //根據方位角將每個衛星都設置好初始state
     void initConstellation(std::map<int, satellite> &satellites, int ISLrightAngle, int ISLleftAngle);
     void adjustableISLdeviceSetupAllISLstateOfDay(int ISLrightAngle, int ISLleftAngle, const AER &acceptableAER_diff, std::map<int, satellite> &satellites, std::map<std::set<int>, ISL> &ISLtable);
