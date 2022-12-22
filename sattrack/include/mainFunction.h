@@ -31,7 +31,10 @@ namespace mainFunction
     void printAERfile(int observerId, int otherId, std::map<int, satellite::satellite> &satellites, std::string outputFileName);
 
     //印出編號observerId衛星觀察右方衛星一天中的AER差異數值(用於判斷可否連線)到sattrack/output.txt
-    void printRightSatAERdiff(int observerId, int otherId, std::map<int, satellite::satellite> &satellites, std::string OutputFileName);
+    void printRightSatAERdiff(int observerId, std::map<int, satellite::satellite> &satellites, std::string OutputFileName);
+
+    //印出編號observerId衛星觀察左方衛星一天中的AER差異數值(用於判斷可否連線)到sattrack/output.txt
+    void printLeftSatAERdiff(int observerId, std::map<int, satellite::satellite> &satellites, std::string OutputFileName);
 
     //印出編號observerId衛星一天中對飛行方向右方衛星的連線狀態(單向)到sattrack/output.txt中
     void printRightConnectabilityFile(int observerId, std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable);

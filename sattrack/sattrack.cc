@@ -146,8 +146,11 @@ int main()
             mainFunction::printAreaAllSatConnectionTime(satellites, parameterTable);
             break;
         case str2int("printRightSatAERdiff"):
-            mainFunction::printRightSatAERdiff(std::stoi(parameterTable.at("observerId")), std::stoi(parameterTable.at("otherId")),satellites, "./" + parameterTable.at("outputFileName"));
-            break;                                                                                      
+            mainFunction::printRightSatAERdiff(std::stoi(parameterTable.at("observerId")), satellites, "./" + parameterTable.at("outputFileName"));
+            break;
+        case str2int("printLeftSatAERdiff"):
+            mainFunction::printLeftSatAERdiff(std::stoi(parameterTable.at("observerId")), satellites, "./" + parameterTable.at("outputFileName"));
+            break;                                                                                                  
         default:
             std::cout<<"running test!"<<"\n";
             /*-------------test-------------*/

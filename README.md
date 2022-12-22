@@ -90,6 +90,8 @@ LEO satellite simulator
         - 需設定parameter: areaStationLatitudes, areaStationLongitudes, areaStationAltitudes, groundStationAcceptableElevation, groundStationAcceptableDistance, round, printSecond, outputFileName
     22. **printRightSatAERdiff**: 印出編號observerId衛星觀察右方衛星一天中的AER差異數值(用於判斷可否連線)到sattrack/output.txt
         - 需設定parameter: observerId, outputFileName, ISLrightAngle
+    23. **printLeftSatAERdiff**: 印出編號observerId衛星觀察左方衛星一天中的AER差異數值(用於判斷可否連線)到sattrack/output.txt
+        - 需設定parameter: observerId, outputFileName, ISLleftAngle        
 - 進入到sgp4/sattrack中執行sattrack
     
     ```bash
