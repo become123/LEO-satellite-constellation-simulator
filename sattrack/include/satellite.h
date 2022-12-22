@@ -98,6 +98,7 @@ namespace satellite
         SGP4 getSgp4();
         int getId();
         AER getAER(int time, satellite &other);
+        AER getrightSatAERdiff(int time);
         int getRightSatId();
         int getLeftSatId();
         int getFrontSatId();
