@@ -66,15 +66,17 @@
 21. printAreaAllSatConnectionTime --> 印出根據parameter.txt設置的區域(多個地面站)，與星群中每一個衛星一天中有那些時間是可以連線的
     需設定parameter: areaStationLatitudes, areaStationLongitudes, areaStationAltitudes, groundStationAcceptableElevation, groundStationAcceptableDistance, round, printSecond, outputFileName
 
+22. printRightSatAERdiff --> 印出編號observerId衛星觀察右方衛星一天中的AER差異數值(用於判斷可否連線)到sattrack/output.txt
+    需設定parameter: observerId, outputFileName, ISLrightAngle
 **********************************************************************************************
 
->>(TLE_inputFileName): (TLE_7P_16Sats.txt) <--填入記錄星群TLE的fileName
->>(execute_function): (printConstellationHopCountFile) <-- 填入要執行的function名稱
->>(outputFileName): (output.txt)
+>>(TLE_inputFileName): (TLE_6P_22Sats.txt) <--填入記錄星群TLE的fileName
+>>(execute_function): (printRightSatAERdiff) <-- 填入要執行的function名稱
+>>(outputFileName): (601_122_diff_output.txt)
 >>(closeLinksFileName): (7P_16Sats_closeLink.txt)
 
->>(observerId): (101) <-- 填入觀察者的衛星編號
->>(otherId): (215) <-- 填入被觀察者的衛星編號
+>>(observerId): (601) <-- 填入觀察者的衛星編號
+>>(otherId): (122) <-- 填入被觀察者的衛星編號
 
 >>(acceptableAzimuthDif): (155)degree  <-- 可接受方位角誤差 
 >>(acceptableElevationDif): (45)degree  <-- 可接受仰角誤差

@@ -88,6 +88,8 @@ LEO satellite simulator
         - 需設定parameter: areaStationLatitudes, areaStationLongitudes, areaStationAltitudes, groundStationAcceptableElevation, groundStationAcceptableDistance, round, outputFileName 
     21. **printAreaAllSatConnectionTime**:  印出根據parameter.txt設置的區域(多個地面站)，與星群中每一個衛星一天中有那些時間是可以連線的
         - 需設定parameter: areaStationLatitudes, areaStationLongitudes, areaStationAltitudes, groundStationAcceptableElevation, groundStationAcceptableDistance, round, printSecond, outputFileName
+    22. **printRightSatAERdiff**: 印出編號observerId衛星觀察右方衛星一天中的AER差異數值(用於判斷可否連線)到sattrack/output.txt
+        - 需設定parameter: observerId, outputFileName, ISLrightAngle
 - 進入到sgp4/sattrack中執行sattrack
     
     ```bash
