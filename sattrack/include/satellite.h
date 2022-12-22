@@ -99,6 +99,7 @@ namespace satellite
         int getId();
         AER getAER(int time, satellite &other);
         AER getrightSatAERdiff(int time);
+        AER getleftSatAERdiff(int time);
         int getRightSatId();
         int getLeftSatId();
         int getFrontSatId();

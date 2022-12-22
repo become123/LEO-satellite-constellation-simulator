@@ -570,6 +570,15 @@ namespace satellite
         return AERdiff;
     }
 
+    //獲得左側衛星AER差異數值(用於判斷可否連線)
+    AER satellite::getleftSatAERdiff(int time){
+        AER aer = this->getAER(time, this->getLeftSat());
+        double azimuthDiff = getAngleDiff(this->getISLleftAngle(), aer.A);
+        double elevationDiff = abs(aer.E);
+        AER AERdiff(aer.date, azimuthDiff, elevationDiff, aer.R);
+        return AERdiff;
+    }    
+
     int satellite::getRightSatId(){
         return neighbors[0].first;
     }
