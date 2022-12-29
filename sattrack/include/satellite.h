@@ -30,8 +30,13 @@ namespace satellite
 
     //回傳某個特定時刻，行星群的連線狀態(112*112的二維vetcor，可以連的話填上距離，不可連的話填上0，自己連自己也是填0)
     std::vector<std::vector<int>> getConstellationState(size_t satCountPerOrbit, size_t totalSatCount, int time, int PAT_time, const AER &acceptableAER_diff, std::map<int, satellite> &satellites);
+    
+    //回傳某個特定時刻，行星群的hop count狀態(totalSatCount*totalSatCount的對稱二維vetcor，內容意義為衛星最少要經過幾個ISL才會抵達另一個衛星)
     std::vector<std::vector<int>> getConstellationHopCount(size_t satCountPerOrbit, size_t totalSatCount, int time, int PAT_time, const AER &acceptableAER_diff, std::map<int, satellite> &satellites);
     
+    //判斷星群是否有任何兩個衛星無法經ISL抵達彼此
+    bool judgeConstellationBreaking(const std::vector<std::vector<int>> &constellationHopCount);
+
     //回傳某個特定時刻，行星群的hop count狀態(totalSatCount*totalSatCount的對稱二維vetcor，內容意義為衛星最少要經過幾個ISL才會抵達另一個衛星)，同時記錄中間點(shortest path經過的點)，以用來計算shortest path
     std::vector<std::vector<int>> getConstellationHopCountRecordMedium(size_t satCountPerOrbit, size_t totalSatCount, int time, int PAT_time, const AER &acceptableAER_diff, std::map<int, satellite> &satellites, std::vector<std::vector<int>> &medium);
     
@@ -52,6 +57,9 @@ namespace satellite
     //獲得紀錄還有哪些Link是正常還沒壞掉或被關掉的set
     std::set<std::set<int>> getOpenLinkSet(std::map<int, satellite> &satellites, std::map<int, std::map<int, bool>> &closeLinksTable);
 
+    //從尚可以使用的Link中，隨機選出一個Link關掉，模擬ISL壞掉的情形
+    void randomCloseLink(std::map<int, satellite> &satellites, std::set<std::set<int>> openLinkSet);
+    
     //計算出所有ISL的stateOfDay
     void setupAllISLstateOfDay(int PATtime, const AER &acceptableAER_diff, std::map<int, satellite> &satellites);
 
@@ -112,6 +120,7 @@ namespace satellite
         void closeLeftLink();
         void closeFrontLink();
         void closeBackLink();
+        void closeLink(int otherSatId);
         bool rightLinkClosed();
         bool leftLinkClosed();
         bool frontLinkClosed();

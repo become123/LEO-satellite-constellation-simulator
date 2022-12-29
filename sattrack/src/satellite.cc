@@ -10,6 +10,8 @@
 #include <bitset>
 #include <set>
 #include <climits>
+#include <cstdlib>
+#include <ctime>
 #include "rectifyAzimuth.h"
 #include "satellite.h"
 #include "AER.h"
@@ -127,6 +129,7 @@ namespace satellite
         return constellationHopCount;
     }
 
+    //判斷星群是否有任何兩個衛星無法經ISL抵達彼此
     bool judgeConstellationBreaking(const std::vector<std::vector<int>> &constellationHopCount){
         for(size_t i = 0; i < constellationHopCount.size(); ++i){
             for(size_t j = 0; j < constellationHopCount.size(); ++j){
@@ -296,6 +299,18 @@ namespace satellite
             }         
         }
         return openLinkSet;
+    }
+
+    //從尚可以使用的Link中，隨機選出一個Link關掉，模擬ISL壞掉的情形
+    void randomCloseLink(std::map<int, satellite> &satellites, std::set<std::set<int>> openLinkSet){
+        srand( time(NULL) );
+        auto n = rand() % (int)openLinkSet.size();
+        auto it = std::begin(openLinkSet);
+        std::advance(it,n);
+        int sat1 = *it->begin(), sat2 = *it->rbegin();
+        satellites.at(sat1).closeLink(sat2);
+        satellites.at(sat2).closeLink(sat1);
+        openLinkSet.erase(it);
     }
 
     //計算出所有ISL的stateOfDay
@@ -632,6 +647,25 @@ namespace satellite
 
     void satellite::closeFrontLink(){
         this->frontClosed = true;
+    }
+
+    void satellite::closeLink(int otherSatId){
+        if(otherSatId == this->getRightSatId()){
+            this->closeRightLink();
+        }
+        else if(otherSatId == this->getLeftSatId()){
+            this->closeLeftLink();
+        }
+        else if(otherSatId == this->getFrontSatId()){
+            this->closeFrontLink();
+        }
+        else if(otherSatId == this->getBackSatId()){
+            this->closeBackLink();
+        }
+        else{
+            std::cout<<"error in satellite::closeLink!\n";
+            exit(-1);
+        }
     }
 
     void satellite::closeBackLink(){
