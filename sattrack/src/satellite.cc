@@ -127,6 +127,17 @@ namespace satellite
         return constellationHopCount;
     }
 
+    bool judgeConstellationBreaking(const std::vector<std::vector<int>> &constellationHopCount){
+        for(size_t i = 0; i < constellationHopCount.size(); ++i){
+            for(size_t j = 0; j < constellationHopCount.size(); ++j){
+                if(constellationHopCount[i][j] == INT_MAX){
+                    return true;
+                }
+            }
+        } 
+        return false;       
+    }
+
     //回傳某個特定時刻，行星群的hop count狀態(totalSatCount*totalSatCount的對稱二維vetcor，內容意義為衛星最少要經過幾個ISL才會抵達另一個衛星)，同時記錄中間點(shortest path經過的點)，以用來計算shortest path
     std::vector<std::vector<int>> getConstellationHopCountRecordMedium(size_t satCountPerOrbit, size_t totalSatCount, int time, int PAT_time, const AER &acceptableAER_diff, std::map<int, satellite> &satellites, std::vector<std::vector<int>> &medium){
         std::vector<std::vector<int>> constellationHopCount = getConstellationState(satCountPerOrbit, totalSatCount, time, PAT_time, acceptableAER_diff, satellites);
