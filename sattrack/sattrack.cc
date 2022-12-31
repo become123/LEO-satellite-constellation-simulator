@@ -70,7 +70,7 @@ int main()
     }
     std::map<int, std::map<int, bool>> closeLinksTable = getFileData::getCloseLinkTable(parameterTable.at("closeLinksFileName"));
     std::map<int, satellite::satellite> satellites = getFileData::getSatellitesTable(TLE_inputFileName, closeLinksTable, ISLfrontAngle, ISLrightAngle, ISLbackAngle, ISLleftAngle);
-    std::set<std::set<int>> openLinkSet = satellite::getOpenLinkSet(satellites, closeLinksTable);
+    std::set<std::set<int>> openLinkSet = satellite::getOpenLinkSet(satellites);
     std::map<std::set<int>, satellite::ISL> ISLtable = satellite::getISLtable(satellites);
 
     //讓衛星物件知道自己的鄰居及ISL是誰(指標指到鄰居衛星及ISL)
@@ -79,6 +79,7 @@ int main()
     }
     mainFunction::printParameter(parameterTable);
     std::cout<<"running function "<<parameterTable["execute_function"]<<"...\n";
+    mainFunction::simulateLinkbreakingtatistics(satCountPerOrbit, totalSatCount, satellites, parameterTable);
 
     switch (str2int(parameterTable["execute_function"].c_str()))
     {

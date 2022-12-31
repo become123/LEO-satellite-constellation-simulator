@@ -55,10 +55,10 @@ namespace satellite
     std::map<std::set<int>, ISL> getISLtable(std::map<int, satellite> &satellites);
 
     //獲得紀錄還有哪些Link是正常還沒壞掉或被關掉的set
-    std::set<std::set<int>> getOpenLinkSet(std::map<int, satellite> &satellites, std::map<int, std::map<int, bool>> &closeLinksTable);
+    std::set<std::set<int>> getOpenLinkSet(std::map<int, satellite> &satellites);
 
     //從尚可以使用的Link中，隨機選出一個Link關掉，模擬ISL壞掉的情形
-    void randomCloseLink(std::map<int, satellite> &satellites, std::set<std::set<int>> openLinkSet);
+    void randomCloseLink(std::map<int, satellite> &satellites, std::set<std::set<int>> &openLinkSet);
     
     //計算出所有ISL的stateOfDay
     void setupAllISLstateOfDay(int PATtime, const AER &acceptableAER_diff, std::map<int, satellite> &satellites);

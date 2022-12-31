@@ -81,10 +81,14 @@ namespace satellite
                 constellationState[satIndex][leftSatIndex] = constellationState[leftSatIndex][satIndex] = sat.second.judgeLeftISLwithPAT(time, PAT_time, acceptableAER_diff);
             }
             if(constellationState[satIndex][frontSatIndex] < 0){
-                constellationState[satIndex][frontSatIndex] = constellationState[frontSatIndex][satIndex] = sat.second.getAER(time, sat.second.getFrontSat()).R;
+                if(!sat.second.frontLinkClosed()){
+                    constellationState[satIndex][frontSatIndex] = constellationState[frontSatIndex][satIndex] = sat.second.getAER(time, sat.second.getFrontSat()).R;
+                }
             }
             if(constellationState[satIndex][backSatIndex] < 0){
-                constellationState[satIndex][backSatIndex] = constellationState[backSatIndex][satIndex] = sat.second.getAER(time, sat.second.getBackSat()).R;
+                if(!sat.second.frontLinkClosed()){
+                    constellationState[satIndex][backSatIndex] = constellationState[backSatIndex][satIndex] = sat.second.getAER(time, sat.second.getBackSat()).R;
+                }                
             }
         }
         for(auto &row: constellationState){
@@ -281,7 +285,7 @@ namespace satellite
     }
 
     //獲得紀錄還有哪些Link是正常還沒壞掉或被關掉的set
-    std::set<std::set<int>> getOpenLinkSet(std::map<int, satellite> &satellites, std::map<int, std::map<int, bool>> &closeLinksTable){
+    std::set<std::set<int>> getOpenLinkSet(std::map<int, satellite> &satellites){
         std::set<std::set<int>> openLinkSet;
         for(auto &satPair:satellites){
             int satId = satPair.second.getId();
@@ -291,10 +295,10 @@ namespace satellite
             int backId = satPair.second.getBackSatId();
             openLinkSet.insert(std::set<int>({satId, frontId}));
             openLinkSet.insert(std::set<int>({satId, backId}));
-            if(!closeLinksTable[satId][rightId]){
+            if(!satPair.second.rightLinkClosed()){
                 openLinkSet.insert(std::set<int>({satId, rightId}));
             }
-            if(!closeLinksTable[satId][leftId]){
+            if(!satPair.second.leftLinkClosed()){
                 openLinkSet.insert(std::set<int>({satId, leftId}));
             }         
         }
@@ -302,12 +306,14 @@ namespace satellite
     }
 
     //從尚可以使用的Link中，隨機選出一個Link關掉，模擬ISL壞掉的情形
-    void randomCloseLink(std::map<int, satellite> &satellites, std::set<std::set<int>> openLinkSet){
+    void randomCloseLink(std::map<int, satellite> &satellites, std::set<std::set<int>> &openLinkSet){
         srand( time(NULL) );
         auto n = rand() % (int)openLinkSet.size();
+        std::cout<<"n = "<<n<<"\n";
         auto it = std::begin(openLinkSet);
         std::advance(it,n);
         int sat1 = *it->begin(), sat2 = *it->rbegin();
+        // std::cout<<"close:("<<sat1<<","<<sat2<<")\n";
         satellites.at(sat1).closeLink(sat2);
         satellites.at(sat2).closeLink(sat1);
         openLinkSet.erase(it);
