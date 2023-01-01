@@ -75,6 +75,9 @@ namespace satellite
     void resetAllISL(std::map<std::set<int>, ISL> &ISLtable);
     void resetAllSat(std::map<int, satellite> &satellites);
 
+    //將所有模擬中設定壞掉的Link重新開啟
+    void resetConstellationBreakingLinks(std::map<int, satellite> &satellites, std::map<int, std::map<int, bool>> &closeLinksTable, std::set<std::set<int>> &openLinkSet);          
+
     class ISL{
     public:
         ISL(int sat1, int sat2);
@@ -121,6 +124,10 @@ namespace satellite
         void closeFrontLink();
         void closeBackLink();
         void closeLink(int otherSatId);
+        void openRightLink();
+        void openLeftLink();
+        void openFrontLink();
+        void openBackLink();     
         bool rightLinkClosed();
         bool leftLinkClosed();
         bool frontLinkClosed();

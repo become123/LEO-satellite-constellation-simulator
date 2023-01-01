@@ -79,7 +79,6 @@ int main()
     }
     mainFunction::printParameter(parameterTable);
     std::cout<<"running function "<<parameterTable["execute_function"]<<"...\n";
-    mainFunction::simulateLinkbreakingtatistics(satCountPerOrbit, totalSatCount, satellites, parameterTable);
 
     switch (str2int(parameterTable["execute_function"].c_str()))
     {
@@ -151,7 +150,10 @@ int main()
             break;
         case str2int("printLeftSatAERdiff"):
             mainFunction::printLeftSatAERdiff(std::stoi(parameterTable.at("observerId")), satellites, "./" + parameterTable.at("outputFileName"));
-            break;                                                                                                  
+            break; 
+        case str2int("simulateLinkbreakingStatistics"):
+            mainFunction::simulateLinkbreakingStatistics(satCountPerOrbit, totalSatCount, satellites, parameterTable, closeLinksTable);
+            break;                                                                                                               
         default:
             std::cout<<"running test!"<<"\n";
             /*-------------test-------------*/

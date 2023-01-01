@@ -867,27 +867,35 @@ namespace mainFunction
         output.close();
     }
 
-    void simulateLinkbreakingtatistics(long unsigned int satCountPerOrbit, long unsigned int totalSatCount, std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){
+    //模擬計算連結失效率，根據所設置的模擬次數，模擬星群的Link要損壞多少個才會發生連結失效，並將最後的分布統計數據印到所設定的output檔案中
+    void simulateLinkbreakingStatistics(long unsigned int satCountPerOrbit, long unsigned int totalSatCount, std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable, std::map<int, std::map<int, bool>> &closeLinksTable){
+        std::ofstream output("./" + parameterTable.at("outputFileName"));
+        output<<"breaking link total count : occur time\n";
         std::set<std::set<int>> openLinkSet = satellite::getOpenLinkSet(satellites);
-        int closeLinkSumulateTime = std::stoi(parameterTable.at("closeLinkSumulateTime"));
-        while(closeLinkSumulateTime--){
+        int closeLinkSimulateTime = std::stoi(parameterTable.at("closeLinkSimulateTime"));
+        std::vector<int> linkBreakingStatisticTable(241,0);
+        while(closeLinkSimulateTime--){
             double acceptableAzimuthDif = std::stod(parameterTable.at("acceptableAzimuthDif"));
             double acceptableElevationDif = std::stod(parameterTable.at("acceptableElevationDif"));
             double acceptableRange = std::stod(parameterTable.at("acceptableRange"));
             AER acceptableAER_diff("acceptableAER_diff", acceptableAzimuthDif, acceptableElevationDif, acceptableRange);
             int time = std::stoi(parameterTable.at("time"));
-            int PAT_time = std::stoi(parameterTable.at("PAT_time"));            
+            int PAT_time = std::stoi(parameterTable.at("PAT_time"));
+            satellite::resetConstellationBreakingLinks(satellites, closeLinksTable, openLinkSet);
             std::vector<std::vector<int>> constellationHopCount = satellite::getConstellationHopCount(satCountPerOrbit, totalSatCount, time, PAT_time, acceptableAER_diff, satellites);
             
-            int breakingCnt = 0;
+            size_t breakingCnt = 0;
             while(!satellite::judgeConstellationBreaking(constellationHopCount)){
                 satellite::randomCloseLink(satellites, openLinkSet);
                 breakingCnt++;
                 constellationHopCount = satellite::getConstellationHopCount(satCountPerOrbit, totalSatCount, time, PAT_time, acceptableAER_diff, satellites);
             }
-            std::cout<<"breakingCnt: "<<breakingCnt<<"\n";
+            // std::cout<<"breakingCnt: "<<breakingCnt<<"\n";
+            linkBreakingStatisticTable[breakingCnt]++;
         }
-
+        for(size_t i = 0; i < linkBreakingStatisticTable.size(); ++i){
+            output<<i<<":"<<linkBreakingStatisticTable[i]<<"\n";
+        }
     }
 }
 

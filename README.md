@@ -91,7 +91,9 @@ LEO satellite simulator
     22. **printRightSatAERdiff**: 印出編號observerId衛星觀察右方衛星一天中的AER差異數值(用於判斷可否連線)到sattrack/output.txt
         - 需設定parameter: observerId, outputFileName, ISLrightAngle
     23. **printLeftSatAERdiff**: 印出編號observerId衛星觀察左方衛星一天中的AER差異數值(用於判斷可否連線)到sattrack/output.txt
-        - 需設定parameter: observerId, outputFileName, ISLleftAngle        
+        - 需設定parameter: observerId, outputFileName, ISLleftAngle 
+    24. **simulateLinkbreakingStatistics**: 模擬計算連結失效率，根據所設置的模擬次數，模擬星群的Link要損壞多少個才會發生連結失效，並將最後的分布統計數據印到所設定的output檔案中
+        - 需設定parameter: ISLfrontAngle, ISLrightAngle, ISLbackAngle, ISLleftAngle, TLE_inputFileName, outputFileName, closeLinkSimulateTime, acceptableAzimuthDif, acceptableElevationDif, acceptableRange, time, PAT_time
 - 進入到sgp4/sattrack中執行sattrack
     
     ```bash

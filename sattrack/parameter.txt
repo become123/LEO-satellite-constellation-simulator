@@ -70,11 +70,14 @@
     需設定parameter: observerId, outputFileName, ISLrightAngle
 
 23. printLeftSatAERdiff --> 印出編號observerId衛星觀察左方衛星一天中的AER差異數值(用於判斷可否連線)到sattrack/output.txt
-    需設定parameter: observerId, outputFileName, ISLleftAngle    
+    需設定parameter: observerId, outputFileName, ISLleftAngle
+
+24. simulateLinkbreakingStatistics --> 模擬計算連結失效率，根據所設置的模擬次數，模擬星群的Link要損壞多少個才會發生連結失效，並將最後的分布統計數據印到所設定的output檔案中
+    需設定parameter: ISLfrontAngle, ISLrightAngle, ISLbackAngle, ISLleftAngle, TLE_inputFileName, outputFileName, closeLinkSimulateTime, acceptableAzimuthDif, acceptableElevationDif, acceptableRange, time, PAT_time
 **********************************************************************************************
 
 >>(TLE_inputFileName): (TLE_6P_22Sats.txt) <--填入記錄星群TLE的fileName
->>(execute_function): (printRightSatAERdiff) <-- 填入要執行的function名稱
+>>(execute_function): (simulateLinkbreakingStatistics) <-- 填入要執行的function名稱
 >>(outputFileName): (output.txt)
 >>(closeLinksFileName): (closeLink.txt)
 
@@ -93,7 +96,7 @@
 >>(time):(40)second <-- 欲計算的特定時間點
 >>(startTime):(660) <--欲計算的開始時間點
 >>(endTime):(712) <--欲計算的結束時間點
->>(PAT_time):(30)second <--建立連線所需花的時間
+>>(PAT_time):(0)second <--建立連線所需花的時間
 
 >>(stationLatitude):(24.9713)
 >>(stationLongitude):(121.192)
@@ -108,6 +111,6 @@
 >>(groundStationAcceptableDistance):(1000000000)km
 >>(round):(N) <-- 仰角部分是否四捨五入，要的話輸入Y，不要的話輸入N
 >>(printSecond):(Y) <-- 時間是否用秒數表示，要的話輸入Y，不要的話輸入N
->>(closeLinkSumulateTime):(1000)
+>>(closeLinkSimulateTime):(20)
 
 
