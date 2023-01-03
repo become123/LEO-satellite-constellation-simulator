@@ -60,7 +60,8 @@ namespace mainFunction
         output << std::setprecision(8) << std::fixed;
         for (int t = 0; t < 86400; ++t){
             AER curAERdiff = observer.getrightSatAERdiff(t);
-            output<<"satellite"<<observer.getId()<<" observe right satellite at date "<<curAERdiff.date <<":    A: "<<curAERdiff.A<<",    E: "<<curAERdiff.E<<",    R: "<<curAERdiff.R<<"\n";
+            output<<"satellite"<<observer.getId()<<" observe right satellite at date "<<curAERdiff.date <<":    A_diff: "<<curAERdiff.A<<",    E_diff: "<<curAERdiff.E<<",    R_diff: "<<curAERdiff.R<<"\n";
+            // output<<curAERdiff.A<<",  "<<curAERdiff.E<<", "<<curAERdiff.R<<"\n";
         }
         output.close();
     }
@@ -72,7 +73,8 @@ namespace mainFunction
         output << std::setprecision(8) << std::fixed;
         for (int t = 0; t < 86400; ++t){
             AER curAERdiff = observer.getleftSatAERdiff(t);
-            output<<"satellite"<<observer.getId()<<" observe left satellite at date "<<curAERdiff.date <<":    A: "<<curAERdiff.A<<",    E: "<<curAERdiff.E<<",    R: "<<curAERdiff.R<<"\n";
+            output<<"satellite"<<observer.getId()<<" observe left satellite at date "<<curAERdiff.date <<":    A_diff: "<<curAERdiff.A<<",    E_diff: "<<curAERdiff.E<<",    R_diff: "<<curAERdiff.R<<"\n";
+            // output<<curAERdiff.A<<",  "<<curAERdiff.E<<", "<<curAERdiff.R<<"\n";
         }
         output.close();
     }    
