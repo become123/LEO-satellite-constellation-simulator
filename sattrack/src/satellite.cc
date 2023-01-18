@@ -70,26 +70,20 @@ namespace satellite
         for(auto &sat:satellites){
             size_t satIndex = satIdToIndex(sat.second.getId(), satCountPerOrbit);
             size_t rightSatIndex = satIdToIndex(sat.second.getRightSatId(), satCountPerOrbit);
-            size_t leftSatIndex = satIdToIndex(sat.second.getLeftSatId(), satCountPerOrbit);
             size_t frontSatIndex = satIdToIndex(sat.second.getFrontSatId(), satCountPerOrbit);
-            size_t backSatIndex = satIdToIndex(sat.second.getBackSatId(), satCountPerOrbit);
             // std::cout<< "satIndex: "<<satIndex<<", rightSatIndex: "<<rightSatIndex<<", leftSatIndex: "<<leftSatIndex<<", frontSatIndex: "<<frontSatIndex<<", backSatIndex: "<<backSatIndex<<"\n";
-            if(constellationState[satIndex][rightSatIndex] < 0){
-                constellationState[satIndex][rightSatIndex] = constellationState[rightSatIndex][satIndex] = sat.second.judgeRightISLwithPAT(time, PAT_time, acceptableAER_diff);
+                
+            //設定跨軌道方向的Link(有判斷連線條件)
+            constellationState[satIndex][rightSatIndex] = constellationState[rightSatIndex][satIndex] = sat.second.judgeRightISLwithPAT(time, PAT_time, acceptableAER_diff);
+            //設定跨軌道方向的Link(無判斷連線條件)
+            // if(!sat.second.rightLinkClosed()){
+            //     constellationState[satIndex][rightSatIndex] = constellationState[rightSatIndex][satIndex] = sat.second.getAER(time, sat.second.getRightSat()).R;
+            // }
+            //設定同軌道方向的Link(無判斷連線條件)
+            if(!sat.second.frontLinkClosed()){
+                constellationState[satIndex][frontSatIndex] = constellationState[frontSatIndex][satIndex] = sat.second.getAER(time, sat.second.getFrontSat()).R;
             }
-            if(constellationState[satIndex][leftSatIndex] < 0){
-                constellationState[satIndex][leftSatIndex] = constellationState[leftSatIndex][satIndex] = sat.second.judgeLeftISLwithPAT(time, PAT_time, acceptableAER_diff);
-            }
-            if(constellationState[satIndex][frontSatIndex] < 0){
-                if(!sat.second.frontLinkClosed()){
-                    constellationState[satIndex][frontSatIndex] = constellationState[frontSatIndex][satIndex] = sat.second.getAER(time, sat.second.getFrontSat()).R;
-                }
-            }
-            if(constellationState[satIndex][backSatIndex] < 0){
-                if(!sat.second.frontLinkClosed()){
-                    constellationState[satIndex][backSatIndex] = constellationState[backSatIndex][satIndex] = sat.second.getAER(time, sat.second.getBackSat()).R;
-                }                
-            }
+
         }
         for(auto &row: constellationState){
             for(auto &i: row){
