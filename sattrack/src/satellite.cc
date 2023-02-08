@@ -74,11 +74,11 @@ namespace satellite
             // std::cout<< "satIndex: "<<satIndex<<", rightSatIndex: "<<rightSatIndex<<", leftSatIndex: "<<leftSatIndex<<", frontSatIndex: "<<frontSatIndex<<", backSatIndex: "<<backSatIndex<<"\n";
                 
             //設定跨軌道方向的Link(有判斷連線條件)
-            constellationState[satIndex][rightSatIndex] = constellationState[rightSatIndex][satIndex] = sat.second.judgeRightISLwithPAT(time, PAT_time, acceptableAER_diff);
+            // constellationState[satIndex][rightSatIndex] = constellationState[rightSatIndex][satIndex] = sat.second.judgeRightISLwithPAT(time, PAT_time, acceptableAER_diff);
             //設定跨軌道方向的Link(無判斷連線條件)
-            // if(!sat.second.rightLinkClosed()){
-            //     constellationState[satIndex][rightSatIndex] = constellationState[rightSatIndex][satIndex] = sat.second.getAER(time, sat.second.getRightSat()).R;
-            // }
+            if(!sat.second.rightLinkClosed()){
+                constellationState[satIndex][rightSatIndex] = constellationState[rightSatIndex][satIndex] = sat.second.getAER(time, sat.second.getRightSat()).R;
+            }
             //設定同軌道方向的Link(無判斷連線條件)
             if(!sat.second.frontLinkClosed()){
                 constellationState[satIndex][frontSatIndex] = constellationState[frontSatIndex][satIndex] = sat.second.getAER(time, sat.second.getFrontSat()).R;
