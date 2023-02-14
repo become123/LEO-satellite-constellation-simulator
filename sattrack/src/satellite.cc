@@ -310,7 +310,6 @@ namespace satellite
         int sat1 = *it->begin(), sat2 = *it->rbegin();
         // std::cout<<"close:("<<sat1<<","<<sat2<<")\n";
         satellites.at(sat1).closeLink(sat2);
-        satellites.at(sat2).closeLink(sat1);
         openLinkSet.erase(it);
     }
 
@@ -679,15 +678,19 @@ namespace satellite
     void satellite::closeLink(int otherSatId){
         if(otherSatId == this->getRightSatId()){
             this->closeRightLink();
+            this->getRightSat().closeLeftLink();
         }
         else if(otherSatId == this->getLeftSatId()){
             this->closeLeftLink();
+            this->getLeftSat().closeRightLink();
         }
         else if(otherSatId == this->getFrontSatId()){
             this->closeFrontLink();
+            this->getFrontSat().closeBackLink();
         }
         else if(otherSatId == this->getBackSatId()){
             this->closeBackLink();
+            this->getBackSat().closeFrontLink();
         }
         else{
             std::cout<<"error in satellite::closeLink!\n";
