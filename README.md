@@ -94,6 +94,8 @@ LEO satellite simulator
         - 需設定parameter: observerId, outputFileName, ISLleftAngle 
     24. **simulateLinkbreakingStatistics**: 模擬計算連結失效率，根據所設置的模擬次數，模擬星群的Link要損壞多少個才會發生連結失效，並將最後的分布統計數據印到所設定的output檔案中
         - 需設定parameter: ISLfrontAngle, ISLrightAngle, ISLbackAngle, ISLleftAngle, TLE_inputFileName, outputFileName, closeLinkSimulateTime, acceptableAzimuthDif, acceptableElevationDif, acceptableRange, time, PAT_time
+    25. **simulateSatFailStatistics**: 模擬計算衛星隨機壞掉的連結失效率，根據所設置的模擬次數，模擬星群的衛星要損壞多少個才會發生連結失效，並將最後的分布統計數據印到所設定的output檔案中
+        - 需設定parameter: ISLfrontAngle, ISLrightAngle, ISLbackAngle, ISLleftAngle, TLE_inputFileName, outputFileName, satFailSimulateTime, acceptableAzimuthDif, acceptableElevationDif, acceptableRange, time, PAT_time
 - 進入到sgp4/sattrack中執行sattrack
     
     ```bash

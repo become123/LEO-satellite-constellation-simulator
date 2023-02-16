@@ -73,11 +73,15 @@
     需設定parameter: observerId, outputFileName, ISLleftAngle
 
 24. simulateLinkbreakingStatistics --> 模擬計算連結失效率，根據所設置的模擬次數，模擬星群的Link要損壞多少個才會發生連結失效，並將最後的分布統計數據印到所設定的output檔案中
-    需設定parameter: ISLfrontAngle, ISLrightAngle, ISLbackAngle, ISLleftAngle, TLE_inputFileName, outputFileName, closeLinkSimulateTime, acceptableAzimuthDif, acceptableElevationDif, acceptableRange, time, PAT_time
+    需設定parameter: ISLfrontAngle, ISLrightAngle, ISLbackAngle, ISLleftAngle, TLE_inputFileName, closeLinksFileName, outputFileName, closeLinkSimulateTime, acceptableAzimuthDif, acceptableElevationDif, acceptableRange, time, PAT_time
+
+25. simulateSatFailStatistics --> 模擬計算衛星隨機壞掉的連結失效率，根據所設置的模擬次數，模擬星群的衛星要損壞多少個才會發生連結失效，並將最後的分布統計數據印到所設定的output檔案中
+    需設定parameter: ISLfrontAngle, ISLrightAngle, ISLbackAngle, ISLleftAngle, TLE_inputFileName, closeLinksFileName, outputFileName, satFailSimulateTime, acceptableAzimuthDif, acceptableElevationDif, acceptableRange, time, PAT_time
+
 **********************************************************************************************
 
 >>(TLE_inputFileName): (TLE_6P_22Sats.txt) <--填入記錄星群TLE的fileName
->>(execute_function): (simulateLinkbreakingStatistics) <-- 填入要執行的function名稱
+>>(execute_function): (simulateSatFailStatistics) <-- 填入要執行的function名稱
 >>(outputFileName): (output.txt)
 >>(closeLinksFileName): (closeLink.txt)
 
@@ -112,5 +116,6 @@
 >>(round):(N) <-- 仰角部分是否四捨五入，要的話輸入Y，不要的話輸入N
 >>(printSecond):(Y) <-- 時間是否用秒數表示，要的話輸入Y，不要的話輸入N
 >>(closeLinkSimulateTime):(20)
+>>(satFailSimulateTime):(10000)
 
 

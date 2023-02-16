@@ -899,6 +899,38 @@ namespace mainFunction
             output<<i<<":"<<linkBreakingStatisticTable[i]<<"\n";
         }
     }
+
+    //模擬計算衛星隨機壞掉的連結失效率，根據所設置的模擬次數，模擬星群的衛星要損壞多少個才會發生連結失效，並將最後的分布統計數據印到所設定的output檔案中
+    void simulateSatFailStatistics(long unsigned int satCountPerOrbit, long unsigned int totalSatCount, std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable, std::map<int, std::map<int, bool>> &closeLinksTable){
+        std::ofstream output("./" + parameterTable.at("outputFileName"));
+        output<<"sat fail total count : occur time\n";
+        std::set<int> nonBrokenSatSet;
+        int satFailSimulateTime = std::stoi(parameterTable.at("satFailSimulateTime"));
+        std::vector<int> satFailStatisticTable(satellites.size(),0);
+        while(satFailSimulateTime--){
+            double acceptableAzimuthDif = std::stod(parameterTable.at("acceptableAzimuthDif"));
+            double acceptableElevationDif = std::stod(parameterTable.at("acceptableElevationDif"));
+            double acceptableRange = std::stod(parameterTable.at("acceptableRange"));
+            AER acceptableAER_diff("acceptableAER_diff", acceptableAzimuthDif, acceptableElevationDif, acceptableRange);
+            int time = std::stoi(parameterTable.at("time"));
+            int PAT_time = std::stoi(parameterTable.at("PAT_time"));
+            satellite::resetConstellationBreakingLinks(satellites, closeLinksTable);
+            nonBrokenSatSet = satellite::getNonBrokenSatSet(satellites);// reset成每一個衛星都沒有壞掉
+            std::vector<std::vector<int>> constellationHopCount = satellite::getConstellationHopCount(satCountPerOrbit, totalSatCount, time, PAT_time, acceptableAER_diff, satellites);
+            
+            size_t breakingCnt = 0;
+            while(!satellite::judgeConstellationBreaking(constellationHopCount,nonBrokenSatSet,satCountPerOrbit)){
+                satellite::randomBreakSat(satellites, nonBrokenSatSet);
+                breakingCnt++;
+                constellationHopCount = satellite::getConstellationHopCount(satCountPerOrbit, totalSatCount, time, PAT_time, acceptableAER_diff, satellites);
+            }
+            // std::cout<<"breakingCnt: "<<breakingCnt<<"\n";
+            satFailStatisticTable[breakingCnt]++;
+        }
+        for(size_t i = 0; i < satFailStatisticTable.size(); ++i){
+            output<<i<<":"<<satFailStatisticTable[i]<<"\n";
+        }
+    }    
 }
 
 

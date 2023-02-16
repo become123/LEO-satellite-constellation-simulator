@@ -139,6 +139,20 @@ namespace satellite
         return false;       
     }
 
+    //判斷星群是否有任何兩個衛星無法經ISL抵達彼此，不包含已經在模擬中壞掉的衛星
+    bool judgeConstellationBreaking(const std::vector<std::vector<int>> &constellationHopCount,const std::set<int> &nonBrokenSatSet, size_t satCountPerOrbit){
+        for(size_t i = 0; i < constellationHopCount.size(); ++i){
+            for(size_t j = 0; j < constellationHopCount.size(); ++j){
+                if(constellationHopCount[i][j] == INT_MAX && nonBrokenSatSet.find(indexToSatId(i, satCountPerOrbit)) != nonBrokenSatSet.end() && nonBrokenSatSet.find(indexToSatId(j, satCountPerOrbit)) != nonBrokenSatSet.end()){
+                    return true;
+                }
+            }
+        } 
+        return false;       
+    }    
+
+    
+
     //回傳某個特定時刻，行星群的hop count狀態(totalSatCount*totalSatCount的對稱二維vetcor，內容意義為衛星最少要經過幾個ISL才會抵達另一個衛星)，同時記錄中間點(shortest path經過的點)，以用來計算shortest path
     std::vector<std::vector<int>> getConstellationHopCountRecordMedium(size_t satCountPerOrbit, size_t totalSatCount, int time, int PAT_time, const AER &acceptableAER_diff, std::map<int, satellite> &satellites, std::vector<std::vector<int>> &medium){
         std::vector<std::vector<int>> constellationHopCount = getConstellationState(satCountPerOrbit, totalSatCount, time, PAT_time, acceptableAER_diff, satellites);
@@ -299,6 +313,15 @@ namespace satellite
         return openLinkSet;
     }
 
+    //獲得紀錄還有哪些衛星是正常還沒壞掉的set(初始為所有衛星都是正常的)
+    std::set<int> getNonBrokenSatSet(std::map<int, satellite> &satellites){
+        std::set<int> nonBrokenSatSet;
+        for(auto &satPair:satellites){
+            nonBrokenSatSet.insert(satPair.first);        
+        }
+        return nonBrokenSatSet;
+    }    
+
     //從尚可以使用的Link中，隨機選出一個Link關掉，模擬ISL壞掉的情形
     void randomCloseLink(std::map<int, satellite> &satellites, std::set<std::set<int>> &openLinkSet){
         srand( time(NULL) );
@@ -312,6 +335,22 @@ namespace satellite
         satellites.at(sat1).closeLink(sat2);
         openLinkSet.erase(it);
     }
+
+    //從尚可以使用的衛星中，隨機選出一個衛星壞掉(4個ISL都壞掉)，模擬衛星壞掉的情形
+    void randomBreakSat(std::map<int, satellite> &satellites, std::set<int> &nonBrokenSatSet){
+        srand( time(NULL) );
+        // std::cout<<(int)openLinkSet.size()<<"\n";
+        auto n = rand() % (int)nonBrokenSatSet.size();
+        // std::cout<<"n = "<<n<<"\n";
+        auto it = std::begin(nonBrokenSatSet);
+        std::advance(it,n);
+        int satId = *it;
+        satellites.at(satId).closeBackLink();
+        satellites.at(satId).closeFrontLink();
+        satellites.at(satId).closeLeftLink();
+        satellites.at(satId).closeRightLink();
+        nonBrokenSatSet.erase(it);
+    }    
 
     //計算出所有ISL的stateOfDay
     void setupAllISLstateOfDay(int PATtime, const AER &acceptableAER_diff, std::map<int, satellite> &satellites){
@@ -432,6 +471,24 @@ namespace satellite
             if(!closeLinksTable[satPair.second.getId()][satPair.second.getBackSatId()]){
                 satPair.second.openBackLink();
                 openLinkSet.insert(std::set<int>({satPair.second.getId(), satPair.second.getBackSatId()}));
+            }            
+        }
+    }
+
+    //將所有模擬中設定壞掉的Link重新開啟
+    void resetConstellationBreakingLinks(std::map<int, satellite> &satellites, std::map<int, std::map<int, bool>> &closeLinksTable){
+        for(auto &satPair:satellites){
+            if(!closeLinksTable[satPair.second.getId()][satPair.second.getRightSatId()]){
+                satPair.second.openRightLink();
+            }
+            if(!closeLinksTable[satPair.second.getId()][satPair.second.getLeftSatId()]){
+                satPair.second.openLeftLink();
+            }
+            if(!closeLinksTable[satPair.second.getId()][satPair.second.getFrontSatId()]){
+                satPair.second.openFrontLink();
+            }
+            if(!closeLinksTable[satPair.second.getId()][satPair.second.getBackSatId()]){
+                satPair.second.openBackLink();
             }            
         }
     }

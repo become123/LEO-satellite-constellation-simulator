@@ -153,7 +153,10 @@ int main()
             break; 
         case str2int("simulateLinkbreakingStatistics"):
             mainFunction::simulateLinkbreakingStatistics(satCountPerOrbit, totalSatCount, satellites, parameterTable, closeLinksTable);
-            break;                                                                                                               
+            break; 
+        case str2int("simulateSatFailStatistics"):
+            mainFunction::simulateSatFailStatistics(satCountPerOrbit, totalSatCount, satellites, parameterTable, closeLinksTable);
+            break;                                                                                                                             
         default:
             std::cout<<"running test!"<<"\n";
             /*-------------test-------------*/
