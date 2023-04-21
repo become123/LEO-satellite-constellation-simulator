@@ -29,6 +29,9 @@ namespace groundStation
         //回傳一整天86400秒中，地面站每秒是否有任何一顆衛星是可以連上的
         std::bitset<86400> getCoverTimeOfDay(std::map<int, satellite::satellite> &satellites, int groundStationAcceptableElevation, int groundStationAcceptableDistance, bool round);
         
+        //回傳一整天86400秒中，地面站每秒有幾顆衛星是可以連上的
+        std::vector<int> getCoverSatCountOfDay(std::map<int, satellite::satellite> &satellites, int groundStationAcceptableElevation, int groundStationAcceptableDistance, bool round);
+
         //回傳特定時間地面站可以連線到的所有衛星ID的list
         std::vector<int> getSecondCoverSatsList(std::map<int, satellite::satellite> &satellites,int time, int groundStationAcceptableElevation, int groundStationAcceptableDistance, bool round);
 

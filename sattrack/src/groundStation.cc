@@ -90,6 +90,16 @@ namespace groundStation
         // return availabilityOfDay;
     }
 
+    //回傳一整天86400秒中，地面站每秒有幾顆衛星是可以連上的
+    std::vector<int> groundStation::getCoverSatCountOfDay(std::map<int, satellite::satellite> &satellites, int groundStationAcceptableElevation, int groundStationAcceptableDistance, bool round){
+        std::vector<int> coverSatCountOfDay;
+        for(size_t t = 0; t < 86400; ++t){
+            std::vector<int> availableSatsList = this->getSecondCoverSatsList(satellites, t, groundStationAcceptableElevation, groundStationAcceptableDistance, round);
+            coverSatCountOfDay.push_back(availableSatsList.size());
+        }
+        return coverSatCountOfDay;
+    }    
+
     //回傳一個vector，裡面是紀錄每個connection state改變的時間點，及他是Link Breaking(false)還是connecting(true)
     std::vector<std::pair<size_t, bool>> groundStation::getStateChangeInfoOfDay(satellite::satellite &sat, int groundStationAcceptableElevation, int groundStationAcceptableDistance, bool round){
         std::bitset<86400> stateOfDay = this->getConnectionOfDay(sat, groundStationAcceptableElevation, groundStationAcceptableDistance, round);

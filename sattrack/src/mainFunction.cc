@@ -746,13 +746,34 @@ namespace mainFunction
         int groundStationAcceptableElevation = std::stoi(parameterTable.at("groundStationAcceptableElevation"));
         int groundStationAcceptableDistance = std::stoi(parameterTable.at("groundStationAcceptableDistance"));
         bool round = parameterTable.at("round") == "Y";
-        for(double latitude = -40; latitude <= 40; ++latitude){
+        int minLatitude = std::stoi(parameterTable.at("minLatitude"));
+        int maxLatitude = std::stoi(parameterTable.at("maxLatitude"));
+        for(double latitude = minLatitude; latitude <= maxLatitude; ++latitude){
             groundStation::groundStation station(latitude, stationLongitude, stationAltitude);
             std::bitset<86400> availabilityOfDay = station.getCoverTimeOfDay(satellites, groundStationAcceptableElevation, groundStationAcceptableDistance, round);
             output<<std::setw(3)<<(int)latitude<<"      :  "<<availabilityOfDay.count()<<"\n";
         }
-        output.close();
+        output.close();  
     }
+
+    //印出不同緯度的地面站86400秒中，平均/最小/最大的可連線衛星數量是多少
+    void printDifferentLatitudeConnectedCountOfDay(std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){
+        std::ofstream output("./" + parameterTable.at("outputFileName"));
+        output<<"latitude : coversatCount\n";
+        double stationLongitude = std::stod(parameterTable.at("stationLongitude"));
+        double stationAltitude = std::stod(parameterTable.at("stationAltitude"));
+        int groundStationAcceptableElevation = std::stoi(parameterTable.at("groundStationAcceptableElevation"));
+        int groundStationAcceptableDistance = std::stoi(parameterTable.at("groundStationAcceptableDistance"));
+        bool round = parameterTable.at("round") == "Y";
+        int minLatitude = std::stoi(parameterTable.at("minLatitude"));
+        int maxLatitude = std::stoi(parameterTable.at("maxLatitude"));        
+        for(double latitude = minLatitude; latitude <= maxLatitude; ++latitude){
+            groundStation::groundStation station(latitude, stationLongitude, stationAltitude);
+            std::vector<int> coverSatCountOfDay = station.getCoverSatCountOfDay(satellites, groundStationAcceptableElevation, groundStationAcceptableDistance, round);
+            output<<std::setw(3)<<(int)latitude<<"      :  "<<"min="<<*std::min_element(coverSatCountOfDay.begin(), coverSatCountOfDay.end())<<",max="<<*std::max_element(coverSatCountOfDay.begin(), coverSatCountOfDay.end())<<",avg:"<<std::setprecision(6)<<util::getAverage(coverSatCountOfDay)<<"\n";
+        }
+        output.close();        
+    }    
 
     //印出地面站對各個衛星一天中對星群中各個衛星的時間總合，總連線時間最長的衛星，總連線時間最短的衛星，以及各個衛星總連線時間的平均
     void printGroundStationConnectingInfo(std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){    
