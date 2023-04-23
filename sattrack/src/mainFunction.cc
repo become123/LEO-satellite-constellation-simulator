@@ -436,12 +436,12 @@ namespace mainFunction
         output<<"min:"<<*min_element(hopCounts.begin(), hopCounts.end())<<"\n";
         output<<"-----------------------------------------------------------------------\n";
 
-        std::vector<int> table(17, 0);
+        std::map<int, int> table;
         for(int hopCount:hopCounts){
             table[(size_t)hopCount]++;
         }
-        for(size_t i = 0; i < table.size(); ++i){
-            output<<i<<":"<<table[i]<<"\n";
+        for(auto p:table){
+            output<<"hopCount = "<<p.first<<": "<<p.second<<"\n";
         }
         output.close(); 
     }
