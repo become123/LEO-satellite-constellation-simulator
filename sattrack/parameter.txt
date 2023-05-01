@@ -84,8 +84,8 @@
 **********************************************************************************************
 
 >>(TLE_inputFileName): (TLE_12P_22Sats.txt) <--填入記錄星群TLE的fileName
->>(execute_function): (printDifferentLatitudeConnectedCountOfDay) <-- 填入要執行的function名稱
->>(outputFileName): (output2.txt)
+>>(execute_function): (printAllSatNeighborId) <-- 填入要執行的function名稱
+>>(outputFileName): (output.txt)
 >>(closeLinksFileName): (closeLink.txt)
 
 >>(observerId): (601) <-- 填入觀察者的衛星編號

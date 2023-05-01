@@ -613,21 +613,19 @@ namespace satellite
             const int orbitNum = (id-satNum)/100;
             // std::cout<<"orbitNum: "<<orbitNum<<", satNum: "<<satNum<<"\n";
             //right
-            neighbors[0].first = satNum - 3 < 1 ? 100*(orbitNum+1)+satNum-3+22 : 100*(orbitNum+1)+satNum-3;
+            neighbors[0].first = satNum - 7 < 1 ? 100*(orbitNum+1)+satNum-7+44 : 100*(orbitNum+1)+satNum-7;
             if(orbitNum == 6){
-                neighbors[0].first = satNum - 2 < 1 ? 100+satNum-2+22 : 100+satNum-2;
+                neighbors[0].first = satNum - 6 < 1 ? 100+satNum-6+44 : 100+satNum-6;
             }
             //left
-            neighbors[1].first = satNum + 3 > 22 ? 100*(orbitNum-1)+satNum+3-22 : 100*(orbitNum-1)+satNum+3;
+            neighbors[1].first = satNum + 7 > 44 ? 100*(orbitNum-1)+satNum+7-44 : 100*(orbitNum-1)+satNum+7;
             if(orbitNum == 1){
-                neighbors[1].first = satNum + 2 > 22 ? 600+satNum+2-22 : 600+satNum+2;
+                neighbors[1].first = satNum + 6 > 44 ? 600+satNum+6-44 : 600+satNum+6;
             }
             //front
-            neighbors[2].first = satNum == 22 ? 100*orbitNum+1 : 100*orbitNum+satNum+1;
+            neighbors[2].first = satNum == 44 ? 100*orbitNum+1 : 100*orbitNum+satNum+1;
             //back
             neighbors[3].first = satNum == 1 ? 100*orbitNum+22 : 100*orbitNum+satNum-1; 
-            /*************neighbor unset!!**************/     
-            neighbors[0].first = neighbors[1].first = neighbors[2].first = neighbors[3].first = 101;
         } 
         else if(constellationType == "8P_33Sats"){
             neighbors = std::vector<std::pair<int,double>>(4);//right left front back 的 <satId, ISLangle>
@@ -639,21 +637,19 @@ namespace satellite
             const int orbitNum = (id-satNum)/100;
             // std::cout<<"orbitNum: "<<orbitNum<<", satNum: "<<satNum<<"\n";
             //right
-            neighbors[0].first = satNum - 3 < 1 ? 100*(orbitNum+1)+satNum-3+22 : 100*(orbitNum+1)+satNum-3;
-            if(orbitNum == 6){
-                neighbors[0].first = satNum - 2 < 1 ? 100+satNum-2+22 : 100+satNum-2;
+            neighbors[0].first = satNum - 4 < 1 ? 100*(orbitNum+1)+satNum-4+33 : 100*(orbitNum+1)+satNum-4;
+            if(orbitNum == 8){
+                neighbors[0].first = satNum - 3 < 1 ? 100+satNum-3+33 : 100+satNum-3;
             }
             //left
-            neighbors[1].first = satNum + 3 > 22 ? 100*(orbitNum-1)+satNum+3-22 : 100*(orbitNum-1)+satNum+3;
+            neighbors[1].first = satNum + 4 > 33 ? 100*(orbitNum-1)+satNum+4-33 : 100*(orbitNum-1)+satNum+4;
             if(orbitNum == 1){
-                neighbors[1].first = satNum + 2 > 22 ? 600+satNum+2-22 : 600+satNum+2;
+                neighbors[1].first = satNum + 3 > 33 ? 800+satNum+3-33 : 800+satNum+3;
             }
             //front
-            neighbors[2].first = satNum == 22 ? 100*orbitNum+1 : 100*orbitNum+satNum+1;
+            neighbors[2].first = satNum == 33 ? 100*orbitNum+1 : 100*orbitNum+satNum+1;
             //back
-            neighbors[3].first = satNum == 1 ? 100*orbitNum+22 : 100*orbitNum+satNum-1; 
-            /*************neighbor unset!!**************/     
-            neighbors[0].first = neighbors[1].first = neighbors[2].first = neighbors[3].first = 101;
+            neighbors[3].first = satNum == 1 ? 100*orbitNum+33 : 100*orbitNum+satNum-1; 
         }         
         else if(constellationType == "12P_22Sats"){
             neighbors = std::vector<std::pair<int,double>>(4);//right left front back 的 <satId, ISLangle>
@@ -665,21 +661,19 @@ namespace satellite
             const int orbitNum = (id-satNum)/100;
             // std::cout<<"orbitNum: "<<orbitNum<<", satNum: "<<satNum<<"\n";
             //right
-            neighbors[0].first = satNum - 3 < 1 ? 100*(orbitNum+1)+satNum-3+22 : 100*(orbitNum+1)+satNum-3;
-            if(orbitNum == 6){
-                neighbors[0].first = satNum - 2 < 1 ? 100+satNum-2+22 : 100+satNum-2;
+            neighbors[0].first = satNum - 2 < 1 ? 100*(orbitNum+1)+satNum-2+22 : 100*(orbitNum+1)+satNum-2;
+            if(orbitNum == 12){
+                neighbors[0].first = satNum - 1 < 1 ? 100+satNum-1+22 : 100+satNum-1;
             }
             //left
-            neighbors[1].first = satNum + 3 > 22 ? 100*(orbitNum-1)+satNum+3-22 : 100*(orbitNum-1)+satNum+3;
+            neighbors[1].first = satNum + 2 > 22 ? 100*(orbitNum-1)+satNum+2-22 : 100*(orbitNum-1)+satNum+2;
             if(orbitNum == 1){
-                neighbors[1].first = satNum + 2 > 22 ? 600+satNum+2-22 : 600+satNum+2;
+                neighbors[1].first = satNum + 1 > 22 ? 1200+satNum+1-22 : 1200+satNum+1;
             }
             //front
             neighbors[2].first = satNum == 22 ? 100*orbitNum+1 : 100*orbitNum+satNum+1;
             //back
             neighbors[3].first = satNum == 1 ? 100*orbitNum+22 : 100*orbitNum+satNum-1; 
-            /*************neighbor unset!!**************/     
-            neighbors[0].first = neighbors[1].first = neighbors[2].first = neighbors[3].first = 101;
         } 
         else{
             std::cout<<"unknown constellationType!\n";
