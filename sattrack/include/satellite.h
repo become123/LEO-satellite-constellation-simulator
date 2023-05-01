@@ -16,7 +16,6 @@
 namespace satellite
 {
     class satellite;
-    class ISL;
     double getAngleDiff(double angle1, double angle2);
     bool judgeAzimuth(double ISLdirAzimuth, double acceptableAzimuthDif, double otherSatAzimuth);
     bool judgeElevation(double acceptableElevationDif, double otherSatElevation);
@@ -54,9 +53,6 @@ namespace satellite
     //getPath function helper
     void find_path(size_t satCountPerOrbit, size_t source, size_t dest, std::vector<int> &path, const std::vector<std::vector<int>> &medium);
     
-    //建出ISLtable讓每個衛星可以指到屬於自己的2個ISL上
-    std::map<std::set<int>, ISL> getISLtable(std::map<int, satellite> &satellites);
-
     //獲得紀錄還有哪些Link是正常還沒壞掉或被關掉的set
     std::set<std::set<int>> getOpenLinkSet(std::map<int, satellite> &satellites);
 
@@ -69,52 +65,22 @@ namespace satellite
     //從尚可以使用的衛星中，隨機選出一個衛星壞掉(4個ISL都壞掉)，模擬衛星壞掉的情形
     void randomBreakSat(std::map<int, satellite> &satellites, std::set<int> &nonBrokenSatSet);
     
-    //計算出所有ISL的stateOfDay
-    void setupAllISLstateOfDay(int PATtime, const AER &acceptableAER_diff, std::map<int, satellite> &satellites);
-
     //根據方位角將每個衛星都設置好初始state
     void initConstellation(std::map<int, satellite> &satellites, int ISLrightAngle, int ISLleftAngle);
-    void adjustableISLdeviceSetupAllISLstateOfDay(int ISLrightAngle, int ISLleftAngle, const AER &acceptableAER_diff, std::map<int, satellite> &satellites, std::map<std::set<int>, ISL> &ISLtable);
     
-    void adjustableISLdeviceSetupAllISLstateOfDay2(int ISLrightAngle, int ISLleftAngle, const AER &acceptableAER_diff, std::map<int, satellite> &satellites, std::map<std::set<int>, ISL> &ISLtable);
-
     void judgeBreakingAndResetState(size_t time, int ISLrightAngle, int ISLleftAngle, const AER &acceptableAER_diff, std::map<int, satellite> &satellites);
 
-    //reset所有ISL的stateOfDay(標記成尚未計算過)
-    void resetAllISL(std::map<std::set<int>, ISL> &ISLtable);
     void resetAllSat(std::map<int, satellite> &satellites);
 
     //將所有模擬中設定壞掉的Link重新開啟
     void resetConstellationBreakingLinks(std::map<int, satellite> &satellites, std::map<int, std::map<int, bool>> &closeLinksTable, std::set<std::set<int>> &openLinkSet);          
     void resetConstellationBreakingLinks(std::map<int, satellite> &satellites, std::map<int, std::map<int, bool>> &closeLinksTable);
 
-    class ISL{
-    public:
-        ISL(int sat1, int sat2);
-        std::set<int> getSatIdPair();
-        bool alreadyCalculate();
-        void printISL2SatId();
-        std::bitset<86400>  getStateOfDay();
-        void setSecondState(size_t time, bool state);
-        bool getSecondState(size_t time);
-        void setStateOfDay(std::bitset<86400> _stateOfDay);
-        //標記成已經計算過
-        void setStateOfDay();
-        void resetStateOfDay(); //reset標記程尚未計算過stateOfDay
-        std::vector<std::pair<int, bool>> getStateChangeInfo();//回傳一個vector，裡面是紀錄每個connection state改變的時間點，及他是Link Breaking(false)還是connecting(true)
-
-    
-    private:
-        std::set<int> satelliteIdPair; //表示是哪兩個衛星間的ISL
-        std::bitset<86400> stateOfDay; //一天中86400秒的連線狀態
-        bool calculated; //紀錄是否已經計算過stateOfDay
-    };
-    
 
     class satellite{
     public: 
         satellite(std::string constellationType, Tle _tle, SGP4 _sgp4, int _id,std::map<int, std::map<int, bool>> &closeLinksTable, int ISLfrontAngle, int ISLrightAngle, int ISLbackAngle, int ISLleftAngle);
-        void buildNeighborSatsAndISLs(std::map<int, satellite> &satellites, std::map<std::set<int>, ISL> &ISLtable);
+        void buildNeighborSats(std::map<int, satellite> &satellites);
         Tle getTle();
         SGP4 getSgp4();
         int getId();
@@ -146,10 +112,6 @@ namespace satellite
         satellite& getLeftSat();
         satellite& getFrontSat();
         satellite& getBackSat();
-        ISL& getRightISL();
-        ISL& getLeftISL();    
-        bool rightAlreadyCalculate();
-        bool leftAlreadyCalculate();
         int getCurrentISLdeviceState();
         void setCertainTimeISLdeviceState(size_t t, bool state);  
         int getCertainTimeISLdeviceState(size_t t); 
@@ -196,12 +158,6 @@ namespace satellite
         //回傳特定時刻可否建立左方的ISL(要彼此可以連線到彼此才可以建立)，可連線則回傳距離，不可連線則回傳0
         int judgeLeftISL(int time, const AER &acceptableAER_diff);
 
-        //回傳考慮PAT time一天(86400秒)中衛星右方ISL的可連性
-        std::bitset<86400> getRightISLstateOfDay(int PATtime, const AER &acceptableAER_diff);
-
-        //回傳考慮PAT time一天(86400秒)中衛星右方ISL的可連性
-        std::bitset<86400> getLeftISLstateOfDay(int PATtime, const AER &acceptableAER_diff);
-
         //回傳特定時刻可否建立右方的ISL(要彼此可以連線到彼此才可以建立)，且有考慮PAT，可連線則回傳距離，不可連線則回傳0
         int judgeRightISLwithPAT(int time, int PAT_time, const AER &acceptableAER_diff);
 
@@ -225,7 +181,6 @@ namespace satellite
         satellite *rightSatPtr = nullptr , *leftSatPtr = nullptr , *frontSatPtr = nullptr , *backSatPtr = nullptr ;
         std::vector<std::pair<int, double>> neighbors;//依序是 right left  front back 的<衛星編號，ISL角度>
         bool rightClosed = false, leftClosed = false, backClosed = false, frontClosed = false;
-        ISL *rightISLptr = nullptr , *leftISLptr = nullptr ;
         int ISLdeviceState = 0;
         std::bitset<86400> ISLsettingStateOfDay; //一天中86400秒的ISL裝置設定狀態
 

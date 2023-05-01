@@ -71,11 +71,10 @@ int main()
     std::map<int, std::map<int, bool>> closeLinksTable = getFileData::getCloseLinkTable(parameterTable.at("closeLinksFileName"));
     std::map<int, satellite::satellite> satellites = getFileData::getSatellitesTable(TLE_inputFileName, closeLinksTable, ISLfrontAngle, ISLrightAngle, ISLbackAngle, ISLleftAngle);
     std::set<std::set<int>> openLinkSet = satellite::getOpenLinkSet(satellites);
-    std::map<std::set<int>, satellite::ISL> ISLtable = satellite::getISLtable(satellites);
 
-    //讓衛星物件知道自己的鄰居及ISL是誰(指標指到鄰居衛星及ISL)
+    //讓衛星物件知道自己的鄰居是誰(指標指到鄰居衛星)
     for(auto &sat:satellites){
-        sat.second.buildNeighborSatsAndISLs(satellites, ISLtable);
+        sat.second.buildNeighborSats(satellites);
     }
     mainFunction::printParameter(parameterTable);
     std::cout<<"running function "<<parameterTable["execute_function"]<<"...\n";
@@ -96,22 +95,10 @@ int main()
             break;
         case str2int("printAllIslConnectionInfoFile"):
             mainFunction::printAllIslConnectionInfoFile(satellites,parameterTable);
-            break;
-        case str2int("compareDifferentAcceptableAzimuthDif"):
-            mainFunction::compareDifferentAcceptableAzimuthDif(totalSatCount, satellites, ISLtable ,parameterTable);
-            break;   
-        case str2int("compareDifferentPAT_time"):
-            mainFunction::compareDifferentPAT_time(totalSatCount, satellites, ISLtable ,parameterTable);            
-            break;  
-        case str2int("printBreakingConnectingStatus"):
-            mainFunction::printBreakingConnectingStatus(satellites,ISLtable, parameterTable);
-            break;                                      
+            break;                                       
         case str2int("printConstellationStateFile"):
             mainFunction::printConstellationStateFile(satCountPerOrbit, totalSatCount, satellites,parameterTable);
             break; 
-        case str2int("adjustableISLdevice_printSatellitesDeviceStateOfDay"):
-            mainFunction::adjustableISLdevice_printSatellitesDeviceStateOfDay(satellites, ISLtable ,parameterTable);
-            break;
         case str2int("printConstellationHopCountFile"):
             mainFunction::printConstellationHopCountFile(satCountPerOrbit, totalSatCount, satellites,parameterTable);
             break;                  
