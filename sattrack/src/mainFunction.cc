@@ -123,10 +123,9 @@ namespace mainFunction
         output.close();
     }
 
-    //印出每顆衛星在一天中，左右ISL的一天total可建立連線秒數(雙向皆通才可建立連線)到./outputFile/資料夾中，檔名會是acceptableAzimuthDif_acceptableElevationDif_acceptableRange.txt
+    //印出每顆衛星在一天中，左右ISL的一天total可建立連線秒數(雙向皆通才可建立連線)到sattrack/output.txt中
     void printAllIslConnectionInfoFile(std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){
-        std::string outputDir = "./outputFile/" + parameterTable.at("acceptableAzimuthDif") + "_" + parameterTable.at("acceptableElevationDif") + "_" + parameterTable.at("acceptableRange") + ".txt";
-        std::ofstream output(outputDir);
+        std::ofstream output("./" + parameterTable.at("outputFileName"));
         double acceptableAzimuthDif = std::stod(parameterTable.at("acceptableAzimuthDif"));
         double acceptableElevationDif = std::stod(parameterTable.at("acceptableElevationDif"));
         double acceptableRange = std::stod(parameterTable.at("acceptableRange"));

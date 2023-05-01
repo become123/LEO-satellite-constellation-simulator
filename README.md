@@ -52,7 +52,7 @@ LEO satellite simulator
         - 需設定parameter: observerId, acceptableAzimuthDif, acceptableElevationDif, acceptableRange, ISLrightAngle, outputFileName
     4. **printLeftConnectabilityFile**: 印出編號observerId衛星一天中對飛行方向左方衛星的連線狀態(單向)到sattrack/output.txt中
         - 需設定parameter: observerId, acceptableAzimuthDif, acceptableElevationDif, acceptableRange, ISLleftAngle, outputFileName
-    5. **printAllIslConnectionInfoFile**: 印出每顆衛星在一天中，左右ISL的一天total可建立連線秒數(雙向皆通才可建立連線)到./outputFile/資料夾中，檔名會是`acceptableAzimuthDif_acceptableElevationDif_acceptableRange.txt`
+    5. **printAllIslConnectionInfoFile**: 印出每顆衛星在一天中，左右ISL的一天total可建立連線秒數(雙向皆通才可建立連線)到sattrack/output.txt中
         - 需設定parameter: acceptableAzimuthDif, acceptableElevationDif, acceptableRange, ISLrightAngle, ISLleftAngle
         - 此function需計算約5分鐘才會輸出結果至檔案中
     6. **printConstellationStateFile**: 印出某個特定時刻，行星群的連線狀態(112*112)到sattrack/output.txt中
