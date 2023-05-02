@@ -294,6 +294,9 @@ namespace getFileData
         }  
         std::string s;
         while ( std::getline (ifs,s) ){
+            if(s[0] != '('){
+                continue;
+            }
             std::string leftBracket = "(";
             std::string rightBracket = ")";
             size_t leftPos = 0;

@@ -73,7 +73,7 @@
 >>(TLE_inputFileName): (TLE_7P_16Sats.txt) <--填入記錄星群TLE的fileName
 >>(execute_function): (printAllIslConnectionInfoFile) <-- 填入要執行的function名稱
 >>(outputFileName): (output.txt)
->>(closeLinksFileName): (closeLink.txt)
+>>(closeLinksFileName): (closeLink.txt) <-- closeLink file的內容每一行是一個(satId1, satId2),意義為satId1與satId2之間的ISL關掉
 
 >>(observerId): (601) <-- 填入觀察者的衛星編號
 >>(otherId): (122) <-- 填入被觀察者的衛星編號

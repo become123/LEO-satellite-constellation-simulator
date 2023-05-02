@@ -1,0 +1,1 @@
+closeLink file的內容每一行是一個(satId1, satId2),意義為satId1與satId2之間的ISL關掉
