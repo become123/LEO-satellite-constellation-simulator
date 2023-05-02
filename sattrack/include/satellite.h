@@ -64,13 +64,6 @@ namespace satellite
 
     //從尚可以使用的衛星中，隨機選出一個衛星壞掉(4個ISL都壞掉)，模擬衛星壞掉的情形
     void randomBreakSat(std::map<int, satellite> &satellites, std::set<int> &nonBrokenSatSet);
-    
-    //根據方位角將每個衛星都設置好初始state
-    void initConstellation(std::map<int, satellite> &satellites, int ISLrightAngle, int ISLleftAngle);
-    
-    void judgeBreakingAndResetState(size_t time, int ISLrightAngle, int ISLleftAngle, const AER &acceptableAER_diff, std::map<int, satellite> &satellites);
-
-    void resetAllSat(std::map<int, satellite> &satellites);
 
     //將所有模擬中設定壞掉的Link重新開啟
     void resetConstellationBreakingLinks(std::map<int, satellite> &satellites, std::map<int, std::map<int, bool>> &closeLinksTable, std::set<std::set<int>> &openLinkSet);          
@@ -112,12 +105,6 @@ namespace satellite
         satellite& getLeftSat();
         satellite& getFrontSat();
         satellite& getBackSat();
-        int getCurrentISLdeviceState();
-        void setCertainTimeISLdeviceState(size_t t, bool state);  
-        int getCertainTimeISLdeviceState(size_t t); 
-        void changeState();  
-        void resetState(); 
-        std::bitset<86400> getISLsettingStateOfDay();
 
         //設定右方ISL一天中86400秒的連線狀態
         void setRightStateOfDate(std::bitset<86400> stateOfDay);
@@ -181,8 +168,6 @@ namespace satellite
         satellite *rightSatPtr = nullptr , *leftSatPtr = nullptr , *frontSatPtr = nullptr , *backSatPtr = nullptr ;
         std::vector<std::pair<int, double>> neighbors;//依序是 right left  front back 的<衛星編號，ISL角度>
         bool rightClosed = false, leftClosed = false, backClosed = false, frontClosed = false;
-        int ISLdeviceState = 0;
-        std::bitset<86400> ISLsettingStateOfDay; //一天中86400秒的ISL裝置設定狀態
 
 
         

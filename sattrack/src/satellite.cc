@@ -336,22 +336,6 @@ namespace satellite
         nonBrokenSatSet.erase(it);
     }    
 
-
-    //根據方位角將每個衛星都設置好初始state
-    void initConstellation(std::map<int, satellite> &satellites, int ISLrightAngle, int ISLleftAngle){
-        //將每個衛星都設置好初始state
-        for(auto &satPair: satellites){
-            satPair.second.setState(0, ISLrightAngle, ISLleftAngle);
-        }        
-    }
-
-    //將所有衛星換回state 0
-    void resetAllSat(std::map<int, satellite> &satellites){
-        for(auto &satPair: satellites){
-            satPair.second.resetState();
-        }
-    }
-
     //將所有模擬中設定壞掉的Link重新開啟
     void resetConstellationBreakingLinks(std::map<int, satellite> &satellites, std::map<int, std::map<int, bool>> &closeLinksTable, std::set<std::set<int>> &openLinkSet){
         for(auto &satPair:satellites){
@@ -729,33 +713,6 @@ namespace satellite
         return *backSatPtr;
     }
 
-    int satellite::getCurrentISLdeviceState(){
-        return this->ISLdeviceState;
-    }
-
-    void satellite::setCertainTimeISLdeviceState(size_t t, bool state){
-        this->ISLsettingStateOfDay[t] = state;
-    }    
-
-    //回傳衛星所記錄的特定秒數的device state
-    int satellite::getCertainTimeISLdeviceState(size_t t){
-        return this->ISLsettingStateOfDay[t];
-    }
-
-    void satellite::changeState(){
-        this->ISLdeviceState = !ISLdeviceState;
-        std::swap(this->neighbors[0].second, this->neighbors[1].second);
-    }
-
-    void satellite::resetState(){
-        if(this->ISLdeviceState == 1)
-            this->changeState();
-    }  
-
-    std::bitset<86400> satellite::getISLsettingStateOfDay(){
-        return this->ISLsettingStateOfDay;
-    }
-
     //印出每一個相鄰衛星的編號
     void satellite::printNeighborId(){
         std::cout<<"neighbors of sat"<<id<<" ---> right: "<<neighbors[0].first<<", left: "<<neighbors[1].first<<", front: "<<neighbors[2].first<<", back: "<<neighbors[3].first;
@@ -908,119 +865,5 @@ namespace satellite
         }
         return this->judgeLeftISL(time, acceptableAER_diff);
     }
-
-    //根據方位角設置衛星的ISL setting state
-    void satellite::setState(size_t t, const int &ISLrightAngle, const int &ISLleftAngle){
-        double lookRightA = this->getAER(t, getRightSat()).A;
-        double lookLeftA = this->getAER(t, this->getLeftSat()).A;
-        // std::cout<<leftLookRightA<<","<<rightLookLeftA;
-        double leftDefaultAngleDiff = getAngleDiff(lookLeftA, ISLleftAngle);
-        double leftSwitchedAngleDiff = getAngleDiff(lookLeftA, ISLrightAngle);
-        double rightDefaultAngleDiff = getAngleDiff(lookRightA, ISLrightAngle);
-        double rightSwitchedAngleDiff = getAngleDiff(lookRightA, ISLleftAngle); 
-        //將連線左方與連線右方衛星的裝置設置成方位角差距比較小的那一個              
-        int leftState = leftDefaultAngleDiff < leftSwitchedAngleDiff ? 0 : 1;
-        int rightState = rightDefaultAngleDiff < rightSwitchedAngleDiff ? 0 : 1;
-        if(leftState == rightState){//若左方右方使用不同的ISL裝置->沒問題
-            if(this->getCurrentISLdeviceState() != leftState)
-                this->changeState();
-        }
-        else{ //leftState != rightState，左方右方使用到同一個ISL裝置，則方位角差較小的那一側優先使用
-            double leftStateAngleDiff = std::min(leftDefaultAngleDiff, leftSwitchedAngleDiff);
-            double rightStateAngleDiff = std::min(rightDefaultAngleDiff, rightSwitchedAngleDiff);
-            int curSatState = leftStateAngleDiff < rightStateAngleDiff ? leftState : rightState;
-            if(this->getCurrentISLdeviceState() != curSatState)
-                this->changeState();                   
-        }
-    }
-
-    //回傳特定時刻可否建立右方的ISL(要彼此可以連線到彼此才可以建立)，且左側右側ISL可以連P+1或P-1軌道(沒有固定)，尚未考慮PAT
-    bool satellite::adjustableISLdeviceJudgeRight(int time, const AER &acceptableAER_diff){
-        if(this->judgeRightISL(time, acceptableAER_diff)){
-            return true;
-        }
-        int selfState = this->getCurrentISLdeviceState();
-        bool selfcanConnectLeft = this->judgeLeftISL(time, acceptableAER_diff);
-        bool rightSatCanConnectRight = this->getRightSat().judgeRightISL(time, acceptableAER_diff);       
-        if(!selfcanConnectLeft && !rightSatCanConnectRight){
-            selfState == 0 ? this->getRightSat().changeState() : this->changeState();//change to both state0
-            if(this->judgeRightISL(time, acceptableAER_diff))
-                return true;
-            selfState == 0 ? this->getRightSat().changeState() : this->changeState();//change back 
-
-            selfState == 1 ? this->getRightSat().changeState() : this->changeState();//change to both state1
-            if(this->judgeRightISL(time, acceptableAER_diff))
-                return true;
-            selfState == 1 ? this->getRightSat().changeState() : this->changeState();//change back
-        }
-        else if(selfcanConnectLeft && !rightSatCanConnectRight){
-            this->getRightSat().changeState();
-            if(this->judgeRightISL(time, acceptableAER_diff))
-                return true;
-            this->getRightSat().changeState();  
-            return false;          
-        }
-        else if(!selfcanConnectLeft && rightSatCanConnectRight){
-            this->changeState();
-            if(this->judgeRightISL(time, acceptableAER_diff))
-                return true;
-            this->changeState();  
-            return false;  
-        }
-        //selfcanConnectLeft && rightSatCanConnectRight
-        return false;
-    }
-
-    //回傳特定時刻可否建立左方的ISL(要彼此可以連線到彼此才可以建立)，且左側右側ISL可以連P+1或P-1軌道(沒有固定)，尚未考慮PAT
-    bool satellite::adjustableISLdeviceJudgeLeft(int time, const AER &acceptableAER_diff){
-        if(this->judgeLeftISL(time, acceptableAER_diff))
-            return true;        
-        int selfState = this->getCurrentISLdeviceState();
-        int leftSatState = this->getLeftSat().getCurrentISLdeviceState();
-        bool selfcanConnectRight = this->judgeRightISL(time, acceptableAER_diff);
-        bool leftSatCanConnectLeft = this->getLeftSat().judgeLeftISL(time, acceptableAER_diff); 
-        if(selfState == leftSatState){           
-            if(!selfcanConnectRight && !leftSatCanConnectLeft){ //檢查是否可以拿另外一側的裝置來使用
-                this->changeState();
-                this->getLeftSat().changeState();
-                if(this->judgeLeftISL(time, acceptableAER_diff))
-                    return true;
-                else{
-                    this->changeState();
-                    this->getLeftSat().changeState();                        
-                }                    
-            }
-            return false;
-        }
-        //state different
-        if(!selfcanConnectRight && !leftSatCanConnectLeft){
-            selfState == 0 ?  this->getRightSat().changeState() : this->changeState();//change to both state0
-            if(this->judgeLeftISL(time, acceptableAER_diff))
-                return true;
-            selfState == 0 ?  this->getRightSat().changeState() : this->changeState();//change back 
-
-            selfState == 1 ?  this->getRightSat().changeState() : this->changeState();//change to both state1
-            if(this->judgeRightISL(time, acceptableAER_diff))
-                return true;
-            selfState == 1 ?  this->getRightSat().changeState() : this->changeState();//change back     
-            return false;
-        }
-        else if(selfcanConnectRight && !leftSatCanConnectLeft){
-            this->getLeftSat().changeState();
-            if(this->judgeLeftISL(time, acceptableAER_diff))
-                return true;
-            this->getLeftSat().changeState();  
-            return false;          
-        }
-        else if(!selfcanConnectRight && leftSatCanConnectLeft){
-            this->changeState();
-            if(this->judgeLeftISL(time, acceptableAER_diff))
-                return true;
-            this->changeState();  
-            return false;  
-        }
-        return false;//selfcanConnectRight && leftSatCanConnectLeft              
-    }
-
     /*------------------Satellite class  end------------------*/
 }
