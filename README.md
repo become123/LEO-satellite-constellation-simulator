@@ -2,6 +2,7 @@ LEO satellite simulator
 ============
 - 衛星位置的預測是base on此C++ SGP4 project
    - https://www.danrw.com/sgp4/
+   - https://github.com/dnwrnr/sgp4.git
 - 有任何問題可以透過email聯絡我: a0981695482@gmail.com
 ### 編譯流程
 
