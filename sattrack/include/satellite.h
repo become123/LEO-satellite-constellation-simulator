@@ -106,12 +106,6 @@ namespace satellite
         satellite& getFrontSat();
         satellite& getBackSat();
 
-        //設定右方ISL一天中86400秒的連線狀態
-        void setRightStateOfDate(std::bitset<86400> stateOfDay);
-
-        //設定左方ISL一天中86400秒的連線狀態
-        void setLeftStateOfDate(std::bitset<86400> stateOfDay);
-
         //印出每一個相鄰衛星的編號
         void printNeighborId();
 
