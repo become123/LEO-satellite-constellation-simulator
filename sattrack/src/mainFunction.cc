@@ -53,6 +53,33 @@ namespace mainFunction
         output.close();
     }
 
+    //印出星網的跨軌道與同軌道的衛星距離資訊到sattrack/output.txt
+    void printDistanceInformation(std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){
+        std::ofstream output("./" + parameterTable.at("outputFileName"));
+        satellite::satellite observer = satellites.at(101);
+        satellite::satellite right = observer.getRightSat();
+        satellite::satellite front = observer.getFrontSat();
+        output << std::setprecision(8) << std::fixed;
+        std::vector<double> rightDistance;
+        std::vector<double> frontDistance;
+        for (int i = 0; i < 6050; ++i)//目前的設定,每天會繞地球14.28圈,每一圈86400/14.28 = 6,050.42秒
+        {
+            AER rightAER = observer.getAER(i, right);
+            AER frontAER = observer.getAER(i, front);
+            rightDistance.push_back(rightAER.R);
+            frontDistance.push_back(frontAER.R);
+        }
+        output<<"inter-plane distance: \n";
+        output<<"max: "<<*std::max_element(rightDistance.begin(), rightDistance.end());
+        output<<", min: "<<*std::min_element(rightDistance.begin(), rightDistance.end());
+        output<<", average: "<<std::accumulate(rightDistance.begin(), rightDistance.end(), 0.0)/rightDistance.size()<<"\n";
+        output<<"intra-plane distance: \n";
+        output<<"max: "<<*std::max_element(frontDistance.begin(), frontDistance.end());
+        output<<", min: "<<*std::min_element(frontDistance.begin(), frontDistance.end());
+        output<<", average: "<<std::accumulate(frontDistance.begin(), frontDistance.end(), 0.0)/frontDistance.size()<<"\n";
+        output.close();
+    }
+
     //印出編號observerId衛星觀察右方衛星一天中的AER差異數值(用於判斷可否連線)到sattrack/output.txt
     void printRightSatAERdiff(int observerId, std::map<int, satellite::satellite> &satellites, std::string OutputFileName){
         satellite::satellite observer = satellites.at(observerId);
@@ -206,7 +233,8 @@ namespace mainFunction
             table[(size_t)hopCount]++;
         }
         for(auto p:table){
-            output<<"hopCount = "<<p.first<<": "<<p.second<<"\n";
+            // output<<"hopCount = "<<p.first<<": "<<p.second<<"\n";
+            output<<p.first<<","<<p.second<<"\n";
         }
         output.close(); 
     }

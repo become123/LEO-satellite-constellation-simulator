@@ -7,71 +7,74 @@
 2. printAERfile --> 印出編號observerId衛星觀察編號otherId衛星一天中的AER數值到sattrack/output.txt
     需設定parameter: observerId, otherId, outputFileName
 
-3. printRightConnectabilityFile --> 印出編號observerId衛星一天中對飛行方向右方衛星的連線狀態(單向)到sattrack/output.txt中
+3. printDistanceInformation --> 印出星網的跨軌道與同軌道的衛星距離資訊到sattrack/output.txt
+    需設定parameter: outputFileName    
+
+4. printRightConnectabilityFile --> 印出編號observerId衛星一天中對飛行方向右方衛星的連線狀態(單向)到sattrack/output.txt中
     需設定parameter: observerId, acceptableAzimuthDif, acceptableElevationDif, acceptableRange, ISLrightAngle, outputFileName
 
-4. printLeftConnectabilityFile --> 印出編號observerId衛星一天中對飛行方向左方衛星的連線狀態(單向)到sattrack/output.txt中
+5. printLeftConnectabilityFile --> 印出編號observerId衛星一天中對飛行方向左方衛星的連線狀態(單向)到sattrack/output.txt中
     需設定parameter: observerId, acceptableAzimuthDif, acceptableElevationDif, acceptableRange, ISLleftAngle, outputFileName
 
-5. printAllIslConnectionInfoFile --> 印出每顆衛星在一天中，左右ISL的一天total可建立連線秒數(雙向皆通才可建立連線)到sattrack/output.txt中
+6. printAllIslConnectionInfoFile --> 印出每顆衛星在一天中，左右ISL的一天total可建立連線秒數(雙向皆通才可建立連線)到sattrack/output.txt中
     需設定parameter: acceptableAzimuthDif, acceptableElevationDif, acceptableRange, ISLrightAngle, ISLleftAngle
     *此function需計算約5分鐘才會輸出結果至檔案中
 
-6. printConstellationStateFile --> 印出某個特定時刻，行星群的連線狀態(衛星數量*衛星數量的二維陣列，可以連的話填上距離，不可連的話填上0，自己連自己也是填0)到sattrack/output.txt中
+7. printConstellationStateFile --> 印出某個特定時刻，行星群的連線狀態(衛星數量*衛星數量的二維陣列，可以連的話填上距離，不可連的話填上0，自己連自己也是填0)到sattrack/output.txt中
     需設定parameter: acceptableAzimuthDif, acceptableElevationDif, acceptableRange, PAT_time, time, ISLrightAngle, ISLleftAngle(目前是當成前後一定可以連線), outputFileName
 
-7. printConstellationHopCountFile --> 印出某個特定時刻，行星群的hop count狀態(totalSatCount*totalSatCount的對稱二維vetcor，內容意義為衛星最少要經過幾個ISL才會抵達另一個衛星)到sattrack/output.txt中
+8. printConstellationHopCountFile --> 印出某個特定時刻，行星群的hop count狀態(totalSatCount*totalSatCount的對稱二維vetcor，內容意義為衛星最少要經過幾個ISL才會抵達另一個衛星)到sattrack/output.txt中
     需設定parameter: acceptableAzimuthDif, acceptableElevationDif, acceptableRange, PAT_time, time, ISLrightAngle, ISLleftAngle(目前是當成前後一定可以連線), outputFileName
 
-8. printConstellationHopCountFileAndOutputCertainPath --> 印出某個特定時刻，行星群的hop count狀態(totalSatCount*totalSatCount的對稱二維vetcor，內容意義為衛星最少要經過幾個ISL才會抵達另一個衛星)到sattrack/output.txt中，並且在terminal中印出由observerId的衛星到otherId衛星的路徑
+9. printConstellationHopCountFileAndOutputCertainPath --> 印出某個特定時刻，行星群的hop count狀態(totalSatCount*totalSatCount的對稱二維vetcor，內容意義為衛星最少要經過幾個ISL才會抵達另一個衛星)到sattrack/output.txt中，並且在terminal中印出由observerId的衛星到otherId衛星的路徑
     需設定parameter: acceptableAzimuthDif, acceptableElevationDif, acceptableRange, PAT_time, time, ISLrightAngle, ISLleftAngle(目前是當成前後一定可以連線), outputFileName
 
-9. printConstellationDistanceFile --> 印出某個特定時刻，行星群的shortest path狀態(totalSatCount*totalSatCount的對稱二維vetcor，內容意義為衛星最少要經過多少距離才會抵達另一個衛星)到sattrack/output.txt中
+10. printConstellationDistanceFile --> 印出某個特定時刻，行星群的shortest path狀態(totalSatCount*totalSatCount的對稱二維vetcor，內容意義為衛星最少要經過多少距離才會抵達另一個衛星)到sattrack/output.txt中
     需設定parameter: acceptableAzimuthDif, acceptableElevationDif, acceptableRange, PAT_time, time, ISLrightAngle, ISLleftAngle(目前是當成前後一定可以連線), outputFileName
 
-10. printConstellationDistanceAndOutputCertainPath --> 印出某個特定時刻，行星群的shortest path狀態，並且在terminal中印出由observerId的衛星到otherId衛星的路徑
+11. printConstellationDistanceAndOutputCertainPath --> 印出某個特定時刻，行星群的shortest path狀態，並且在terminal中印出由observerId的衛星到otherId衛星的路徑
     需設定parameter: acceptableAzimuthDif, acceptableElevationDif, acceptableRange, PAT_time, time, ISLrightAngle, ISLleftAngle(目前是當成前後一定可以連線), outputFileName
 
-11. printStationAllSatConnectionTime --> 印出根據parameter.txt設置位置的地面站，與星群中每一個衛星一天中有那些時間是可以連線的
+12. printStationAllSatConnectionTime --> 印出根據parameter.txt設置位置的地面站，與星群中每一個衛星一天中有那些時間是可以連線的
     需設定parameter: stationLatitude, stationLongitude, stationAltitude, groundStationAcceptableElevation, groundStationAcceptableDistance, round, printSecond, outputFileName
 
-12. printConstellationISLdeviceInfo --> 印出自parameter.txt中的startTime到endTime每秒的衛星間方位角關係及角度差較小的ISL裝置設置角度
+13. printConstellationISLdeviceInfo --> 印出自parameter.txt中的startTime到endTime每秒的衛星間方位角關係及角度差較小的ISL裝置設置角度
     需設定parameter: startTime, endTime, ISLrightAngle, ISLleftAngle, outputFileName
 
-13. printStationCoverSatsPerSecond --> 印出根據parameter.txt設置位置的地面站，一天中的每一秒有哪些衛星是可以連線的
+14. printStationCoverSatsPerSecond --> 印出根據parameter.txt設置位置的地面站，一天中的每一秒有哪些衛星是可以連線的
     需設定parameter: stationLatitude, stationLongitude, stationAltitude, groundStationAcceptableElevation, groundStationAcceptableDistance, round, outputFileName
 
-14. printDifferentLatitudeCoverTimeOfDay --> 印出不同緯度的地面站86400秒中，有幾秒是有被衛星覆蓋的
+15. printDifferentLatitudeCoverTimeOfDay --> 印出不同緯度的地面站86400秒中，有幾秒是有被衛星覆蓋的
     需設定parameter: stationLongitude, stationAltitude, groundStationAcceptableElevation, groundStationAcceptableDistance, minLatitude, maxLatitude, round, outputFileName
 
-15. printDifferentLatitudeConnectedCountOfDay --> 印出不同緯度的地面站86400秒中，平均/最小/最大的可連線衛星數量是多少
+16. printDifferentLatitudeConnectedCountOfDay --> 印出不同緯度的地面站86400秒中，平均/最小/最大的可連線衛星數量是多少
     需設定parameter: stationLongitude, stationAltitude, groundStationAcceptableElevation, groundStationAcceptableDistance, minLatitude, maxLatitude, round, outputFileName
 
-16. printGroundStationConnectingInfo --> 印出地面站對各個衛星一天中對星群中各個衛星的可連線時間總合，總連線時間最長的衛星，總連線時間最短的衛星，以及各個衛星總連線時間的平均
+17. printGroundStationConnectingInfo --> 印出地面站對各個衛星一天中對星群中各個衛星的可連線時間總合，總連線時間最長的衛星，總連線時間最短的衛星，以及各個衛星總連線時間的平均
     需設定parameter: stationLatitude, stationLongitude, stationAltitude, groundStationAcceptableElevation, groundStationAcceptableDistance, round, outputFileName
 
-17. printAreaConnectingInfo --> 印出設定區域(多個地面站)內對各個衛星一天中對星群中各個衛星的可連線時間總合，總連線時間最長的衛星，總連線時間最短的衛星，以及各個衛星總連線時間的平均，多個地面站中只要任一個可以連上，就算那一秒鐘可以連上
+18. printAreaConnectingInfo --> 印出設定區域(多個地面站)內對各個衛星一天中對星群中各個衛星的可連線時間總合，總連線時間最長的衛星，總連線時間最短的衛星，以及各個衛星總連線時間的平均，多個地面站中只要任一個可以連上，就算那一秒鐘可以連上
     需設定parameter: areaStationLatitudes, areaStationLongitudes, areaStationAltitudes, groundStationAcceptableElevation, groundStationAcceptableDistance, round, outputFileName
 
-18. printAreaAllSatConnectionTime --> 印出根據parameter.txt設置的區域(多個地面站)，與星群中每一個衛星一天中有那些時間是可以連線的
+19. printAreaAllSatConnectionTime --> 印出根據parameter.txt設置的區域(多個地面站)，與星群中每一個衛星一天中有那些時間是可以連線的
     需設定parameter: areaStationLatitudes, areaStationLongitudes, areaStationAltitudes, groundStationAcceptableElevation, groundStationAcceptableDistance, round, printSecond, outputFileName
 
-19. printRightSatAERdiff --> 印出編號observerId衛星觀察右方衛星一天中的AER差異數值(用於判斷可否連線)到sattrack/output.txt
+20. printRightSatAERdiff --> 印出編號observerId衛星觀察右方衛星一天中的AER差異數值(用於判斷可否連線)到sattrack/output.txt
     需設定parameter: observerId, outputFileName, ISLrightAngle
 
-20. printLeftSatAERdiff --> 印出編號observerId衛星觀察左方衛星一天中的AER差異數值(用於判斷可否連線)到sattrack/output.txt
+21. printLeftSatAERdiff --> 印出編號observerId衛星觀察左方衛星一天中的AER差異數值(用於判斷可否連線)到sattrack/output.txt
     需設定parameter: observerId, outputFileName, ISLleftAngle
 
-21. simulateLinkbreakingStatistics --> 模擬計算連結失效率，根據所設置的模擬次數，模擬星群的Link要損壞多少個才會發生連結失效，並將最後的分布統計數據印到所設定的output檔案中
+22. simulateLinkbreakingStatistics --> 模擬計算連結失效率，根據所設置的模擬次數，模擬星群的Link要損壞多少個才會發生連結失效，並將最後的分布統計數據印到所設定的output檔案中
     需設定parameter: ISLfrontAngle, ISLrightAngle, ISLbackAngle, ISLleftAngle, TLE_inputFileName, closeLinksFileName, outputFileName, closeLinkSimulateTime, acceptableAzimuthDif, acceptableElevationDif, acceptableRange, time, PAT_time
 
-22. simulateSatFailStatistics --> 模擬計算衛星隨機壞掉的連結失效率，根據所設置的模擬次數，模擬星群的衛星要損壞多少個才會發生連結失效，並將最後的分布統計數據印到所設定的output檔案中
+23. simulateSatFailStatistics --> 模擬計算衛星隨機壞掉的連結失效率，根據所設置的模擬次數，模擬星群的衛星要損壞多少個才會發生連結失效，並將最後的分布統計數據印到所設定的output檔案中
     需設定parameter: ISLfrontAngle, ISLrightAngle, ISLbackAngle, ISLleftAngle, TLE_inputFileName, closeLinksFileName, outputFileName, satFailSimulateTime, acceptableAzimuthDif, acceptableElevationDif, acceptableRange, time, PAT_time
 
 **********************************************************************************************
 
->>(TLE_inputFileName): (TLE_7P_16Sats.txt) <--填入記錄星群TLE的fileName
->>(execute_function): (printAllIslConnectionInfoFile) <-- 填入要執行的function名稱
+>>(TLE_inputFileName): (TLE_12P_22Sats.txt) <--填入記錄星群TLE的fileName
+>>(execute_function): (printDistanceInformation) <-- 填入要執行的function名稱
 >>(outputFileName): (output.txt)
 >>(closeLinksFileName): (closeLink.txt) <-- closeLink file的內容每一行是一個(satId1, satId2),意義為satId1與satId2之間的ISL關掉
 
@@ -87,7 +90,7 @@
 >>(ISLbackAngle):(180)degree <-- 後方ISL設置角度
 >>(ISLleftAngle):(180)degree <-- 左方ISL設置角度
 
->>(time):(40)second <-- 欲計算的特定時間點
+>>(time):(0)second <-- 欲計算的特定時間點
 >>(startTime):(660) <--欲計算的開始時間點
 >>(endTime):(712) <--欲計算的結束時間點
 >>(PAT_time):(0)second <--建立連線所需花的時間

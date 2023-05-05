@@ -99,6 +99,9 @@ int main()
         case str2int("printAERfile"):
             mainFunction::printAERfile(std::stoi(parameterTable.at("observerId")), std::stoi(parameterTable.at("otherId")),satellites, "./" + parameterTable.at("outputFileName"));
             break;
+        case str2int("printDistanceInformation"):
+            mainFunction::printDistanceInformation(satellites, parameterTable);
+            break;    
         case str2int("printRightConnectabilityFile"):
             mainFunction::printRightConnectabilityFile(std::stoi(parameterTable.at("observerId")),satellites,parameterTable);
             break;
