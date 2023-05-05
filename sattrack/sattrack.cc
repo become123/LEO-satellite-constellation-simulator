@@ -76,9 +76,9 @@ int main()
         totalSatCount = 264;
         satCountPerOrbit = 33;
     }
-    else if(TLE_inputFileName == "TLE_12P_16Sats.txt"){
+    else if(TLE_inputFileName == "TLE_12P_22Sats.txt"){
         totalSatCount = 264;
-        satCountPerOrbit = 16;
+        satCountPerOrbit = 22;
     }
     std::map<int, std::map<int, bool>> closeLinksTable = getFileData::getCloseLinkTable(parameterTable.at("closeLinksFileName"));
     std::map<int, satellite::satellite> satellites = getFileData::getSatellitesTable(TLE_inputFileName, closeLinksTable, ISLfrontAngle, ISLrightAngle, ISLbackAngle, ISLleftAngle);
