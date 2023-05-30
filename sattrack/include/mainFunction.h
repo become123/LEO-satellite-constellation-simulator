@@ -75,6 +75,9 @@ namespace mainFunction
     //印出不同緯度的地面站86400秒中，有幾秒是有被衛星覆蓋的
     void printDifferentLatitudeCoverTimeOfDay(std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable);
 
+    //印出不同緯度的地面站86400秒中，有幾秒是有被至少n顆衛星覆蓋的
+    void printDifferentLatitudeNSatCoverTimeOfDay(std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable);
+    
     //印出不同緯度的地面站86400秒中，平均/最小/最大的可連線衛星數量是多少
     void printDifferentLatitudeConnectedCountOfDay(std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable);
 

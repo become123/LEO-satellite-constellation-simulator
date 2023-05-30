@@ -549,6 +549,26 @@ namespace mainFunction
         output.close();  
     }
 
+    //印出不同緯度的地面站86400秒中，有幾秒是有被至少n顆衛星覆蓋的
+    void printDifferentLatitudeNSatCoverTimeOfDay(std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){
+        std::ofstream output("./" + parameterTable.at("outputFileName"));
+        output<<"latitude : coverTimeofDay\n";
+        double stationLongitude = std::stod(parameterTable.at("stationLongitude"));
+        double stationAltitude = std::stod(parameterTable.at("stationAltitude"));
+        int groundStationAcceptableElevation = std::stoi(parameterTable.at("groundStationAcceptableElevation"));
+        int groundStationAcceptableDistance = std::stoi(parameterTable.at("groundStationAcceptableDistance"));
+        bool round = parameterTable.at("round") == "Y";
+        int minLatitude = std::stoi(parameterTable.at("minLatitude"));
+        int maxLatitude = std::stoi(parameterTable.at("maxLatitude"));
+        int nSat = std::stoi(parameterTable.at("nSat"));
+        for(double latitude = minLatitude; latitude <= maxLatitude; ++latitude){
+            groundStation::groundStation station(latitude, stationLongitude, stationAltitude);
+            std::bitset<86400> availabilityOfDay = station.getCoverTimeOfDay(satellites, groundStationAcceptableElevation, groundStationAcceptableDistance, round, nSat);
+            output<<std::setw(3)<<(int)latitude<<"      ,  "<<availabilityOfDay.count()<<"\n";
+        }
+        output.close();  
+    }    
+
     //印出不同緯度的地面站86400秒中，平均/最小/最大的可連線衛星數量是多少
     void printDifferentLatitudeConnectedCountOfDay(std::map<int, satellite::satellite> &satellites, std::map<std::string, std::string> &parameterTable){
         std::ofstream output("./" + parameterTable.at("outputFileName"));

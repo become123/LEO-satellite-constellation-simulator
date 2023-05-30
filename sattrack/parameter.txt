@@ -47,34 +47,38 @@
 15. printDifferentLatitudeCoverTimeOfDay --> 印出不同緯度的地面站86400秒中，有幾秒是有被衛星覆蓋的
     需設定parameter: stationLongitude, stationAltitude, groundStationAcceptableElevation, groundStationAcceptableDistance, minLatitude, maxLatitude, round, outputFileName
 
-16. printDifferentLatitudeConnectedCountOfDay --> 印出不同緯度的地面站86400秒中，平均/最小/最大的可連線衛星數量是多少
+16. printDifferentLatitudeNSatCoverTimeOfDay --> 印出不同緯度的地面站86400秒中，有幾秒是有被至少n顆衛星覆蓋的
+    需設定parameter: stationLongitude, stationAltitude, groundStationAcceptableElevation, groundStationAcceptableDistance, minLatitude, maxLatitude, round, nSat, outputFileName
+
+17. printDifferentLatitudeConnectedCountOfDay --> 印出不同緯度的地面站86400秒中，平均/最小/最大的可連線衛星數量是多少
     需設定parameter: stationLongitude, stationAltitude, groundStationAcceptableElevation, groundStationAcceptableDistance, minLatitude, maxLatitude, round, outputFileName
 
-17. printGroundStationConnectingInfo --> 印出地面站對各個衛星一天中對星群中各個衛星的可連線時間總合，總連線時間最長的衛星，總連線時間最短的衛星，以及各個衛星總連線時間的平均
+
+18. printGroundStationConnectingInfo --> 印出地面站對各個衛星一天中對星群中各個衛星的可連線時間總合，總連線時間最長的衛星，總連線時間最短的衛星，以及各個衛星總連線時間的平均
     需設定parameter: stationLatitude, stationLongitude, stationAltitude, groundStationAcceptableElevation, groundStationAcceptableDistance, round, outputFileName
 
-18. printAreaConnectingInfo --> 印出設定區域(多個地面站)內對各個衛星一天中對星群中各個衛星的可連線時間總合，總連線時間最長的衛星，總連線時間最短的衛星，以及各個衛星總連線時間的平均，多個地面站中只要任一個可以連上，就算那一秒鐘可以連上
+19. printAreaConnectingInfo --> 印出設定區域(多個地面站)內對各個衛星一天中對星群中各個衛星的可連線時間總合，總連線時間最長的衛星，總連線時間最短的衛星，以及各個衛星總連線時間的平均，多個地面站中只要任一個可以連上，就算那一秒鐘可以連上
     需設定parameter: areaStationLatitudes, areaStationLongitudes, areaStationAltitudes, groundStationAcceptableElevation, groundStationAcceptableDistance, round, outputFileName
 
-19. printAreaAllSatConnectionTime --> 印出根據parameter.txt設置的區域(多個地面站)，與星群中每一個衛星一天中有那些時間是可以連線的
+20. printAreaAllSatConnectionTime --> 印出根據parameter.txt設置的區域(多個地面站)，與星群中每一個衛星一天中有那些時間是可以連線的
     需設定parameter: areaStationLatitudes, areaStationLongitudes, areaStationAltitudes, groundStationAcceptableElevation, groundStationAcceptableDistance, round, printSecond, outputFileName
 
-20. printRightSatAERdiff --> 印出編號observerId衛星觀察右方衛星一天中的AER差異數值(用於判斷可否連線)到sattrack/output.txt
+21. printRightSatAERdiff --> 印出編號observerId衛星觀察右方衛星一天中的AER差異數值(用於判斷可否連線)到sattrack/output.txt
     需設定parameter: observerId, outputFileName, ISLrightAngle
 
-21. printLeftSatAERdiff --> 印出編號observerId衛星觀察左方衛星一天中的AER差異數值(用於判斷可否連線)到sattrack/output.txt
+22. printLeftSatAERdiff --> 印出編號observerId衛星觀察左方衛星一天中的AER差異數值(用於判斷可否連線)到sattrack/output.txt
     需設定parameter: observerId, outputFileName, ISLleftAngle
 
-22. simulateLinkbreakingStatistics --> 模擬計算連結失效率，根據所設置的模擬次數，模擬星群的Link要損壞多少個才會發生連結失效，並將最後的分布統計數據印到所設定的output檔案中
+23. simulateLinkbreakingStatistics --> 模擬計算連結失效率，根據所設置的模擬次數，模擬星群的Link要損壞多少個才會發生連結失效，並將最後的分布統計數據印到所設定的output檔案中
     需設定parameter: ISLfrontAngle, ISLrightAngle, ISLbackAngle, ISLleftAngle, TLE_inputFileName, closeLinksFileName, outputFileName, closeLinkSimulateTime, acceptableAzimuthDif, acceptableElevationDif, acceptableRange, time, PAT_time
 
-23. simulateSatFailStatistics --> 模擬計算衛星隨機壞掉的連結失效率，根據所設置的模擬次數，模擬星群的衛星要損壞多少個才會發生連結失效，並將最後的分布統計數據印到所設定的output檔案中
+24. simulateSatFailStatistics --> 模擬計算衛星隨機壞掉的連結失效率，根據所設置的模擬次數，模擬星群的衛星要損壞多少個才會發生連結失效，並將最後的分布統計數據印到所設定的output檔案中
     需設定parameter: ISLfrontAngle, ISLrightAngle, ISLbackAngle, ISLleftAngle, TLE_inputFileName, closeLinksFileName, outputFileName, satFailSimulateTime, acceptableAzimuthDif, acceptableElevationDif, acceptableRange, time, PAT_time
 
 **********************************************************************************************
 
 >>(TLE_inputFileName): (TLE_12P_22Sats.txt) <--填入記錄星群TLE的fileName
->>(execute_function): (printDistanceInformation) <-- 填入要執行的function名稱
+>>(execute_function): (printDifferentLatitudeNSatCoverTimeOfDay) <-- 填入要執行的function名稱
 >>(outputFileName): (output.txt)
 >>(closeLinksFileName): (closeLink.txt) <-- closeLink file的內容每一行是一個(satId1, satId2),意義為satId1與satId2之間的ISL關掉
 
@@ -99,8 +103,6 @@
 >>(stationLongitude):(121.192)
 >>(stationAltitude):(0.192742)
 
->>(minLatitude):(22)
->>(maxLatitude):(26)
 
 設定多個地面站，依序排列在緯度，經度及海拔的括號中
 >>(areaStationLatitudes): (26.15013 ,26.22531 ,24.45711 ,24.43836 ,23.57384 ,23.67324 ,25.03590 ,25.295102 ,24.15494 ,24.05902 ,23.00356 ,23.06135 ,22.63584 ,21.90526 ,23.99012 ,22.75994 )
@@ -109,7 +111,11 @@
 
 >>(groundStationAcceptableElevation):(30)degree
 >>(groundStationAcceptableDistance):(1000000000)km
->>(round):(N) <-- 仰角部分是否四捨五入，要的話輸入Y，不要的話輸入N
+>>(round):(Y) <-- 仰角部分是否四捨五入，要的話輸入Y，不要的話輸入N
+>>(nSat):(2) <-- 地面站要可以連線到幾顆星網中的衛星，才算有連線到
+>>(minLatitude):(-40) <-- 欲計算的開始時間點
+>>(maxLatitude):(40) <-- 欲計算的結束時間點
+
 >>(printSecond):(Y) <-- 時間是否用秒數表示，要的話輸入Y，不要的話輸入N
 >>(closeLinkSimulateTime):(20)
 >>(satFailSimulateTime):(10000)

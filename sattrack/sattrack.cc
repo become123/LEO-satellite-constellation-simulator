@@ -137,7 +137,10 @@ int main()
             break;
         case str2int("printDifferentLatitudeCoverTimeOfDay"):
             mainFunction::printDifferentLatitudeCoverTimeOfDay(satellites, parameterTable);
-            break;    
+            break; 
+        case str2int("printDifferentLatitudeNSatCoverTimeOfDay"):
+            mainFunction::printDifferentLatitudeNSatCoverTimeOfDay(satellites, parameterTable);
+            break;               
         case str2int("printDifferentLatitudeConnectedCountOfDay"):
             mainFunction::printDifferentLatitudeConnectedCountOfDay(satellites, parameterTable);
             break; 

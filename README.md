@@ -76,21 +76,23 @@ LEO satellite simulator
         - 需設定parameter: stationLatitude, stationLongitude, stationAltitude, groundStationAcceptableElevation, groundStationAcceptableDistance, round, outputFileName  
     15. **printDifferentLatitudeCoverTimeOfDay**:印出不同緯度的地面站86400秒中，有幾秒是有被衛星覆蓋的
         - 需設定parameter: stationLongitude, stationAltitude, groundStationAcceptableElevation, groundStationAcceptableDistance, minLatitude, maxLatitude, round, outputFileName
-    16. **printDifferentLatitudeConnectedCountOfDay**:印出不同緯度的地面站86400秒中，平均/最小/最大的可連線衛星數量是多少
+    16. **printDifferentLatitudeNSatCoverTimeOfDay** : 印出不同緯度的地面站86400秒中，有幾秒是有被至少n顆衛星覆蓋的
+        - 需設定parameter: stationLongitude, stationAltitude, groundStationAcceptableElevation, groundStationAcceptableDistance, minLatitude, maxLatitude, round, nSat, outputFileName
+    17. **printDifferentLatitudeConnectedCountOfDay**:印出不同緯度的地面站86400秒中，平均/最小/最大的可連線衛星數量是多少
         - 需設定parameter: stationLongitude, stationAltitude, groundStationAcceptableElevation, groundStationAcceptableDistance, minLatitude, maxLatitude, round, outputFileName
-    17. **printGroundStationConnectingInfo**:印出地面站對各個衛星一天中對星群中各個衛星的可連線時間總合，總連線時間最長的衛星，總連線時間最短的衛星，以及各個衛星總連線時間的平均
+    18. **printGroundStationConnectingInfo**:印出地面站對各個衛星一天中對星群中各個衛星的可連線時間總合，總連線時間最長的衛星，總連線時間最短的衛星，以及各個衛星總連線時間的平均
         - 需設定parameter: stationLatitude, stationLongitude, stationAltitude, groundStationAcceptableElevation, groundStationAcceptableDistance, round, outputFileName
-    18. **printAreaConnectingInfo**:印出設定區域(多個地面站)內對各個衛星一天中對星群中各個衛星的可連線時間總合，總連線時間最長的衛星，總連線時間最短的衛星，以及各個衛星總連線時間的平均，多個地面站中只要任一個可以連上，就算那一秒鐘可以連上
+    19. **printAreaConnectingInfo**:印出設定區域(多個地面站)內對各個衛星一天中對星群中各個衛星的可連線時間總合，總連線時間最長的衛星，總連線時間最短的衛星，以及各個衛星總連線時間的平均，多個地面站中只要任一個可以連上，就算那一秒鐘可以連上
         - 需設定parameter: areaStationLatitudes, areaStationLongitudes, areaStationAltitudes, groundStationAcceptableElevation, groundStationAcceptableDistance, round, outputFileName 
-    19. **printAreaAllSatConnectionTime**:  印出根據parameter.txt設置的區域(多個地面站)，與星群中每一個衛星一天中有那些時間是可以連線的
+    20. **printAreaAllSatConnectionTime**:  印出根據parameter.txt設置的區域(多個地面站)，與星群中每一個衛星一天中有那些時間是可以連線的
         - 需設定parameter: areaStationLatitudes, areaStationLongitudes, areaStationAltitudes, groundStationAcceptableElevation, groundStationAcceptableDistance, round, printSecond, outputFileName
-    20. **printRightSatAERdiff**: 印出編號observerId衛星觀察右方衛星一天中的AER差異數值(用於判斷可否連線)到sattrack/output.txt
+    21. **printRightSatAERdiff**: 印出編號observerId衛星觀察右方衛星一天中的AER差異數值(用於判斷可否連線)到sattrack/output.txt
         - 需設定parameter: observerId, outputFileName, ISLrightAngle
-    21. **printLeftSatAERdiff**: 印出編號observerId衛星觀察左方衛星一天中的AER差異數值(用於判斷可否連線)到sattrack/output.txt
+    22. **printLeftSatAERdiff**: 印出編號observerId衛星觀察左方衛星一天中的AER差異數值(用於判斷可否連線)到sattrack/output.txt
         - 需設定parameter: observerId, outputFileName, ISLleftAngle 
-    22. **simulateLinkbreakingStatistics**: 模擬計算連結失效率，根據所設置的模擬次數，模擬星群的Link要損壞多少個才會發生連結失效，並將最後的分布統計數據印到所設定的output檔案中
+    23. **simulateLinkbreakingStatistics**: 模擬計算連結失效率，根據所設置的模擬次數，模擬星群的Link要損壞多少個才會發生連結失效，並將最後的分布統計數據印到所設定的output檔案中
         - 需設定parameter: ISLfrontAngle, ISLrightAngle, ISLbackAngle, ISLleftAngle, TLE_inputFileName, outputFileName, closeLinkSimulateTime, acceptableAzimuthDif, acceptableElevationDif, acceptableRange, time, PAT_time
-    23. **simulateSatFailStatistics**: 模擬計算衛星隨機壞掉的連結失效率，根據所設置的模擬次數，模擬星群的衛星要損壞多少個才會發生連結失效，並將最後的分布統計數據印到所設定的output檔案中
+    24. **simulateSatFailStatistics**: 模擬計算衛星隨機壞掉的連結失效率，根據所設置的模擬次數，模擬星群的衛星要損壞多少個才會發生連結失效，並將最後的分布統計數據印到所設定的output檔案中
         - 需設定parameter: ISLfrontAngle, ISLrightAngle, ISLbackAngle, ISLleftAngle, TLE_inputFileName, outputFileName, satFailSimulateTime, acceptableAzimuthDif, acceptableElevationDif, acceptableRange, time, PAT_time
 - 進入到sgp4/sattrack中執行sattrack
     

@@ -90,6 +90,38 @@ namespace groundStation
         // return availabilityOfDay;
     }
 
+    //回傳一整天86400秒中，地面站每秒是否有至少n顆衛星是可以連上的
+    std::bitset<86400> groundStation::getCoverTimeOfDay(std::map<int, satellite::satellite> &satellites, int groundStationAcceptableElevation, int groundStationAcceptableDistance, bool round, int nSat){
+        std::bitset<86400> availabilityOfDay;
+        std::vector<int> availableSatsList = this->getSecondCoverSatsList(satellites, 0, groundStationAcceptableElevation, groundStationAcceptableDistance, round);
+        for(size_t t = 0; t < 86400; ++t){
+            std::vector<int>::iterator iter;
+            for (iter = availableSatsList.begin(); iter != availableSatsList.end(); ){ //刪除List中斷線的衛星
+                if(!this->judgeConnection(satellites.at(*iter), t, groundStationAcceptableElevation, groundStationAcceptableDistance, round))
+                    iter = availableSatsList.erase(iter);
+                else
+                    ++iter;
+            }
+            if((int)availableSatsList.size() >= nSat){
+                availabilityOfDay[t] = true;
+            }
+            else{
+                availableSatsList = this->getSecondCoverSatsList(satellites, t, groundStationAcceptableElevation, groundStationAcceptableDistance, round);
+                availabilityOfDay[t] = (int)availableSatsList.size() >= nSat;
+            }
+        }
+        return availabilityOfDay;
+
+        // slow version
+        // std::bitset<86400> availabilityOfDay;
+        // std::vector<int> availableSatsList = this->getSecondCoverSatsList(satellites, 0, groundStationAcceptableElevation, groundStationAcceptableDistance, round);
+        // for(size_t t = 0; t < 86400; ++t){
+        //     availableSatsList = this->getSecondCoverSatsList(satellites, t, groundStationAcceptableElevation, groundStationAcceptableDistance, round);
+        //     availabilityOfDay[t] = (int)availableSatsList.size() >= nSat;
+        // }
+        // return availabilityOfDay;
+    }    
+
     //回傳一整天86400秒中，地面站每秒有幾顆衛星是可以連上的
     std::vector<int> groundStation::getCoverSatCountOfDay(std::map<int, satellite::satellite> &satellites, int groundStationAcceptableElevation, int groundStationAcceptableDistance, bool round){
         std::vector<int> coverSatCountOfDay;
