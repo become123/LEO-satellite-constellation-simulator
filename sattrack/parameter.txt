@@ -27,13 +27,13 @@
     需設定parameter: acceptableAzimuthDif, acceptableElevationDif, acceptableRange, PAT_time, time, ISLrightAngle, ISLleftAngle(目前是當成前後一定可以連線), outputFileName
 
 9. printConstellationHopCountFileAndOutputCertainPath --> 印出某個特定時刻，行星群的hop count狀態(totalSatCount*totalSatCount的對稱二維vetcor，內容意義為衛星最少要經過幾個ISL才會抵達另一個衛星)到sattrack/output.txt中，並且在terminal中印出由observerId的衛星到otherId衛星的路徑
-    需設定parameter: acceptableAzimuthDif, acceptableElevationDif, acceptableRange, PAT_time, time, ISLrightAngle, ISLleftAngle(目前是當成前後一定可以連線), outputFileName
+    需設定parameter: acceptableAzimuthDif, acceptableElevationDif, acceptableRange, PAT_time, time, ISLrightAngle, ISLleftAngle(目前是當成前後一定可以連線), observerId, otherId, outputFileName
 
 10. printConstellationDistanceFile --> 印出某個特定時刻，行星群的shortest path狀態(totalSatCount*totalSatCount的對稱二維vetcor，內容意義為衛星最少要經過多少距離才會抵達另一個衛星)到sattrack/output.txt中
     需設定parameter: acceptableAzimuthDif, acceptableElevationDif, acceptableRange, PAT_time, time, ISLrightAngle, ISLleftAngle(目前是當成前後一定可以連線), outputFileName
 
 11. printConstellationDistanceAndOutputCertainPath --> 印出某個特定時刻，行星群的shortest path狀態，並且在terminal中印出由observerId的衛星到otherId衛星的路徑
-    需設定parameter: acceptableAzimuthDif, acceptableElevationDif, acceptableRange, PAT_time, time, ISLrightAngle, ISLleftAngle(目前是當成前後一定可以連線), outputFileName
+    需設定parameter: acceptableAzimuthDif, acceptableElevationDif, acceptableRange, PAT_time, time, ISLrightAngle, ISLleftAngle(目前是當成前後一定可以連線), observerId, otherId, outputFileName
 
 12. printStationAllSatConnectionTime --> 印出根據parameter.txt設置位置的地面站，與星群中每一個衛星一天中有那些時間是可以連線的
     需設定parameter: stationLatitude, stationLongitude, stationAltitude, groundStationAcceptableElevation, groundStationAcceptableDistance, round, printSecond, outputFileName
@@ -77,13 +77,13 @@
 
 **********************************************************************************************
 
->>(TLE_inputFileName): (TLE_12P_22Sats.txt) <--填入記錄星群TLE的fileName
->>(execute_function): (printDifferentLatitudeNSatCoverTimeOfDay) <-- 填入要執行的function名稱
+>>(TLE_inputFileName): (TLE_6P_22Sats.txt) <--填入記錄星群TLE的fileName
+>>(execute_function): (printConstellationHopCountFileAndOutputCertainPath) <-- 填入要執行的function名稱
 >>(outputFileName): (output.txt)
 >>(closeLinksFileName): (closeLink.txt) <-- closeLink file的內容每一行是一個(satId1, satId2),意義為satId1與satId2之間的ISL關掉
 
 >>(observerId): (601) <-- 填入觀察者的衛星編號
->>(otherId): (122) <-- 填入被觀察者的衛星編號
+>>(otherId): (522) <-- 填入被觀察者的衛星編號
 
 >>(acceptableAzimuthDif): (155)degree  <-- 可接受方位角誤差 
 >>(acceptableElevationDif): (45)degree  <-- 可接受仰角誤差
