@@ -64,19 +64,19 @@ int main()
         totalSatCount = 112;
         satCountPerOrbit = 16;
     }
-    else if(TLE_inputFileName == "TLE_6P_22Sats.txt"){
+    else if(TLE_inputFileName == "TLE_6P_22Sats.txt" || TLE_inputFileName == "TLE_6P_22Sats_38deg.txt"){
         totalSatCount = 132;
         satCountPerOrbit = 22;
     }
-    else if(TLE_inputFileName == "TLE_6P_44Sats.txt"){
+    else if(TLE_inputFileName == "TLE_6P_44Sats.txt" || TLE_inputFileName == "TLE_6P_44Sats_38deg.txt"){
         totalSatCount = 264;
         satCountPerOrbit = 44;
     }
-    else if(TLE_inputFileName == "TLE_8P_33Sats.txt"){
+    else if(TLE_inputFileName == "TLE_8P_33Sats.txt" || TLE_inputFileName == "TLE_8P_33Sats_38deg.txt"){
         totalSatCount = 264;
         satCountPerOrbit = 33;
     }
-    else if(TLE_inputFileName == "TLE_12P_22Sats.txt"){
+    else if(TLE_inputFileName == "TLE_12P_22Sats.txt" || TLE_inputFileName == "TLE_12P_22Sats_38deg.txt"){
         totalSatCount = 264;
         satCountPerOrbit = 22;
     }

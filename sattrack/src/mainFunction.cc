@@ -544,7 +544,8 @@ namespace mainFunction
         for(double latitude = minLatitude; latitude <= maxLatitude; ++latitude){
             groundStation::groundStation station(latitude, stationLongitude, stationAltitude);
             std::bitset<86400> availabilityOfDay = station.getCoverTimeOfDay(satellites, groundStationAcceptableElevation, groundStationAcceptableDistance, round);
-            output<<std::setw(3)<<(int)latitude<<"      :  "<<availabilityOfDay.count()<<"\n";
+            // output<<std::setw(3)<<(int)latitude<<"      ,  "<<availabilityOfDay.count()<<"\n"; //印總時間
+            output<<std::setw(3)<<(int)latitude<<"      :  "<<std::setw(5)<<std::setprecision(2)<<(double)availabilityOfDay.count()/86400*100<<"\n"; //印百分比
         }
         output.close();  
     }
@@ -564,7 +565,8 @@ namespace mainFunction
         for(double latitude = minLatitude; latitude <= maxLatitude; ++latitude){
             groundStation::groundStation station(latitude, stationLongitude, stationAltitude);
             std::bitset<86400> availabilityOfDay = station.getCoverTimeOfDay(satellites, groundStationAcceptableElevation, groundStationAcceptableDistance, round, nSat);
-            output<<std::setw(3)<<(int)latitude<<"      ,  "<<availabilityOfDay.count()<<"\n";
+            // output<<std::setw(3)<<(int)latitude<<"      ,  "<<availabilityOfDay.count()<<"\n";//印總時間
+            output<<std::setw(3)<<(int)latitude<<"      :  "<<std::setw(5)<<std::setprecision(2)<<(double)availabilityOfDay.count()/86400*100<<"\n"; //印百分比
         }
         output.close();  
     }    

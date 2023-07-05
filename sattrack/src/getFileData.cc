@@ -19,6 +19,7 @@ namespace getFileData
     std::map<int, satellite::satellite> getSatellitesTable(std::string fileName,std::map<int, std::map<int, bool>> &closeLinksTable, int ISLfrontAngle, int ISLrightAngle, int ISLbackAngle, int ISLleftAngle){
         std::map<int, satellite::satellite> satellites;
         if(fileName == "TLE_7P_16Sats.txt"){
+            std::cout<<"reading TLE_7P_16Sats.txt\n";
             std::ifstream ifs(fileName);
             std::vector<std::string> satelliteNumbers;
             std::vector<std::pair<std::string,std::string>> TLEs;
@@ -59,6 +60,7 @@ namespace getFileData
             }            
         }
         else if(fileName == "TLE_6P_22Sats.txt"){
+            std::cout<<"reading TLE_6P_22Sats.txt\n";
             std::ifstream ifs(fileName);
             std::vector<std::string> satelliteNumbers;
             std::vector<std::pair<std::string,std::string>> TLEs;
@@ -99,6 +101,7 @@ namespace getFileData
             } 
         }
         else if(fileName == "TLE_6P_44Sats.txt"){
+            std::cout<<"reading TLE_6P_44Sats.txt\n";
             std::ifstream ifs(fileName);
             std::vector<std::string> satelliteNumbers;
             std::vector<std::pair<std::string,std::string>> TLEs;
@@ -139,6 +142,7 @@ namespace getFileData
             } 
         }
         else if(fileName == "TLE_8P_33Sats.txt"){
+            std::cout<<"reading TLE_8P_33Sats.txt\n";
             std::ifstream ifs(fileName);
             std::vector<std::string> satelliteNumbers;
             std::vector<std::pair<std::string,std::string>> TLEs;
@@ -179,11 +183,12 @@ namespace getFileData
             } 
         }
         else if(fileName == "TLE_12P_22Sats.txt"){
+            std::cout<<"reading TLE_12P_22Sats.txt\n";
             std::ifstream ifs(fileName);
             std::vector<std::string> satelliteNumbers;
             std::vector<std::pair<std::string,std::string>> TLEs;
             /*----------------get input data from file--------------*/
-            if (!ifs.is_open()) {
+            if (!ifs.is_open()) { 
                 std::cout << "Failed to open file.\n";
                 exit(EXIT_FAILURE);
             }
@@ -220,6 +225,186 @@ namespace getFileData
                 satellites.insert(std::make_pair(id,s));
             } 
         }                        
+        else if(fileName == "TLE_6P_22Sats_38deg.txt"){
+            std::cout<<"reading TLE_6P_22Sats_38deg.txt\n";
+            std::ifstream ifs(fileName);
+            std::vector<std::string> satelliteNumbers;
+            std::vector<std::pair<std::string,std::string>> TLEs;
+            /*----------------get input data from file--------------*/
+            if (!ifs.is_open()) {
+                std::cout << "Failed to open file.\n";
+                exit(EXIT_FAILURE);
+            }
+            std::string description; //TLE檔案中的第一行會把所有衛星編號列出來
+            std::getline (ifs,description);
+            satelliteNumbers = util::splitString(',', description);
+            size_t satCnt = satelliteNumbers.size();
+            for(size_t i = 0; i < satCnt; ++i){
+                satelliteNumbers[i] = satelliteNumbers[i].substr(21,3);
+                // std::cout<<"i = "<<i<<":"<<satelliteNumbers[i]<<"\n";
+            }
+            // std::cout<<"\n";
+            for(size_t i = 0; i < satCnt; ++i){
+                std::string temp;
+                while(temp != "---------------------------------------------------------------------"){
+                    std::getline (ifs,temp);
+                }
+                std::string line1, line2;
+                std::getline (ifs,line1);
+                std::getline (ifs,line2);
+                TLEs.push_back(std::pair<std::string, std::string>(line1, line2));
+            }
+            ifs.close();
+            /*-----------------------------------------------------*/
+            for(size_t i = 0; i < satCnt; ++i){ //build table
+                // std::cout<<"line1: "<<TLEs[i].first<<",line2: "<<TLEs[i].second<<"\n";
+                //example:
+                //     Tle satellite = Tle("satellite name",
+                // "1 99999U          21305.00000000 -.00000094  00000-0 -36767-4 0 00007",
+                // "2 99999 029.0167 000.0781 0005106 264.8962 095.3405 14.28719153000015");
+                // SGP4 observerSgp4(satellite);
+                const Tle satelliteTLE = Tle(satelliteNumbers[i], TLEs[i].first, TLEs[i].second);
+                SGP4 newSatelliteSGP4data(satelliteTLE);
+                int id = stoi(satelliteNumbers[i]);
+                satellite::satellite s("6P_22Sats", satelliteTLE,newSatelliteSGP4data, id, closeLinksTable, ISLfrontAngle, ISLrightAngle, ISLbackAngle, ISLleftAngle);
+                satellites.insert(std::make_pair(id,s));
+            }                 
+        }
+        else if(fileName == "TLE_6P_44Sats_38deg.txt"){
+            std::cout<<"reading TLE_6P_44Sats_38deg.txt\n";
+            std::ifstream ifs(fileName);
+            std::vector<std::string> satelliteNumbers;
+            std::vector<std::pair<std::string,std::string>> TLEs;
+            /*----------------get input data from file--------------*/
+            if (!ifs.is_open()) {
+                std::cout << "Failed to open file.\n";
+                exit(EXIT_FAILURE);
+            }
+            std::string description; //TLE檔案中的第一行會把所有衛星編號列出來
+            std::getline (ifs,description);
+            satelliteNumbers = util::splitString(',', description);
+            size_t satCnt = satelliteNumbers.size();
+            for(size_t i = 0; i < satCnt; ++i){
+                satelliteNumbers[i] = satelliteNumbers[i].substr(21,4);
+                // std::cout<<"i = "<<i<<":"<<satelliteNumbers[i]<<"\n";
+            }
+            // std::cout<<"\n";
+            for(size_t i = 0; i < satCnt; ++i){
+                std::string temp;
+                while(temp != "---------------------------------------------------------------------"){
+                    std::getline (ifs,temp);
+                }
+                std::string line1, line2;
+                std::getline (ifs,line1);
+                std::getline (ifs,line2);
+                TLEs.push_back(std::pair<std::string, std::string>(line1, line2));
+            }
+            ifs.close();
+            /*-----------------------------------------------------*/
+            for(size_t i = 0; i < satCnt; ++i){ //build table
+                // std::cout<<"line1: "<<TLEs[i].first<<",line2: "<<TLEs[i].second<<"\n";
+                //example:
+                //     Tle satellite = Tle("satellite name",
+                // "1 99999U          21305.00000000 -.00000094  00000-0 -36767-4 0 00007",
+                // "2 99999 029.0167 000.0781 0005106 264.8962 095.3405 14.28719153000015");
+                // SGP4 observerSgp4(satellite);
+                const Tle satelliteTLE = Tle(satelliteNumbers[i], TLEs[i].first, TLEs[i].second);
+                SGP4 newSatelliteSGP4data(satelliteTLE);
+                int id = stoi(satelliteNumbers[i]);
+                satellite::satellite s("6P_44Sats", satelliteTLE,newSatelliteSGP4data, id, closeLinksTable, ISLfrontAngle, ISLrightAngle, ISLbackAngle, ISLleftAngle);
+                satellites.insert(std::make_pair(id,s));
+            }                       
+        }        
+        else if(fileName == "TLE_8P_33Sats_38deg.txt"){
+            std::cout<<"reading TLE_8P_33Sats_38deg.txt\n";
+            std::ifstream ifs(fileName);
+            std::vector<std::string> satelliteNumbers;
+            std::vector<std::pair<std::string,std::string>> TLEs;
+            /*----------------get input data from file--------------*/
+            if (!ifs.is_open()) {
+                std::cout << "Failed to open file.\n";
+                exit(EXIT_FAILURE);
+            }
+            std::string description; //TLE檔案中的第一行會把所有衛星編號列出來
+            std::getline (ifs,description);
+            satelliteNumbers = util::splitString(',', description);
+            size_t satCnt = satelliteNumbers.size();
+            for(size_t i = 0; i < satCnt; ++i){
+                satelliteNumbers[i] = satelliteNumbers[i].substr(21,4);
+                // std::cout<<"i = "<<i<<":"<<satelliteNumbers[i]<<"\n";
+            }
+            // std::cout<<"\n";
+            for(size_t i = 0; i < satCnt; ++i){
+                std::string temp;
+                while(temp != "---------------------------------------------------------------------"){
+                    std::getline (ifs,temp);
+                }
+                std::string line1, line2;
+                std::getline (ifs,line1);
+                std::getline (ifs,line2);
+                TLEs.push_back(std::pair<std::string, std::string>(line1, line2));
+            }
+            ifs.close();
+            /*-----------------------------------------------------*/
+            for(size_t i = 0; i < satCnt; ++i){ //build table
+                // std::cout<<"line1: "<<TLEs[i].first<<",line2: "<<TLEs[i].second<<"\n";
+                //example:
+                //     Tle satellite = Tle("satellite name",
+                // "1 99999U          21305.00000000 -.00000094  00000-0 -36767-4 0 00007",
+                // "2 99999 029.0167 000.0781 0005106 264.8962 095.3405 14.28719153000015");
+                // SGP4 observerSgp4(satellite);
+                const Tle satelliteTLE = Tle(satelliteNumbers[i], TLEs[i].first, TLEs[i].second);
+                SGP4 newSatelliteSGP4data(satelliteTLE);
+                int id = stoi(satelliteNumbers[i]);
+                satellite::satellite s("8P_33Sats", satelliteTLE,newSatelliteSGP4data, id, closeLinksTable, ISLfrontAngle, ISLrightAngle, ISLbackAngle, ISLleftAngle);
+                satellites.insert(std::make_pair(id,s));
+            }                
+        }         
+        else if(fileName == "TLE_12P_22Sats_38deg.txt"){
+            std::cout<<"reading TLE_12P_22Sats_38deg.txt\n";
+            std::ifstream ifs(fileName);
+            std::vector<std::string> satelliteNumbers;
+            std::vector<std::pair<std::string,std::string>> TLEs;
+            /*----------------get input data from file--------------*/
+            if (!ifs.is_open()) {
+                std::cout << "Failed to open file.\n";
+                exit(EXIT_FAILURE);
+            }
+            std::string description; //TLE檔案中的第一行會把所有衛星編號列出來
+            std::getline (ifs,description);
+            satelliteNumbers = util::splitString(',', description);
+            size_t satCnt = satelliteNumbers.size();
+            for(size_t i = 0; i < satCnt; ++i){
+                satelliteNumbers[i] = satelliteNumbers[i].substr(21,4);
+                // std::cout<<"i = "<<i<<":"<<satelliteNumbers[i]<<"\n";
+            }
+            // std::cout<<"\n";
+            for(size_t i = 0; i < satCnt; ++i){
+                std::string temp;
+                while(temp != "---------------------------------------------------------------------"){
+                    std::getline (ifs,temp);
+                }
+                std::string line1, line2;
+                std::getline (ifs,line1);
+                std::getline (ifs,line2);
+                TLEs.push_back(std::pair<std::string, std::string>(line1, line2));
+            }
+            ifs.close();
+            /*-----------------------------------------------------*/
+            for(size_t i = 0; i < satCnt; ++i){ //build table
+                // std::cout<<"line1: "<<TLEs[i].first<<",line2: "<<TLEs[i].second<<"\n";
+                //example:
+                //     Tle satellite = Tle("satellite name",
+                // "1 99999U          21305.00000000 -.00000094  00000-0 -36767-4 0 00007",
+                // "2 99999 029.0167 000.0781 0005106 264.8962 095.3405 14.28719153000015");
+                // SGP4 observerSgp4(satellite);
+                const Tle satelliteTLE = Tle(satelliteNumbers[i], TLEs[i].first, TLEs[i].second);
+                SGP4 newSatelliteSGP4data(satelliteTLE);
+                int id = stoi(satelliteNumbers[i]);
+                satellite::satellite s("12P_22Sats", satelliteTLE,newSatelliteSGP4data, id, closeLinksTable, ISLfrontAngle, ISLrightAngle, ISLbackAngle, ISLleftAngle);
+                satellites.insert(std::make_pair(id,s));
+            }            
+        }   
         else{
             std::cout<<"can not read "<<fileName<<" !\n";
             exit(-1);
