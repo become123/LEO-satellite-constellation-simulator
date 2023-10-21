@@ -20,7 +20,7 @@ namespace getFileData
         std::map<int, satellite::satellite> satellites;
         if(fileName == "TLE_7P_16Sats.txt"){
             std::cout<<"reading TLE_7P_16Sats.txt\n";
-            std::ifstream ifs(fileName);
+            std::ifstream ifs("inputTLEsFile/"+fileName);
             std::vector<std::string> satelliteNumbers;
             std::vector<std::pair<std::string,std::string>> TLEs;
             /*----------------get input data from file--------------*/
@@ -61,7 +61,7 @@ namespace getFileData
         }
         else if(fileName == "TLE_6P_22Sats.txt"){
             std::cout<<"reading TLE_6P_22Sats.txt\n";
-            std::ifstream ifs(fileName);
+            std::ifstream ifs("inputTLEsFile/"+fileName);
             std::vector<std::string> satelliteNumbers;
             std::vector<std::pair<std::string,std::string>> TLEs;
             /*----------------get input data from file--------------*/
@@ -102,7 +102,7 @@ namespace getFileData
         }
         else if(fileName == "TLE_6P_44Sats.txt"){
             std::cout<<"reading TLE_6P_44Sats.txt\n";
-            std::ifstream ifs(fileName);
+            std::ifstream ifs("inputTLEsFile/"+fileName);
             std::vector<std::string> satelliteNumbers;
             std::vector<std::pair<std::string,std::string>> TLEs;
             /*----------------get input data from file--------------*/
@@ -143,7 +143,7 @@ namespace getFileData
         }
         else if(fileName == "TLE_8P_33Sats.txt"){
             std::cout<<"reading TLE_8P_33Sats.txt\n";
-            std::ifstream ifs(fileName);
+            std::ifstream ifs("inputTLEsFile/"+fileName);
             std::vector<std::string> satelliteNumbers;
             std::vector<std::pair<std::string,std::string>> TLEs;
             /*----------------get input data from file--------------*/
@@ -184,7 +184,7 @@ namespace getFileData
         }
         else if(fileName == "TLE_12P_22Sats.txt"){
             std::cout<<"reading TLE_12P_22Sats.txt\n";
-            std::ifstream ifs(fileName);
+            std::ifstream ifs("inputTLEsFile/"+fileName);
             std::vector<std::string> satelliteNumbers;
             std::vector<std::pair<std::string,std::string>> TLEs;
             /*----------------get input data from file--------------*/
@@ -227,7 +227,7 @@ namespace getFileData
         }                        
         else if(fileName == "TLE_6P_22Sats_38deg.txt"){
             std::cout<<"reading TLE_6P_22Sats_38deg.txt\n";
-            std::ifstream ifs(fileName);
+            std::ifstream ifs("inputTLEsFile/"+fileName);
             std::vector<std::string> satelliteNumbers;
             std::vector<std::pair<std::string,std::string>> TLEs;
             /*----------------get input data from file--------------*/
@@ -272,7 +272,7 @@ namespace getFileData
         }
         else if(fileName == "TLE_6P_44Sats_38deg.txt"){
             std::cout<<"reading TLE_6P_44Sats_38deg.txt\n";
-            std::ifstream ifs(fileName);
+            std::ifstream ifs("inputTLEsFile/"+fileName);
             std::vector<std::string> satelliteNumbers;
             std::vector<std::pair<std::string,std::string>> TLEs;
             /*----------------get input data from file--------------*/
@@ -317,7 +317,7 @@ namespace getFileData
         }        
         else if(fileName == "TLE_8P_33Sats_38deg.txt"){
             std::cout<<"reading TLE_8P_33Sats_38deg.txt\n";
-            std::ifstream ifs(fileName);
+            std::ifstream ifs("inputTLEsFile/"+fileName);
             std::vector<std::string> satelliteNumbers;
             std::vector<std::pair<std::string,std::string>> TLEs;
             /*----------------get input data from file--------------*/
@@ -362,7 +362,7 @@ namespace getFileData
         }         
         else if(fileName == "TLE_12P_22Sats_38deg.txt"){
             std::cout<<"reading TLE_12P_22Sats_38deg.txt\n";
-            std::ifstream ifs(fileName);
+            std::ifstream ifs("inputTLEsFile/"+fileName);
             std::vector<std::string> satelliteNumbers;
             std::vector<std::pair<std::string,std::string>> TLEs;
             /*----------------get input data from file--------------*/
@@ -407,7 +407,7 @@ namespace getFileData
         }   
         else if(fileName == "TLE_6P_22Sats_36deg.txt"){
             std::cout<<"reading TLE_6P_22Sats_36deg.txt\n";
-            std::ifstream ifs(fileName);
+            std::ifstream ifs("inputTLEsFile/"+fileName);
             std::vector<std::string> satelliteNumbers;
             std::vector<std::pair<std::string,std::string>> TLEs;
             /*----------------get input data from file--------------*/
@@ -452,7 +452,7 @@ namespace getFileData
         }
         else if(fileName == "TLE_6P_44Sats_36deg.txt"){
             std::cout<<"reading TLE_6P_44Sats_36deg.txt\n";
-            std::ifstream ifs(fileName);
+            std::ifstream ifs("inputTLEsFile/"+fileName);
             std::vector<std::string> satelliteNumbers;
             std::vector<std::pair<std::string,std::string>> TLEs;
             /*----------------get input data from file--------------*/
@@ -497,7 +497,7 @@ namespace getFileData
         }        
         else if(fileName == "TLE_8P_33Sats_36deg.txt"){
             std::cout<<"reading TLE_8P_33Sats_36deg.txt\n";
-            std::ifstream ifs(fileName);
+            std::ifstream ifs("inputTLEsFile/"+fileName);
             std::vector<std::string> satelliteNumbers;
             std::vector<std::pair<std::string,std::string>> TLEs;
             /*----------------get input data from file--------------*/
@@ -542,7 +542,7 @@ namespace getFileData
         }         
         else if(fileName == "TLE_12P_22Sats_36deg.txt"){
             std::cout<<"reading TLE_12P_22Sats_36deg.txt\n";
-            std::ifstream ifs(fileName);
+            std::ifstream ifs("inputTLEsFile/"+fileName);
             std::vector<std::string> satelliteNumbers;
             std::vector<std::pair<std::string,std::string>> TLEs;
             /*----------------get input data from file--------------*/
