@@ -1,0 +1,5 @@
+>>(orbitCount):(6)
+>>(satCountPerOrbit):(22)
+>>(generalOffset):(-3)
+>>(specialOffset):(-2)
+------------------------(satId):(right,left,front,back)---------------------

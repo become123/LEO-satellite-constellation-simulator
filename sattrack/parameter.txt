@@ -77,8 +77,8 @@
 
 **********************************************************************************************
 
->>(TLE_inputFileName): (inputTLEsFile/TLE_7P_16Sats.txt) <--填入記錄星群TLE的fileName
->>(constellationInfoFileName): (constellationInfo/7P_16Sats_Info.txt) <--填入記錄星群資訊的fileName
+>>(TLE_inputFileName): (inputTLEsFile/TLE_6P_22Sats.txt) <--填入記錄星群TLE的fileName
+>>(constellationInfoFileName): (constellationInfo/6P_22Sats_info.txt) <--填入記錄星群資訊的fileName
 >>(execute_function): (printAllSatNeighborId) <-- 填入要執行的function名稱
 >>(outputFileName): (output.txt)
 >>(closeLinksFileName): (closeLink.txt) <-- closeLink file的內容每一行是一個(satId1, satId2),意義為satId1與satId2之間的ISL關掉
