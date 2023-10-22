@@ -10,7 +10,7 @@
 namespace getFileData
 {
     //獲得satellite table
-    std::map<int, satellite::satellite> getSatellitesTable(std::string fileName, std::map<int, std::map<int, bool>> &closeLinksTable, int ISLfrontAngle, int ISLrightAngle, int ISLbackAngle, int ISLleftAngle);
+    std::map<int, satellite::satellite> getSatellitesTable(std::map<int, std::map<int, bool>> &closeLinksTable, std::map<std::string, std::string> &parameterTable);
 
     //獲得parameterTable，其中記錄模擬所設置的各種parameter
     std::map<std::string, std::string> getParameterdata(std::string fileName);

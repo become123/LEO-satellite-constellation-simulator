@@ -54,10 +54,6 @@ int main()
     /*---------------------------------------*/
     
     std::map<std::string, std::string> parameterTable  = getFileData::getParameterdata("parameter.txt");
-    int ISLfrontAngle = std::stoi(parameterTable.at("ISLfrontAngle"));
-    int ISLrightAngle = std::stoi(parameterTable.at("ISLrightAngle"));
-    int ISLbackAngle = std::stoi(parameterTable.at("ISLbackAngle"));
-    int ISLleftAngle = std::stoi(parameterTable.at("ISLleftAngle"));
     std::string TLE_inputFileName = parameterTable.at("TLE_inputFileName");
     long unsigned int totalSatCount = 0, satCountPerOrbit = 0;
     if(TLE_inputFileName == "TLE_7P_16Sats.txt"){
@@ -81,7 +77,7 @@ int main()
         satCountPerOrbit = 22;
     }
     std::map<int, std::map<int, bool>> closeLinksTable = getFileData::getCloseLinkTable(parameterTable.at("closeLinksFileName"));
-    std::map<int, satellite::satellite> satellites = getFileData::getSatellitesTable(TLE_inputFileName, closeLinksTable, ISLfrontAngle, ISLrightAngle, ISLbackAngle, ISLleftAngle);
+    std::map<int, satellite::satellite> satellites = getFileData::getSatellitesTable(closeLinksTable, parameterTable);
     std::set<std::set<int>> openLinkSet = satellite::getOpenLinkSet(satellites);
     //讓衛星物件知道自己的鄰居是誰(指標指到鄰居衛星)
     for(auto &sat:satellites){

@@ -7,6 +7,7 @@
 #include <map>
 #include <utility>
 #include <set>
+#include <unordered_map>
 #include <SGP4.h>
 #include <bitset>
 #include "AER.h"
@@ -72,7 +73,7 @@ namespace satellite
 
     class satellite{
     public: 
-        satellite(std::string constellationType, Tle _tle, SGP4 _sgp4, int _id,std::map<int, std::map<int, bool>> &closeLinksTable, int ISLfrontAngle, int ISLrightAngle, int ISLbackAngle, int ISLleftAngle);
+        satellite(std::unordered_map<std::string, std::vector<int>> &constellationInfoTable, Tle _tle, SGP4 _sgp4, int _id,std::map<int, std::map<int, bool>> &closeLinksTable, int ISLfrontAngle, int ISLrightAngle, int ISLbackAngle, int ISLleftAngle);
         void buildNeighborSats(std::map<int, satellite> &satellites);
         Tle getTle();
         SGP4 getSgp4();
