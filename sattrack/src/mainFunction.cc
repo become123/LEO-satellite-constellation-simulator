@@ -12,13 +12,14 @@
 #include <iostream>
 #include <iomanip>
 #include <map>
-#include<fstream>
+#include <fstream>
 #include <utility>
 #include <numeric>
 #include <algorithm>
 #include <bitset>
 #include <set>
 #include <numeric>
+#include <algorithm>
 
 
 namespace mainFunction
@@ -290,6 +291,7 @@ namespace mainFunction
         int time = std::stoi(parameterTable.at("time"));
         int PAT_time = std::stoi(parameterTable.at("PAT_time"));
         std::vector<std::vector<int>> constellationShortestDistance = satellite::getConstellationShortestPath(satCountPerOrbit, totalSatCount, time, PAT_time, acceptableAER_diff, satellites);
+        std::vector<int> distances;
         output<<"        ";
         for(size_t i = 0; i < constellationShortestDistance.size(); ++i){
             output<<std::setw(6)<<satellite::indexToSatId(i, satCountPerOrbit)<<" |";
@@ -302,11 +304,16 @@ namespace mainFunction
             output<<std::setw(7)<<satellite::indexToSatId(i, satCountPerOrbit)<<"|";
             for(size_t j = 0; j < constellationShortestDistance.size(); ++j){
                 output<<std::setw(6)<<constellationShortestDistance[i][j]<<" |";
+                if(constellationShortestDistance[i][j] != 0){
+                    distances.push_back(constellationShortestDistance[i][j]);
+                }
             }
             output<<"\n--------";
             for(int dash = 0; dash < lineWidth; ++dash) output<<"-";
             output<<"\n";
         }
+        output<<"average distance:"<<util::getAverage(distances)<<", max distance:"<<*std::max_element(distances.begin(), distances.end())<<", min distance:"<<*std::min_element(distances.begin(), distances.end())<<"\n";
+
         output.close(); 
     }
 

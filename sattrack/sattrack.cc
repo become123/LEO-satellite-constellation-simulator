@@ -56,28 +56,8 @@ int main()
     std::map<std::string, std::string> parameterTable  = getFileData::getParameterdata("parameter.txt");
     std::string TLE_inputFileName = parameterTable.at("TLE_inputFileName");
     long unsigned int totalSatCount = 0, satCountPerOrbit = 0;
-    if(TLE_inputFileName == "TLE_7P_16Sats.txt"){
-        totalSatCount = 112;
-        satCountPerOrbit = 16;
-    }
-    else if(TLE_inputFileName == "TLE_6P_22Sats.txt" || TLE_inputFileName == "TLE_6P_22Sats_38deg.txt" || TLE_inputFileName == "TLE_6P_22Sats_36deg.txt"){
-        totalSatCount = 132;
-        satCountPerOrbit = 22;
-    }
-    else if(TLE_inputFileName == "TLE_6P_44Sats.txt" || TLE_inputFileName == "TLE_6P_44Sats_38deg.txt" || TLE_inputFileName == "TLE_6P_44Sats_36deg.txt"){
-        totalSatCount = 264;
-        satCountPerOrbit = 44;
-    }
-    else if(TLE_inputFileName == "TLE_8P_33Sats.txt" || TLE_inputFileName == "TLE_8P_33Sats_38deg.txt" || TLE_inputFileName == "TLE_8P_33Sats_36deg.txt"){
-        totalSatCount = 264;
-        satCountPerOrbit = 33;
-    }
-    else if(TLE_inputFileName == "TLE_12P_22Sats.txt" || TLE_inputFileName == "TLE_12P_22Sats_38deg.txt" || TLE_inputFileName == "TLE_12P_22Sats_36deg.txt"){
-        totalSatCount = 264;
-        satCountPerOrbit = 22;
-    }
     std::map<int, std::map<int, bool>> closeLinksTable = getFileData::getCloseLinkTable(parameterTable.at("closeLinksFileName"));
-    std::map<int, satellite::satellite> satellites = getFileData::getSatellitesTable(closeLinksTable, parameterTable);
+    std::map<int, satellite::satellite> satellites = getFileData::getSatellitesTable(closeLinksTable, parameterTable, totalSatCount, satCountPerOrbit);
     std::set<std::set<int>> openLinkSet = satellite::getOpenLinkSet(satellites);
     //讓衛星物件知道自己的鄰居是誰(指標指到鄰居衛星)
     for(auto &sat:satellites){

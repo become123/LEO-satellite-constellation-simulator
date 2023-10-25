@@ -9,8 +9,8 @@
 
 namespace getFileData
 {
-    //獲得satellite table
-    std::map<int, satellite::satellite> getSatellitesTable(std::map<int, std::map<int, bool>> &closeLinksTable, std::map<std::string, std::string> &parameterTable);
+    //獲得satellite table，並且初始化totalSatCount以及satCountPerOrbit
+    std::map<int, satellite::satellite> getSatellitesTable(std::map<int, std::map<int, bool>> &closeLinksTable, std::map<std::string, std::string> &parameterTable, long unsigned int &totalSatCount, long unsigned int &satCountPerOrbit);
 
     //獲得parameterTable，其中記錄模擬所設置的各種parameter
     std::map<std::string, std::string> getParameterdata(std::string fileName);

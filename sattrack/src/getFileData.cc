@@ -16,8 +16,8 @@
 
 namespace getFileData
 {
-    //獲得satellite table
-    std::map<int, satellite::satellite> getSatellitesTable(std::map<int, std::map<int, bool>> &closeLinksTable, std::map<std::string, std::string> &parameterTable){
+    //獲得satellite table，並且初始化totalSatCount以及satCountPerOrbit
+    std::map<int, satellite::satellite> getSatellitesTable(std::map<int, std::map<int, bool>> &closeLinksTable, std::map<std::string, std::string> &parameterTable, long unsigned int &totalSatCount, long unsigned int &satCountPerOrbit){
         std::string constellationInfoFileName = parameterTable.at("constellationInfoFileName");
         // std::cout<<constellationInfoFileName<<"\n";
         std::map<int, satellite::satellite> satellites;
@@ -97,10 +97,11 @@ namespace getFileData
             std::cout << "Failed to open file.\n";
             exit(EXIT_FAILURE);
         }        
-        int orbitCount = constellationInfoTable.at("orbitCount")[0];
-        int satCountPerOrbit = constellationInfoTable.at("satCountPerOrbit")[0];
-        for(int orbidId = 1; orbidId <= orbitCount; ++orbidId){
-            for(int satId = 1; satId <= satCountPerOrbit; ++satId){
+        long unsigned int orbitCount = (long unsigned int)constellationInfoTable.at("orbitCount")[0];
+        satCountPerOrbit = (long unsigned int)constellationInfoTable.at("satCountPerOrbit")[0];
+        totalSatCount = (long unsigned int)orbitCount*satCountPerOrbit;
+        for(long unsigned int orbidId = 1; orbidId <= orbitCount; ++orbidId){
+            for(long unsigned int satId = 1; satId <= satCountPerOrbit; ++satId){
                 int curId = orbidId*100+satId;
                 std::string temp;
                 while(temp != "---------------------------------------------------------------------"){
