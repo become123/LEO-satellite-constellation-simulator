@@ -23,7 +23,7 @@ namespace getFileData
         std::map<int, satellite::satellite> satellites;
         std::ifstream constellationInfoIfs(constellationInfoFileName);
         if (!constellationInfoIfs.is_open()) {
-            std::cout << "Failed to open constellationInfoIfs.\n";
+            std::cout << "Failed to open constellationInfo.\n";
             exit(EXIT_FAILURE);
         }
         std::unordered_map<std::string, std::vector<int>> constellationInfoTable;

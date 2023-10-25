@@ -1,0 +1,5 @@
+>>(orbitCount):(12) //軌道數量
+>>(satCountPerOrbit):(22) //每個軌道的衛星數量，目前寫法不能超過100個衛星
+>>(generalOffset):(-2) //往下一個軌道的偏移量
+>>(specialOffset):(3)  //最後一個軌道往下一個軌道的偏移量
+------------------------(satId):(right,left,front,back)---------------------
