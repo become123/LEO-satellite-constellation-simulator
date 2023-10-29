@@ -57,8 +57,13 @@ namespace getFileData
     //透過.json檔獲得parameterTable，其中記錄模擬所設置的各種parameter
     std::map<std::string, std::string> getJsonParameterdata(std::string fileName){
         std::ifstream ifs(fileName);
+        if (!ifs.is_open()) {
+            std::cout << "Failed to open file in getJsonParameterdata function.\n";
+            exit(EXIT_FAILURE);
+        }        
         nlohmann::json j;
         ifs>>j;
+        ifs.close();
         std::map<std::string, std::string> parameterTable;
         for (auto& element : j.items()) {
             parameterTable[element.key()] = element.value();
@@ -66,6 +71,7 @@ namespace getFileData
         return parameterTable;      
     }
 
+    //獲得記錄衛星間關係的table
     std::unordered_map<std::string, std::vector<int>> getConstellationInfoTable(std::string constellationInfoFileName){
         // std::cout<<constellationInfoFileName<<"\n";
         std::ifstream constellationInfoIfs(constellationInfoFileName);
@@ -128,6 +134,52 @@ namespace getFileData
         constellationInfoIfs.close();    
         return constellationInfoTable;    
     }
+
+    //獲得記錄衛星間關係的table
+    std::unordered_map<std::string, std::vector<int>> getConstellationInfoTableByJson(std::string constellationInfoFileName){
+        // std::cout<<constellationInfoFileName<<"\n";
+        std::ifstream ifs(constellationInfoFileName);
+        if (!ifs.is_open()) {
+            std::cout << "Failed to open file in getConstellationInfoTableByJson function.\n";
+            exit(EXIT_FAILURE);
+        }        
+        std::unordered_map<std::string, std::vector<int>> constellationInfoTable;
+        nlohmann::json jsonData;
+        ifs>>jsonData;
+        for (auto& element : jsonData.items()) {
+            // std::cout << element.key() << ": ";
+            if (element.value().is_object()) {
+                // 如果值是一個物件，則遍歷該物件的屬性
+                for (auto& sub_element : element.value().items()) {
+                    // std::cout << sub_element.key() << ": ";
+                    // if (sub_element.value().is_object()) {
+                    //     // 如果值還是一個物件，則再次遍歷該物件的屬性
+                    //     for (auto& sub_sub_element : sub_element.value().items()) {
+                    //         std::cout << sub_sub_element.key() << ": " << sub_sub_element.value() << ", ";
+                    //     }
+                    // } else {
+                    //     std::cout << sub_element.value() << ", ";
+                    // }
+                    constellationInfoTable[sub_element.key()].push_back(stoi(sub_element.value()["right"].get<std::string>()));
+                    constellationInfoTable[sub_element.key()].push_back(stoi(sub_element.value()["left"].get<std::string>()));
+                    constellationInfoTable[sub_element.key()].push_back(stoi(sub_element.value()["front"].get<std::string>()));
+                    constellationInfoTable[sub_element.key()].push_back(stoi(sub_element.value()["back"].get<std::string>()));
+                }
+            } else {
+                // std::cout << element.value();
+                constellationInfoTable[element.key()] = {stoi(element.value().get<std::string>())};
+            }
+            // std::cout << "\n";
+        }
+        // for(auto p:constellationInfoTable){
+        //     std::cout<<p.first<<":";
+        //     for(auto i:p.second){
+        //         std::cout<<i<<",";
+        //     }
+        //     std::cout<<"\n";
+        // }        
+        return constellationInfoTable;    
+    }    
 
     //獲得satellite table，並且初始化totalSatCount以及satCountPerOrbit
     std::map<int, satellite::satellite> getSatellitesTable(std::map<int, std::map<int, bool>> &closeLinksTable, std::map<std::string, std::string> &parameterTable, std::unordered_map<std::string, std::vector<int>> constellationInfoTable){

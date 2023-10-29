@@ -1,7 +1,7 @@
 {
-  "TLE_inputFileName": "inputTLEsFile/TLE_12P_22Sats_40deg_F8.txt",
-  "constellationInfoFileName": "constellationInfo/12P_22Sats_40deg_F8_info.txt",
-  "execute_function": "printConstellationDistanceFile",
+  "TLE_inputFileName": "inputTLEsFile/TLE_7P_16Sats.txt",
+  "constellationInfoFileName": "constellationInfo/example.json",
+  "execute_function": "printAllSatNeighborId",
   "outputFileName": "output.txt",
   "closeLinksFileName": "closeLink.txt",
   "observerId": "601",

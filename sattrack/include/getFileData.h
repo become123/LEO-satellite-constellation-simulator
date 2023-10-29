@@ -15,7 +15,11 @@ namespace getFileData
     //透過.json檔獲得parameterTable，其中記錄模擬所設置的各種parameter
     std::map<std::string, std::string> getJsonParameterdata(std::string fileName);
 
+    //獲得記錄衛星間關係的table
     std::unordered_map<std::string, std::vector<int>> getConstellationInfoTable(std::string fileName);
+
+    //獲得記錄衛星間關係的table
+    std::unordered_map<std::string, std::vector<int>> getConstellationInfoTableByJson(std::string fileName);
     
     //獲得satellite table，並且初始化totalSatCount以及satCountPerOrbit
     std::map<int, satellite::satellite> getSatellitesTable(std::map<int, std::map<int, bool>> &closeLinksTable, std::map<std::string, std::string> &parameterTable, std::unordered_map<std::string, std::vector<int>> constellationInfoTable);

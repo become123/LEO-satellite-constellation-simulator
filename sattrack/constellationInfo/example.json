@@ -1,0 +1,20 @@
+{
+    "orbitCount": "7",
+    "satCountPerOrbit": "16",
+    "generalOffset": "-2",
+    "specialOffset": "0",
+    "satRelation":{
+        "101":{
+            "right":"215",
+            "left":"701",
+            "front":"102",
+            "back":"116"
+        },
+        "102":{
+            "right":"216",
+            "left":"702",
+            "front":"103",
+            "back":"101"
+        } 
+    }
+}

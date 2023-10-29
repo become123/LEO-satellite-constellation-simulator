@@ -57,7 +57,8 @@ int main()
     // std::map<std::string, std::string> parameterTable  = getFileData::getParameterdata("parameter.txt");
     std::string TLE_inputFileName = parameterTable.at("TLE_inputFileName");
     std::map<int, std::map<int, bool>> closeLinksTable = getFileData::getCloseLinkTable(parameterTable.at("closeLinksFileName"));
-    std::unordered_map<std::string, std::vector<int>> constellationInfoTable = getFileData::getConstellationInfoTable(parameterTable.at("constellationInfoFileName"));  
+    // std::unordered_map<std::string, std::vector<int>> constellationInfoTable = getFileData::getConstellationInfoTable(parameterTable.at("constellationInfoFileName"));  
+    std::unordered_map<std::string, std::vector<int>> constellationInfoTable = getFileData::getConstellationInfoTableByJson(parameterTable.at("constellationInfoFileName"));  
     std::map<int, satellite::satellite> satellites = getFileData::getSatellitesTable(closeLinksTable, parameterTable, constellationInfoTable);
     std::set<std::set<int>> openLinkSet = satellite::getOpenLinkSet(satellites);
     long unsigned int satCountPerOrbit = (long unsigned int)constellationInfoTable.at("satCountPerOrbit")[0];
