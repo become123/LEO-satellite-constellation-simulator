@@ -56,10 +56,13 @@ int main()
     std::map<std::string, std::string> parameterTable  = getFileData::getJsonParameterdata("parameter.json");
     // std::map<std::string, std::string> parameterTable  = getFileData::getParameterdata("parameter.txt");
     std::string TLE_inputFileName = parameterTable.at("TLE_inputFileName");
-    long unsigned int totalSatCount = 0, satCountPerOrbit = 0;
     std::map<int, std::map<int, bool>> closeLinksTable = getFileData::getCloseLinkTable(parameterTable.at("closeLinksFileName"));
-    std::map<int, satellite::satellite> satellites = getFileData::getSatellitesTable(closeLinksTable, parameterTable, totalSatCount, satCountPerOrbit);
+    std::unordered_map<std::string, std::vector<int>> constellationInfoTable = getFileData::getConstellationInfoTable(parameterTable.at("constellationInfoFileName"));  
+    std::map<int, satellite::satellite> satellites = getFileData::getSatellitesTable(closeLinksTable, parameterTable, constellationInfoTable);
     std::set<std::set<int>> openLinkSet = satellite::getOpenLinkSet(satellites);
+    long unsigned int satCountPerOrbit = (long unsigned int)constellationInfoTable.at("satCountPerOrbit")[0];
+    long unsigned int totalSatCount = (long unsigned int)constellationInfoTable.at("orbitCount")[0]*satCountPerOrbit;  
+
     //讓衛星物件知道自己的鄰居是誰(指標指到鄰居衛星)
     for(auto &sat:satellites){
         sat.second.buildNeighborSats(satellites);

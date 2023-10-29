@@ -17,11 +17,57 @@
 
 namespace getFileData
 {
-    //獲得satellite table，並且初始化totalSatCount以及satCountPerOrbit
-    std::map<int, satellite::satellite> getSatellitesTable(std::map<int, std::map<int, bool>> &closeLinksTable, std::map<std::string, std::string> &parameterTable, long unsigned int &totalSatCount, long unsigned int &satCountPerOrbit){
-        std::string constellationInfoFileName = parameterTable.at("constellationInfoFileName");
+    //獲得parameterTable，其中記錄模擬所設置的各種parameter
+    std::map<std::string, std::string> getParameterdata(std::string fileName){
+        std::map<std::string, std::string> parameterTable;
+        std::ifstream ifs(fileName);
+        if (!ifs.is_open()) {
+            std::cout << "Failed to open file.\n";
+            exit(EXIT_FAILURE);
+        }  
+        std::string s;
+        while ( std::getline (ifs,s) ){
+            if(s[0] != '>'){
+                continue;
+            }
+            std::vector<std::string> data;
+            //找出括號中的資料
+            std::string leftBracket = "(";
+            std::string rightBracket = ")";
+            size_t leftPos = 0;
+            size_t rightPos = 0;
+            std::string token;
+            leftPos = s.find(leftBracket);
+            rightPos = s.find(rightBracket);
+            while (leftPos != std::string::npos && rightPos != std::string::npos) {
+                token = s.substr(leftPos, rightPos-leftPos);
+                token.erase(0, 1);
+                // std::cout<<token<<"\n";
+                data.push_back(token);
+                s.erase(0, rightPos + 1);
+                leftPos = s.find(leftBracket);
+                rightPos = s.find(rightBracket);
+            }
+            parameterTable[data[0]] = data[1];
+        }
+        ifs.close();  
+        return parameterTable;            
+    }
+
+    //透過.json檔獲得parameterTable，其中記錄模擬所設置的各種parameter
+    std::map<std::string, std::string> getJsonParameterdata(std::string fileName){
+        std::ifstream ifs(fileName);
+        nlohmann::json j;
+        ifs>>j;
+        std::map<std::string, std::string> parameterTable;
+        for (auto& element : j.items()) {
+            parameterTable[element.key()] = element.value();
+        }
+        return parameterTable;      
+    }
+
+    std::unordered_map<std::string, std::vector<int>> getConstellationInfoTable(std::string constellationInfoFileName){
         // std::cout<<constellationInfoFileName<<"\n";
-        std::map<int, satellite::satellite> satellites;
         std::ifstream constellationInfoIfs(constellationInfoFileName);
         if (!constellationInfoIfs.is_open()) {
             std::cout << "Failed to open constellationInfo.\n";
@@ -79,7 +125,12 @@ namespace getFileData
             std::vector<int> neighborIds = util::strVec2IntVec(util::splitString(',', data[1]));
             constellationInfoTable[data[0]] = neighborIds;
         }
-        constellationInfoIfs.close();
+        constellationInfoIfs.close();    
+        return constellationInfoTable;    
+    }
+
+    //獲得satellite table，並且初始化totalSatCount以及satCountPerOrbit
+    std::map<int, satellite::satellite> getSatellitesTable(std::map<int, std::map<int, bool>> &closeLinksTable, std::map<std::string, std::string> &parameterTable, std::unordered_map<std::string, std::vector<int>> constellationInfoTable){
         // for(auto p:constellationInfoTable){
         //     std::cout<<p.first<<":";
         //     for(auto i:p.second){
@@ -87,6 +138,7 @@ namespace getFileData
         //     }
         //     std::cout<<"\n";
         // }
+        std::map<int, satellite::satellite> satellites;
         int ISLfrontAngle = std::stoi(parameterTable.at("ISLfrontAngle"));
         int ISLrightAngle = std::stoi(parameterTable.at("ISLrightAngle"));
         int ISLbackAngle = std::stoi(parameterTable.at("ISLbackAngle"));
@@ -99,8 +151,7 @@ namespace getFileData
             exit(EXIT_FAILURE);
         }        
         long unsigned int orbitCount = (long unsigned int)constellationInfoTable.at("orbitCount")[0];
-        satCountPerOrbit = (long unsigned int)constellationInfoTable.at("satCountPerOrbit")[0];
-        totalSatCount = (long unsigned int)orbitCount*satCountPerOrbit;
+        long unsigned int satCountPerOrbit = (long unsigned int)constellationInfoTable.at("satCountPerOrbit")[0];
         for(long unsigned int orbidId = 1; orbidId <= orbitCount; ++orbidId){
             for(long unsigned int satId = 1; satId <= satCountPerOrbit; ++satId){
                 int curId = orbidId*100+satId;
@@ -118,55 +169,6 @@ namespace getFileData
             }
         }         
         return satellites;
-    }
-
-    //獲得parameterTable，其中記錄模擬所設置的各種parameter
-    std::map<std::string, std::string> getParameterdata(std::string fileName){
-        std::map<std::string, std::string> parameterTable;
-        std::ifstream ifs(fileName);
-        if (!ifs.is_open()) {
-            std::cout << "Failed to open file.\n";
-            exit(EXIT_FAILURE);
-        }  
-        std::string s;
-        while ( std::getline (ifs,s) ){
-            if(s[0] != '>'){
-                continue;
-            }
-            std::vector<std::string> data;
-            //找出括號中的資料
-            std::string leftBracket = "(";
-            std::string rightBracket = ")";
-            size_t leftPos = 0;
-            size_t rightPos = 0;
-            std::string token;
-            leftPos = s.find(leftBracket);
-            rightPos = s.find(rightBracket);
-            while (leftPos != std::string::npos && rightPos != std::string::npos) {
-                token = s.substr(leftPos, rightPos-leftPos);
-                token.erase(0, 1);
-                // std::cout<<token<<"\n";
-                data.push_back(token);
-                s.erase(0, rightPos + 1);
-                leftPos = s.find(leftBracket);
-                rightPos = s.find(rightBracket);
-            }
-            parameterTable[data[0]] = data[1];
-        }
-        ifs.close();  
-        return parameterTable;            
-    }
-
-    //透過.json檔獲得parameterTable，其中記錄模擬所設置的各種parameter
-    std::map<std::string, std::string> getJsonParameterdata(std::string fileName){
-        std::ifstream ifs(fileName);
-        nlohmann::json j;
-        ifs>>j;
-        std::map<std::string, std::string> parameterTable;
-        for (auto& element : j.items()) {
-            parameterTable[element.key()] = element.value();
-        }
-        return parameterTable;      
     }
 
     //獲得parameter.txt中設置的經緯度們的地面站物件(不只一個)
