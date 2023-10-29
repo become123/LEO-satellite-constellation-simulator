@@ -25,7 +25,14 @@ LEO satellite simulator
     ```bash
     sudo apt install libeigen3-dev
     ```
+ 
+- 安裝讀json的library:
     
+    ```bash
+    sudo apt-get install -y nlohmann-json3-dev
+    ```   
+
+
 - 進入到檔案位置LEO-satellite-constellation-simulator/中進行cmake來產生Makefile，在LEO-satellite-constellation-simulator/中輸入指令:
     
     ```bash

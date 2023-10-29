@@ -5,7 +5,7 @@ set(SRCS
     sattrack.cc)
 
 find_package (Eigen3 3.3 REQUIRED NO_MODULE)
-
+find_package (nlohmann_json 3.2.0 REQUIRED)
 
 add_executable(sattrack
     ${SRCS}
@@ -20,4 +20,5 @@ target_include_directories(sattrack PUBLIC include)
 
 target_link_libraries(sattrack
     sgp4
-    Eigen3::Eigen)
+    Eigen3::Eigen
+    nlohmann_json::nlohmann_json)

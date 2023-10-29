@@ -53,7 +53,8 @@ int main()
     start = clock();    
     /*---------------------------------------*/
     
-    std::map<std::string, std::string> parameterTable  = getFileData::getParameterdata("parameter.txt");
+    std::map<std::string, std::string> parameterTable  = getFileData::getJsonParameterdata("parameter.json");
+    // std::map<std::string, std::string> parameterTable  = getFileData::getParameterdata("parameter.txt");
     std::string TLE_inputFileName = parameterTable.at("TLE_inputFileName");
     long unsigned int totalSatCount = 0, satCountPerOrbit = 0;
     std::map<int, std::map<int, bool>> closeLinksTable = getFileData::getCloseLinkTable(parameterTable.at("closeLinksFileName"));
@@ -64,7 +65,7 @@ int main()
         sat.second.buildNeighborSats(satellites);
     }
     mainFunction::printParameter(parameterTable);
-    std::cout<<"running function "<<parameterTable["execute_function"]<<"...\n";
+        std::cout<<"running function "<<parameterTable["execute_function"]<<"...\n";
     switch (str2int(parameterTable["execute_function"].c_str()))
     {
         case str2int("printAllSatNeighborId"):

@@ -13,6 +13,7 @@
 #include <utility>
 #include <set>
 #include <algorithm>
+#include <nlohmann/json.hpp>
 
 namespace getFileData
 {
@@ -154,6 +155,18 @@ namespace getFileData
         }
         ifs.close();  
         return parameterTable;            
+    }
+
+    //透過.json檔獲得parameterTable，其中記錄模擬所設置的各種parameter
+    std::map<std::string, std::string> getJsonParameterdata(std::string fileName){
+        std::ifstream ifs(fileName);
+        nlohmann::json j;
+        ifs>>j;
+        std::map<std::string, std::string> parameterTable;
+        for (auto& element : j.items()) {
+            parameterTable[element.key()] = element.value();
+        }
+        return parameterTable;      
     }
 
     //獲得parameter.txt中設置的經緯度們的地面站物件(不只一個)
