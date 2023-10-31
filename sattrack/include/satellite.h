@@ -11,6 +11,7 @@
 #include <SGP4.h>
 #include <bitset>
 #include "AER.h"
+#include "GEO.h"
 
 
 
@@ -81,6 +82,7 @@ namespace satellite
         AER getAER(int time, satellite &other);
         AER getrightSatAERdiff(int time);
         AER getleftSatAERdiff(int time);
+        GEOcoordinate getGEOcoordinate(int time);
         int getRightSatId();
         int getLeftSatId();
         int getFrontSatId();

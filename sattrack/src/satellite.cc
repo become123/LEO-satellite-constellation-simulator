@@ -16,6 +16,7 @@
 #include "rectifyAzimuth.h"
 #include "satellite.h"
 #include "AER.h"
+#include "GEO.h"
 
 namespace satellite
 {
@@ -515,6 +516,15 @@ namespace satellite
         AER AERdiff(aer.date, azimuthDiff, elevationDiff, aer.R);
         return AERdiff;
     }    
+
+    //獲得衛星的某特定時間經緯度座標
+    GEOcoordinate satellite::getGEOcoordinate(int time){
+        DateTime dt = this->getTle().Epoch().AddSeconds(time);
+        Eci eci = this->getSgp4().FindPosition(dt);
+        CoordGeodetic geo = eci.ToGeodetic();
+        GEOcoordinate res(Util::RadiansToDegrees(geo.latitude), Util::RadiansToDegrees(geo.longitude),geo.altitude);
+        return res;
+    }
 
     int satellite::getRightSatId(){
         return neighbors[0].first;
