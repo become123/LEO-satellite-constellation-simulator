@@ -5,15 +5,15 @@
     "specialOffset": "0",
     "satRelation":{
         "101":{
-            "right":"215",
-            "left":"701",
-            "front":"102",
-            "back":"116"
+            "right":"101",
+            "left":"101",
+            "front":"101",
+            "back":"101"
         },
         "102":{
-            "right":"216",
-            "left":"702",
-            "front":"103",
+            "right":"101",
+            "left":"101",
+            "front":"101",
             "back":"101"
         } 
     }

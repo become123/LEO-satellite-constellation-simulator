@@ -1,0 +1,9 @@
+{
+    "orbitCount": "12",
+    "satCountPerOrbit": "22",
+    "generalOffset": "-2",
+    "specialOffset": "6",
+    "satRelation":{
+
+    }
+}

@@ -1,0 +1,20 @@
+{
+    "orbitCount": "7", //軌道數量
+    "satCountPerOrbit": "16", //每個軌道的衛星數量
+    "generalOffset": "-2", //往下一個軌道的偏移量
+    "specialOffset": "0", //最後一個軌道往下一個軌道的偏移量
+    "satRelation":{ //額外設定的衛星間關係
+        "101":{
+            "right":"101",
+            "left":"101",
+            "front":"101",
+            "back":"101"
+        },
+        "102":{
+            "right":"101",
+            "left":"101",
+            "front":"101",
+            "back":"101"
+        } 
+    }
+}
