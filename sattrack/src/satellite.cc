@@ -745,9 +745,6 @@ namespace satellite
 
     //回傳特定時刻可否建立右方的ISL(要彼此可以連線到彼此才可以建立)，可連線則回傳距離，不可連線則回傳0
     int satellite::judgeRightISL(int time, const AER &acceptableAER_diff){
-        // if(this->getCurrentISLdeviceState() != this->getRightSat().getCurrentISLdeviceState()){
-        //     return 0;
-        // }
         int right = this->judgeRightConnectability(time, acceptableAER_diff);
         int left = this->getRightSat().judgeLeftConnectability(time, acceptableAER_diff);
         if(left && right){
@@ -763,10 +760,7 @@ namespace satellite
     } 
 
     //回傳特定時刻可否建立左方的ISL(要彼此可以連線到彼此才可以建立)，可連線則回傳距離，不可連線則回傳0
-    int satellite::judgeLeftISL(int time, const AER &acceptableAER_diff){
-        // if(this->getCurrentISLdeviceState() != this->getLeftSat().getCurrentISLdeviceState()){
-        //     return 0;
-        // }        
+    int satellite::judgeLeftISL(int time, const AER &acceptableAER_diff){      
         int right = this->judgeLeftConnectability(time, acceptableAER_diff);
         int left = this->getLeftSat().judgeRightConnectability(time, acceptableAER_diff);
         if(left && right){
