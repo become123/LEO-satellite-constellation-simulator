@@ -76,7 +76,9 @@ namespace satellite
             // std::cout<< "satIndex: "<<satIndex<<", rightSatIndex: "<<rightSatIndex<<", leftSatIndex: "<<leftSatIndex<<", frontSatIndex: "<<frontSatIndex<<", backSatIndex: "<<backSatIndex<<"\n";
                 
             //設定跨軌道方向的Link(有判斷連線條件)
-            constellationState[satIndex][rightSatIndex] = constellationState[rightSatIndex][satIndex] = sat.second.judgeRightISLwithPAT(time, PAT_time, acceptableAER_diff);
+            if(!sat.second.rightLinkClosed()){
+                constellationState[satIndex][rightSatIndex] = constellationState[rightSatIndex][satIndex] = sat.second.judgeRightISLwithPAT(time, PAT_time, acceptableAER_diff);
+            }            
             //設定跨軌道方向的Link(無判斷連線條件)
             // if(!sat.second.rightLinkClosed()){
             //     constellationState[satIndex][rightSatIndex] = constellationState[rightSatIndex][satIndex] = sat.second.getAER(time, sat.second.getRightSat()).R;
@@ -775,9 +777,6 @@ namespace satellite
 
     //回傳特定時刻可否建立右方的ISL(要彼此可以連線到彼此才可以建立)，且有考慮PAT，可連線則回傳距離，不可連線則回傳0
     int satellite::judgeRightISLwithPAT(int time, int PAT_time, const AER &acceptableAER_diff){
-        if(this->rightLinkClosed()){
-            return 0;
-        }
         if(time < PAT_time){
             for(int setupTime = 0; setupTime < time; ++setupTime){
                 if(this->judgeRightISL(setupTime, acceptableAER_diff) == 0){
@@ -796,9 +795,6 @@ namespace satellite
 
     //回傳特定時刻可否建立左方的ISL(要彼此可以連線到彼此才可以建立)，且有考慮PAT，可連線則回傳距離，不可連線則回傳0
     int satellite::judgeLeftISLwithPAT(int time, int PAT_time, const AER &acceptableAER_diff){
-        if(this->leftLinkClosed()){
-            return 0;
-        }
         if(time < PAT_time){
             for(int setupTime = 0; setupTime < time; ++setupTime){
                 if(this->judgeLeftISL(setupTime, acceptableAER_diff) == 0){

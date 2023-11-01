@@ -60,7 +60,6 @@ int main()
     // std::unordered_map<std::string, std::vector<int>> constellationInfoTable = getFileData::getConstellationInfoTable(parameterTable.at("constellationInfoFileName"));  
     std::unordered_map<std::string, std::vector<int>> constellationInfoTable = getFileData::getConstellationInfoTableByJson(parameterTable.at("constellationInfoFileName"));  
     std::map<int, satellite::satellite> satellites = getFileData::getSatellitesTable(closeLinksTable, parameterTable, constellationInfoTable);
-    std::set<std::set<int>> openLinkSet = satellite::getOpenLinkSet(satellites);
     long unsigned int satCountPerOrbit = (long unsigned int)constellationInfoTable.at("satCountPerOrbit")[0];
     long unsigned int totalSatCount = (long unsigned int)constellationInfoTable.at("orbitCount")[0]*satCountPerOrbit;  
 
